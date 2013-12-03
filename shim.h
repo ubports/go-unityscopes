@@ -12,6 +12,10 @@ extern "C" {
 typedef uintptr_t SharedPtrData[2];
 
 
+void init_reply_ptr(SharedPtrData dest, SharedPtrData src);
+void destroy_reply_ptr(SharedPtrData data);
+
+
 #ifdef __cplusplus
 }
 #endif

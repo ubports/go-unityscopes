@@ -7,9 +7,6 @@
 #include <scopes/ScopeBase.h>
 #include <scopes/Variant.h>
 
-#include "_cgo_export.h"
-
-
 class ScopeAdapter : public unity::api::scopes::ScopeBase
 {
     friend class QueryAdapter;
@@ -32,6 +29,7 @@ public:
 private:
     const ScopeAdapter &scope;
     const std::string query;
+    GoChan cancel_channel;
 };
 
 #endif

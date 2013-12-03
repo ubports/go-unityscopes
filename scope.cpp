@@ -1,6 +1,10 @@
 #include <scopes/Category.h>
 #include <scopes/ResultItem.h>
+extern "C" {
+#include "_cgo_export.h"
+}
 #include "scope.h"
+#include "smartptr_helper.h"
 
 using namespace unity::api::scopes;
 
@@ -21,13 +25,19 @@ QueryBase::UPtr ScopeAdapter::create_query(std::string const &q,
 }
 
 QueryAdapter::QueryAdapter(ScopeAdapter &scope, std::string const &query)
-    : scope(scope), query(query) {
+    : scope(scope), query(query), cancel_channel(makeCancelChannel()) {
+    // FIXME: do we need to do anything to keep cancel_channel from
+    // being collected?
 }
 
 void QueryAdapter::cancelled() {
-    // FIXME: forward cancellation to Go (channel?)
+    sendCancelChannel(cancel_channel);
 }
 
 void QueryAdapter::run(ReplyProxy const &reply) {
-    // FIXME: spawn goroutine to handle query.
+    callScopeQuery(
+        scope.goscope,
+        const_cast<char*>(query.c_str()),
+        const_cast<uintptr_t*>(reinterpret_cast<const uintptr_t*>(&reply)),
+        cancel_channel);
 }
