@@ -3,21 +3,30 @@ package unityscope
 /*
 #cgo CXXFLAGS: -std=c++11
 #cgo pkg-config: libunity-scopes
+#include <stdlib.h>
 #include "shim.h"
 */
 import "C"
-import "runtime"
+import (
+	"runtime"
+	"sync"
+	"unsafe"
+)
 
 type Reply struct {
 	r C.SharedPtrData
+}
+
+func (reply *Reply) Finished() {
+	C.reply_finished(&reply.r[0])
 }
 
 type Scope interface {
 	Query(query string, reply *Reply, cancelled <-chan bool)
 }
 
-func finalizeReply(r Reply) {
-	C.destroy_reply_ptr(&r.r[0])
+func finalizeReply(reply *Reply) {
+	C.destroy_reply_ptr(&reply.r[0])
 }
 
 //export callScopeQuery
@@ -25,16 +34,43 @@ func callScopeQuery(scope Scope, query *C.char, reply_data *C.uintptr_t, cancel 
 	reply := new(Reply)
 	runtime.SetFinalizer(reply, finalizeReply)
 	C.init_reply_ptr(&reply.r[0], reply_data)
-	go scope.Query(C.GoString(query), reply, cancel)
+	go func() {
+		scope.Query(C.GoString(query), reply, cancel)
+		reply.Finished()
+	}()
 }
 
+func Run(scopeName, runtimeConfig string, scope Scope) {
+	cScopeName := C.CString(scopeName)
+	defer C.free(unsafe.Pointer(cScopeName))
+	cRuntimeConfig := C.CString(runtimeConfig)
+	defer C.free(unsafe.Pointer(cRuntimeConfig))
+
+	C.run_scope(cScopeName, cRuntimeConfig, unsafe.Pointer(&scope))
+}
+
+var (
+	cancelChannels = make(map[chan bool] bool)
+	cancelChannelsLock sync.Mutex
+)
 
 //export makeCancelChannel
 func makeCancelChannel() chan bool {
-	return make(chan bool, 1)
+	ch := make(chan bool, 1)
+	cancelChannelsLock.Lock()
+	cancelChannels[ch] = true
+	cancelChannelsLock.Unlock()
+	return ch
 }
 
 //export sendCancelChannel
 func sendCancelChannel(ch chan bool) {
 	ch <- true
+}
+
+//export releaseCancelChannel
+func releaseCancelChannel(ch chan bool) {
+	cancelChannelsLock.Lock()
+	delete(cancelChannels, ch)
+	cancelChannelsLock.Unlock()
 }

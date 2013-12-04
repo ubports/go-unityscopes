@@ -1,6 +1,7 @@
 #ifndef UNITYSCOPE_SCOPE_H
 #define UNITYSCOPE_SCOPE_H
 
+#include <memory>
 #include <string>
 
 #include <scopes/Reply.h>
@@ -29,7 +30,7 @@ public:
 private:
     const ScopeAdapter &scope;
     const std::string query;
-    GoChan cancel_channel;
+    std::unique_ptr<void, void(*)(GoChan)> cancel_channel;
 };
 
 #endif

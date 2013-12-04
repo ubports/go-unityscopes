@@ -11,9 +11,13 @@ extern "C" {
 
 typedef uintptr_t SharedPtrData[2];
 
+void run_scope(const char *scope_name, const char *runtime_config,
+               void *pointer_to_iface);
 
 void init_reply_ptr(SharedPtrData dest, SharedPtrData src);
 void destroy_reply_ptr(SharedPtrData data);
+
+void reply_finished(SharedPtrData reply);
 
 
 #ifdef __cplusplus

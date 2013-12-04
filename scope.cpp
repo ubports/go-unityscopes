@@ -25,13 +25,12 @@ QueryBase::UPtr ScopeAdapter::create_query(std::string const &q,
 }
 
 QueryAdapter::QueryAdapter(ScopeAdapter &scope, std::string const &query)
-    : scope(scope), query(query), cancel_channel(makeCancelChannel()) {
-    // FIXME: do we need to do anything to keep cancel_channel from
-    // being collected?
+    : scope(scope), query(query),
+      cancel_channel(makeCancelChannel(), releaseCancelChannel) {
 }
 
 void QueryAdapter::cancelled() {
-    sendCancelChannel(cancel_channel);
+    sendCancelChannel(cancel_channel.get());
 }
 
 void QueryAdapter::run(ReplyProxy const &reply) {
@@ -39,5 +38,5 @@ void QueryAdapter::run(ReplyProxy const &reply) {
         scope.goscope,
         const_cast<char*>(query.c_str()),
         const_cast<uintptr_t*>(reinterpret_cast<const uintptr_t*>(&reply)),
-        cancel_channel);
+        cancel_channel.get());
 }
