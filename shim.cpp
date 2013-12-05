@@ -1,3 +1,4 @@
+#include <scopes/Category.h>
 #include <scopes/Reply.h>
 #include <scopes/Runtime.h>
 
@@ -27,4 +28,13 @@ void destroy_reply_ptr(SharedPtrData data) {
 
 void reply_finished(SharedPtrData reply) {
     get_ptr<Reply>(reply)->finished();
+}
+
+void reply_register_category(SharedPtrData reply, const char *id, const char *title, const char *icon, SharedPtrData category) {
+    auto cat = get_ptr<Reply>(reply)->register_category(id, title, icon);
+    init_ptr<const Category>(category, cat);
+}
+
+void destroy_category_ptr(SharedPtrData data) {
+    destroy_ptr<const Category>(data);
 }

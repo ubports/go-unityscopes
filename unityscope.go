@@ -21,6 +21,28 @@ func (reply *Reply) Finished() {
 	C.reply_finished(&reply.r[0])
 }
 
+func (reply *Reply) RegisterCategory(id, title, icon string) *Category {
+	cId := C.CString(id)
+	defer C.free(unsafe.Pointer(cId))
+	cTitle := C.CString(title)
+	defer C.free(unsafe.Pointer(cTitle))
+	cIcon := C.CString(icon)
+	defer C.free(unsafe.Pointer(cIcon))
+
+	cat := new(Category)
+	runtime.SetFinalizer(cat, finalizeCategory)
+	C.reply_register_category(&reply.r[0], cId, cTitle, cIcon, &cat.c[0])
+	return cat
+}
+
+type Category struct {
+	c C.SharedPtrData
+}
+
+func finalizeCategory(cat *Category) {
+	C.destroy_category_ptr(&cat.c[0])
+}
+
 type Scope interface {
 	Query(query string, reply *Reply, cancelled <-chan bool)
 }

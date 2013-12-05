@@ -18,7 +18,9 @@ void init_reply_ptr(SharedPtrData dest, SharedPtrData src);
 void destroy_reply_ptr(SharedPtrData data);
 
 void reply_finished(SharedPtrData reply);
+void reply_register_category(SharedPtrData reply, const char *id, const char *title, const char *icon, SharedPtrData category);
 
+void destroy_category_ptr(SharedPtrData data);
 
 #ifdef __cplusplus
 }
