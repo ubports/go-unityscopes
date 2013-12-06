@@ -1,4 +1,5 @@
 #include <scopes/Category.h>
+#include <scopes/CategorisedResult.h>
 #include <scopes/Reply.h>
 #include <scopes/Runtime.h>
 
@@ -12,8 +13,8 @@ using namespace unity::api::scopes;
 
 void run_scope(const char *scope_name, const char *runtime_config,
                void *pointer_to_iface) {
-    auto runtime = Runtime::create(scope_name, runtime_config);
-    ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
+    //auto runtime = Runtime::create_for_scope(scope_name, runtime_config);
+    //ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
     //runtime->run_scope(&scope);
 }
 
@@ -35,6 +36,19 @@ void reply_register_category(SharedPtrData reply, const char *id, const char *ti
     init_ptr<const Category>(category, cat);
 }
 
+void reply_push(SharedPtrData reply, _CategorisedResult *result) {
+    get_ptr<Reply>(reply)->push(*reinterpret_cast<CategorisedResult*>(result));
+}
+
 void destroy_category_ptr(SharedPtrData data) {
     destroy_ptr<const Category>(data);
+}
+
+_CategorisedResult *new_categorised_result(SharedPtrData category) {
+    auto cat = get_ptr<Category>(category);
+    return reinterpret_cast<_CategorisedResult*>(new CategorisedResult(cat));
+}
+
+void destroy_categorised_result(_CategorisedResult *res) {
+    delete reinterpret_cast<CategorisedResult*>(res);
 }

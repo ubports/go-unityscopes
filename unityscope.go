@@ -35,6 +35,10 @@ func (reply *Reply) RegisterCategory(id, title, icon string) *Category {
 	return cat
 }
 
+func (reply *Reply) Push(result *CategorisedResult) {
+	C.reply_push(&reply.r[0], result.result)
+}
+
 type Category struct {
 	c C.SharedPtrData
 }
@@ -42,6 +46,25 @@ type Category struct {
 func finalizeCategory(cat *Category) {
 	C.destroy_category_ptr(&cat.c[0])
 }
+
+type CategorisedResult struct {
+	result unsafe.Pointer
+}
+
+func NewCategorisedResult(category *Category) *CategorisedResult {
+	res := new(CategorisedResult)
+	runtime.SetFinalizer(res, finalizeCategorisedResult)
+	res.result = C.new_categorised_result(&category.c[0])
+	return res
+}
+
+func finalizeCategorisedResult(res *CategorisedResult) {
+	if res.result != nil {
+		C.destroy_categorised_result(res.result)
+	}
+	res.result = nil
+}
+
 
 type Scope interface {
 	Query(query string, reply *Reply, cancelled <-chan bool)

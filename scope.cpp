@@ -1,5 +1,4 @@
 #include <scopes/Category.h>
-#include <scopes/ResultItem.h>
 extern "C" {
 #include "_cgo_export.h"
 }
