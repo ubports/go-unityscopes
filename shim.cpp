@@ -13,9 +13,9 @@ using namespace unity::api::scopes;
 
 void run_scope(const char *scope_name, const char *runtime_config,
                void *pointer_to_iface) {
-    //auto runtime = Runtime::create_for_scope(scope_name, runtime_config);
-    //ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
-    //runtime->run_scope(&scope);
+    auto runtime = Runtime::create_scope_runtime(scope_name, runtime_config);
+    ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
+    runtime->run_scope(&scope);
 }
 
 void init_reply_ptr(SharedPtrData dest, SharedPtrData src) {
