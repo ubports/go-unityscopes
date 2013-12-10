@@ -31,7 +31,10 @@ void destroy_category_ptr(SharedPtrData data);
 _CategorisedResult *new_categorised_result(SharedPtrData category);
 void destroy_categorised_result(_CategorisedResult *res);
 
-
+void categorised_result_set_uri(_CategorisedResult *res, const char *uri);
+void categorised_result_set_title(_CategorisedResult *res, const char *title);
+void categorised_result_set_art(_CategorisedResult *res, const char *art);
+void categorised_result_set_dnd_uri(_CategorisedResult *res, const char *uri);
 
 #ifdef __cplusplus
 }

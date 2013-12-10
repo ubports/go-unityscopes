@@ -52,3 +52,19 @@ _CategorisedResult *new_categorised_result(SharedPtrData category) {
 void destroy_categorised_result(_CategorisedResult *res) {
     delete reinterpret_cast<CategorisedResult*>(res);
 }
+
+void categorised_result_set_uri(_CategorisedResult *res, const char *uri) {
+    reinterpret_cast<CategorisedResult*>(res)->set_uri(uri);
+}
+
+void categorised_result_set_title(_CategorisedResult *res, const char *title) {
+    reinterpret_cast<CategorisedResult*>(res)->set_title(title);
+}
+
+void categorised_result_set_art(_CategorisedResult *res, const char *art) {
+    reinterpret_cast<CategorisedResult*>(res)->set_art(art);
+}
+
+void categorised_result_set_dnd_uri(_CategorisedResult *res, const char *uri) {
+    reinterpret_cast<CategorisedResult*>(res)->set_dnd_uri(uri);
+}

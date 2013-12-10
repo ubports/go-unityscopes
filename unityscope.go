@@ -65,6 +65,30 @@ func finalizeCategorisedResult(res *CategorisedResult) {
 	res.result = nil
 }
 
+func (res *CategorisedResult) SetURI(uri string) {
+	cUri := C.CString(uri)
+	defer C.free(unsafe.Pointer(cUri))
+	C.categorised_result_set_uri(res.result, cUri)
+}
+
+func (res *CategorisedResult) SetTitle(title string) {
+	cTitle := C.CString(title)
+	defer C.free(unsafe.Pointer(cTitle))
+	C.categorised_result_set_title(res.result, cTitle)
+}
+
+func (res *CategorisedResult) SetArt(art string) {
+	cArt := C.CString(art)
+	defer C.free(unsafe.Pointer(cArt))
+	C.categorised_result_set_art(res.result, cArt)
+}
+
+func (res *CategorisedResult) SetDndURI(uri string) {
+	cUri := C.CString(uri)
+	defer C.free(unsafe.Pointer(cUri))
+	C.categorised_result_set_dnd_uri(res.result, cUri)
+}
+
 
 type Scope interface {
 	Query(query string, reply *Reply, cancelled <-chan bool)
