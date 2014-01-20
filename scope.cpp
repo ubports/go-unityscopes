@@ -23,6 +23,10 @@ QueryBase::UPtr ScopeAdapter::create_query(std::string const &q,
     return query;
 }
 
+QueryBase::UPtr ScopeAdapter::preview(Result const& result, VariantMap const& hints) {
+    return nullptr;
+}
+
 QueryAdapter::QueryAdapter(ScopeAdapter &scope, std::string const &query)
     : scope(scope), query(query),
       cancel_channel(makeCancelChannel(), releaseCancelChannel) {
@@ -32,7 +36,7 @@ void QueryAdapter::cancelled() {
     sendCancelChannel(cancel_channel.get());
 }
 
-void QueryAdapter::run(ReplyProxy const &reply) {
+void QueryAdapter::run(SearchReplyProxy const &reply) {
     callScopeQuery(
         scope.goscope,
         const_cast<char*>(query.c_str()),

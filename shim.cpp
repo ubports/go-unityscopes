@@ -2,7 +2,7 @@
 
 #include <unity/scopes/Category.h>
 #include <unity/scopes/CategorisedResult.h>
-#include <unity/scopes/Reply.h>
+#include <unity/scopes/SearchReply.h>
 #include <unity/scopes/Runtime.h>
 
 extern "C" {
@@ -20,32 +20,32 @@ void run_scope(const char *scope_name, const char *runtime_config,
     runtime->run_scope(&scope);
 }
 
-void init_reply_ptr(SharedPtrData dest, SharedPtrData src) {
-    std::shared_ptr<Reply> reply = get_ptr<Reply>(src);
-    init_ptr<Reply>(dest, reply);
+void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src) {
+    std::shared_ptr<SearchReply> reply = get_ptr<SearchReply>(src);
+    init_ptr<SearchReply>(dest, reply);
 }
 
-void destroy_reply_ptr(SharedPtrData data) {
-    destroy_ptr<Reply>(data);
+void destroy_search_reply_ptr(SharedPtrData data) {
+    destroy_ptr<SearchReply>(data);
 }
 
-void reply_finished(SharedPtrData reply) {
-    get_ptr<Reply>(reply)->finished();
+void search_reply_finished(SharedPtrData reply) {
+    get_ptr<SearchReply>(reply)->finished();
 }
 
-void reply_error(SharedPtrData reply, const char *err_string) {
-    get_ptr<Reply>(reply)->error(std::make_exception_ptr(
+void search_reply_error(SharedPtrData reply, const char *err_string) {
+    get_ptr<SearchReply>(reply)->error(std::make_exception_ptr(
                                      std::runtime_error(err_string)));
 }
 
-void reply_register_category(SharedPtrData reply, const char *id, const char *title, const char *icon, SharedPtrData category) {
-    auto cat = get_ptr<Reply>(reply)->register_category(id, title, icon);
+void search_reply_register_category(SharedPtrData reply, const char *id, const char *title, const char *icon, SharedPtrData category) {
+    auto cat = get_ptr<SearchReply>(reply)->register_category(id, title, icon);
     init_ptr<const Category>(category, cat);
 }
 
-void reply_push(SharedPtrData reply, _CategorisedResult *result, char **error) {
+void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **error) {
     try {
-        get_ptr<Reply>(reply)->push(*reinterpret_cast<CategorisedResult*>(result));
+        get_ptr<SearchReply>(reply)->push(*reinterpret_cast<CategorisedResult*>(result));
     } catch (std::exception &e) {
         *error = strdup(e.what());
     }

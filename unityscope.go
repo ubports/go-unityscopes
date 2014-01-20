@@ -22,21 +22,21 @@ func checkError(errorString *C.char) (err error) {
 	return
 }
 
-type Reply struct {
+type SearchReply struct {
 	r C.SharedPtrData
 }
 
-func (reply *Reply) Finished() {
-	C.reply_finished(&reply.r[0])
+func (reply *SearchReply) Finished() {
+	C.search_reply_finished(&reply.r[0])
 }
 
-func (reply *Reply) Error(err error) {
+func (reply *SearchReply) Error(err error) {
 	errString := C.CString(err.Error())
 	defer C.free(unsafe.Pointer(errString))
-	C.reply_error(&reply.r[0], errString)
+	C.search_reply_error(&reply.r[0], errString)
 }
 
-func (reply *Reply) RegisterCategory(id, title, icon string) *Category {
+func (reply *SearchReply) RegisterCategory(id, title, icon string) *Category {
 	cId := C.CString(id)
 	defer C.free(unsafe.Pointer(cId))
 	cTitle := C.CString(title)
@@ -46,13 +46,13 @@ func (reply *Reply) RegisterCategory(id, title, icon string) *Category {
 
 	cat := new(Category)
 	runtime.SetFinalizer(cat, finalizeCategory)
-	C.reply_register_category(&reply.r[0], cId, cTitle, cIcon, &cat.c[0])
+	C.search_reply_register_category(&reply.r[0], cId, cTitle, cIcon, &cat.c[0])
 	return cat
 }
 
-func (reply *Reply) Push(result *CategorisedResult) error {
+func (reply *SearchReply) Push(result *CategorisedResult) error {
 	var errorString *C.char = nil
-	C.reply_push(&reply.r[0], result.result, &errorString)
+	C.search_reply_push(&reply.r[0], result.result, &errorString)
 	return checkError(errorString)
 }
 
@@ -106,20 +106,20 @@ func (res *CategorisedResult) SetDndURI(uri string) {
 	C.categorised_result_set_dnd_uri(res.result, cUri)
 }
 
-// Scope defines the interface that 
+// Scope defines the interface that scope implementations must implement
 type Scope interface {
-	Query(query string, reply *Reply, cancelled <-chan bool) error
+	Query(query string, reply *SearchReply, cancelled <-chan bool) error
 }
 
-func finalizeReply(reply *Reply) {
-	C.destroy_reply_ptr(&reply.r[0])
+func finalizeSearchReply(reply *SearchReply) {
+	C.destroy_search_reply_ptr(&reply.r[0])
 }
 
 //export callScopeQuery
 func callScopeQuery(scope Scope, query *C.char, reply_data *C.uintptr_t, cancel <-chan bool) {
-	reply := new(Reply)
-	runtime.SetFinalizer(reply, finalizeReply)
-	C.init_reply_ptr(&reply.r[0], reply_data)
+	reply := new(SearchReply)
+	runtime.SetFinalizer(reply, finalizeSearchReply)
+	C.init_search_reply_ptr(&reply.r[0], reply_data)
 	go func() {
 		err := scope.Query(C.GoString(query), reply, cancel)
 		if err != nil {
