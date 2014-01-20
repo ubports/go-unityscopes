@@ -9,7 +9,6 @@ package unityscope
 import "C"
 import (
 	"errors"
-	"log"
 	"runtime"
 	"sync"
 	"unsafe"
@@ -29,6 +28,12 @@ type Reply struct {
 
 func (reply *Reply) Finished() {
 	C.reply_finished(&reply.r[0])
+}
+
+func (reply *Reply) Error(err error) {
+	errString := C.CString(err.Error())
+	defer C.free(unsafe.Pointer(errString))
+	C.reply_error(&reply.r[0], errString)
 }
 
 func (reply *Reply) RegisterCategory(id, title, icon string) *Category {
@@ -118,7 +123,8 @@ func callScopeQuery(scope Scope, query *C.char, reply_data *C.uintptr_t, cancel 
 	go func() {
 		err := scope.Query(C.GoString(query), reply, cancel)
 		if err != nil {
-			log.Println(err)
+			reply.Error(err)
+			return
 		}
 		reply.Finished()
 	}()

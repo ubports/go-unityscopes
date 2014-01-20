@@ -33,6 +33,11 @@ void reply_finished(SharedPtrData reply) {
     get_ptr<Reply>(reply)->finished();
 }
 
+void reply_error(SharedPtrData reply, const char *err_string) {
+    get_ptr<Reply>(reply)->error(std::make_exception_ptr(
+                                     std::runtime_error(err_string)));
+}
+
 void reply_register_category(SharedPtrData reply, const char *id, const char *title, const char *icon, SharedPtrData category) {
     auto cat = get_ptr<Reply>(reply)->register_category(id, title, icon);
     init_ptr<const Category>(category, cat);

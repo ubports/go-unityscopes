@@ -21,6 +21,7 @@ void init_reply_ptr(SharedPtrData dest, SharedPtrData src);
 void destroy_reply_ptr(SharedPtrData data);
 
 void reply_finished(SharedPtrData reply);
+void reply_error(SharedPtrData reply, const char *err_string);
 void reply_register_category(SharedPtrData reply, const char *id, const char *title, const char *icon, SharedPtrData category);
 void reply_push(SharedPtrData reply, _CategorisedResult *result, char **error);
 
