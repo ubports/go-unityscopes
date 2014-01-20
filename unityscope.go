@@ -8,10 +8,20 @@ package unityscope
 */
 import "C"
 import (
+	"errors"
+	"log"
 	"runtime"
 	"sync"
 	"unsafe"
 )
+
+func checkError(errorString *C.char) (err error) {
+	if errorString != nil {
+		err = errors.New(C.GoString(errorString))
+		C.free(unsafe.Pointer(errorString))
+	}
+	return
+}
 
 type Reply struct {
 	r C.SharedPtrData
@@ -35,8 +45,10 @@ func (reply *Reply) RegisterCategory(id, title, icon string) *Category {
 	return cat
 }
 
-func (reply *Reply) Push(result *CategorisedResult) {
-	C.reply_push(&reply.r[0], result.result)
+func (reply *Reply) Push(result *CategorisedResult) error {
+	var errorString *C.char = nil
+	C.reply_push(&reply.r[0], result.result, &errorString)
+	return checkError(errorString)
 }
 
 type Category struct {
@@ -89,9 +101,9 @@ func (res *CategorisedResult) SetDndURI(uri string) {
 	C.categorised_result_set_dnd_uri(res.result, cUri)
 }
 
-
+// Scope defines the interface that 
 type Scope interface {
-	Query(query string, reply *Reply, cancelled <-chan bool)
+	Query(query string, reply *Reply, cancelled <-chan bool) error
 }
 
 func finalizeReply(reply *Reply) {
@@ -104,7 +116,10 @@ func callScopeQuery(scope Scope, query *C.char, reply_data *C.uintptr_t, cancel 
 	runtime.SetFinalizer(reply, finalizeReply)
 	C.init_reply_ptr(&reply.r[0], reply_data)
 	go func() {
-		scope.Query(C.GoString(query), reply, cancel)
+		err := scope.Query(C.GoString(query), reply, cancel)
+		if err != nil {
+			log.Println(err)
+		}
 		reply.Finished()
 	}()
 }

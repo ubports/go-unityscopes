@@ -1,7 +1,9 @@
-#include <scopes/Category.h>
-#include <scopes/CategorisedResult.h>
-#include <scopes/Reply.h>
-#include <scopes/Runtime.h>
+#include <cstring>
+
+#include <unity/scopes/Category.h>
+#include <unity/scopes/CategorisedResult.h>
+#include <unity/scopes/Reply.h>
+#include <unity/scopes/Runtime.h>
 
 extern "C" {
 #include "_cgo_export.h"
@@ -9,7 +11,7 @@ extern "C" {
 #include "scope.h"
 #include "smartptr_helper.h"
 
-using namespace unity::api::scopes;
+using namespace unity::scopes;
 
 void run_scope(const char *scope_name, const char *runtime_config,
                void *pointer_to_iface) {
@@ -36,8 +38,12 @@ void reply_register_category(SharedPtrData reply, const char *id, const char *ti
     init_ptr<const Category>(category, cat);
 }
 
-void reply_push(SharedPtrData reply, _CategorisedResult *result) {
-    get_ptr<Reply>(reply)->push(*reinterpret_cast<CategorisedResult*>(result));
+void reply_push(SharedPtrData reply, _CategorisedResult *result, char **error) {
+    try {
+        get_ptr<Reply>(reply)->push(*reinterpret_cast<CategorisedResult*>(result));
+    } catch (std::exception &e) {
+        *error = strdup(e.what());
+    }
 }
 
 void destroy_category_ptr(SharedPtrData data) {

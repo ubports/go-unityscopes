@@ -22,7 +22,7 @@ void destroy_reply_ptr(SharedPtrData data);
 
 void reply_finished(SharedPtrData reply);
 void reply_register_category(SharedPtrData reply, const char *id, const char *title, const char *icon, SharedPtrData category);
-void reply_push(SharedPtrData reply, _CategorisedResult *result);
+void reply_push(SharedPtrData reply, _CategorisedResult *result, char **error);
 
 /* Category objects */
 void destroy_category_ptr(SharedPtrData data);

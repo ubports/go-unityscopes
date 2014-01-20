@@ -4,29 +4,29 @@
 #include <memory>
 #include <string>
 
-#include <scopes/Reply.h>
-#include <scopes/ScopeBase.h>
-#include <scopes/Variant.h>
+#include <unity/scopes/Reply.h>
+#include <unity/scopes/ScopeBase.h>
+#include <unity/scopes/Variant.h>
 
-class ScopeAdapter : public unity::api::scopes::ScopeBase
+class ScopeAdapter : public unity::scopes::ScopeBase
 {
     friend class QueryAdapter;
 public:
     ScopeAdapter(GoInterface goscope);
-    virtual int start(std::string const&, unity::api::scopes::RegistryProxy const &) override;
+    virtual int start(std::string const&, unity::scopes::RegistryProxy const &) override;
     virtual void stop() override;
-    virtual unity::api::scopes::QueryBase::UPtr create_query(std::string const &query, unity::api::scopes::VariantMap const &hints) override;
+    virtual unity::scopes::QueryBase::UPtr create_query(std::string const &query, unity::scopes::VariantMap const &hints) override;
 
 private:
     GoInterface goscope;
 };
 
-class QueryAdapter : public unity::api::scopes::QueryBase
+class QueryAdapter : public unity::scopes::QueryBase
 {
 public:
     QueryAdapter(ScopeAdapter &scope, std::string const &query);
     virtual void cancelled() override;
-    virtual void run(unity::api::scopes::ReplyProxy const &reply) override;
+    virtual void run(unity::scopes::ReplyProxy const &reply) override;
 private:
     const ScopeAdapter &scope;
     const std::string query;

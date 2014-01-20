@@ -1,11 +1,11 @@
-#include <scopes/Category.h>
+#include <unity/scopes/Category.h>
 extern "C" {
 #include "_cgo_export.h"
 }
 #include "scope.h"
 #include "smartptr_helper.h"
 
-using namespace unity::api::scopes;
+using namespace unity::scopes;
 
 ScopeAdapter::ScopeAdapter(GoInterface goscope) : goscope(goscope) {
 }
