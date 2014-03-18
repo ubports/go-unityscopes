@@ -17,17 +17,17 @@ int ScopeAdapter::start(std::string const &, RegistryProxy const &) {
 void ScopeAdapter::stop() {
 }
 
-QueryBase::UPtr ScopeAdapter::create_query(std::string const &q,
-                                           VariantMap const &hints) {
-    QueryBase::UPtr query(new QueryAdapter(*this, q));
+SearchQueryBase::UPtr ScopeAdapter::search(CannedQuery const &q,
+                                     SearchMetadata const &hints) {
+    SearchQueryBase::UPtr query(new QueryAdapter(*this, q));
     return query;
 }
 
-QueryBase::UPtr ScopeAdapter::preview(Result const& result, VariantMap const& hints) {
+PreviewQueryBase::UPtr ScopeAdapter::preview(Result const& result, ActionMetadata const& hints) {
     return nullptr;
 }
 
-QueryAdapter::QueryAdapter(ScopeAdapter &scope, std::string const &query)
+QueryAdapter::QueryAdapter(ScopeAdapter &scope, CannedQuery const &query)
     : scope(scope), query(query),
       cancel_channel(makeCancelChannel(), releaseCancelChannel) {
 }
@@ -39,7 +39,7 @@ void QueryAdapter::cancelled() {
 void QueryAdapter::run(SearchReplyProxy const &reply) {
     callScopeQuery(
         scope.goscope,
-        const_cast<char*>(query.c_str()),
+        const_cast<char*>(query.query_string().c_str()),
         const_cast<uintptr_t*>(reinterpret_cast<const uintptr_t*>(&reply)),
         cancel_channel.get());
 }

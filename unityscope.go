@@ -56,6 +56,27 @@ func (reply *SearchReply) Push(result *CategorisedResult) error {
 	return checkError(errorString)
 }
 
+type PreviewReply struct {
+	r C.SharedPtrData
+}
+
+func (reply *PreviewReply) Finished() {
+	C.preview_reply_finished(&reply.r[0])
+}
+
+func (reply *PreviewReply) Error(err error) {
+	errString := C.CString(err.Error())
+	defer C.free(unsafe.Pointer(errString))
+	C.preview_reply_error(&reply.r[0], errString)
+}
+
+func (reply *PreviewReply) Push(widgets []string) error {
+	var errorString *C.char = nil
+	C.preview_reply_push_widgets(&reply.r[0], unsafe.Pointer(&widgets[0]), C.int(len(widgets)), &errorString)
+	return checkError(errorString)
+}
+
+
 type Category struct {
 	c C.SharedPtrData
 }

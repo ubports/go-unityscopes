@@ -2,6 +2,8 @@
 
 #include <unity/scopes/Category.h>
 #include <unity/scopes/CategorisedResult.h>
+#include <unity/scopes/PreviewReply.h>
+#include <unity/scopes/PreviewWidget.h>
 #include <unity/scopes/SearchReply.h>
 #include <unity/scopes/Runtime.h>
 
@@ -46,6 +48,38 @@ void search_reply_register_category(SharedPtrData reply, const char *id, const c
 void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **error) {
     try {
         get_ptr<SearchReply>(reply)->push(*reinterpret_cast<CategorisedResult*>(result));
+    } catch (std::exception &e) {
+        *error = strdup(e.what());
+    }
+}
+
+void init_preview_reply_ptr(SharedPtrData dest, SharedPtrData src) {
+    std::shared_ptr<PreviewReply> reply = get_ptr<PreviewReply>(src);
+    init_ptr<PreviewReply>(dest, reply);
+}
+
+void destroy_preview_reply_ptr(SharedPtrData data) {
+    destroy_ptr<PreviewReply>(data);
+}
+
+void preview_reply_finished(SharedPtrData reply) {
+    get_ptr<PreviewReply>(reply)->finished();
+}
+
+void preview_reply_error(SharedPtrData reply, const char *err_string) {
+    get_ptr<PreviewReply>(reply)->error(std::make_exception_ptr(
+                                            std::runtime_error(err_string)));
+}
+
+void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int count, char **error) {
+    try {
+        GoString *widget_data = static_cast<GoString*>(gostring_array);
+        PreviewWidgetList widgets;
+        for (int i = 0; i < count; i++) {
+            widgets.push_back(PreviewWidget(std::string(
+                widget_data[i].p, widget_data[i].n)));
+        }
+        get_ptr<PreviewReply>(reply)->push(widgets);
     } catch (std::exception &e) {
         *error = strdup(e.what());
     }
