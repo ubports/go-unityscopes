@@ -70,9 +70,17 @@ func (reply *PreviewReply) Error(err error) {
 	C.preview_reply_error(&reply.r[0], errString)
 }
 
-func (reply *PreviewReply) Push(widgets []string) error {
+func (reply *PreviewReply) Push(widgets []PreviewWidget) error {
+	widget_data := make([]string, len(widgets))
+	for i, w := range widgets {
+		data, err := w.data()
+		if err != nil {
+			return err
+		}
+		widget_data[i] = string(data)
+	}
 	var errorString *C.char = nil
-	C.preview_reply_push_widgets(&reply.r[0], unsafe.Pointer(&widgets[0]), C.int(len(widgets)), &errorString)
+	C.preview_reply_push_widgets(&reply.r[0], unsafe.Pointer(&widget_data[0]), C.int(len(widget_data)), &errorString)
 	return checkError(errorString)
 }
 
