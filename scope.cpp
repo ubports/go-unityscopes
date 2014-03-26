@@ -24,7 +24,8 @@ SearchQueryBase::UPtr ScopeAdapter::search(CannedQuery const &q,
 }
 
 PreviewQueryBase::UPtr ScopeAdapter::preview(Result const& result, ActionMetadata const& hints) {
-    return nullptr;
+    PreviewQueryBase::UPtr query(new PreviewAdapter(*this, result));
+    return query;
 }
 
 QueryAdapter::QueryAdapter(ScopeAdapter &scope, CannedQuery const &query)
@@ -37,9 +38,26 @@ void QueryAdapter::cancelled() {
 }
 
 void QueryAdapter::run(SearchReplyProxy const &reply) {
-    callScopeQuery(
+    callScopeSearch(
         scope.goscope,
         const_cast<char*>(query.query_string().c_str()),
+        const_cast<uintptr_t*>(reinterpret_cast<const uintptr_t*>(&reply)),
+        cancel_channel.get());
+}
+
+PreviewAdapter::PreviewAdapter(ScopeAdapter &scope, Result const &result)
+    : scope(scope), result(result),
+      cancel_channel(makeCancelChannel(), releaseCancelChannel) {
+}
+
+void PreviewAdapter::cancelled() {
+    sendCancelChannel(cancel_channel.get());
+}
+
+void PreviewAdapter::run(PreviewReplyProxy const &reply) {
+    callScopePreview(
+        scope.goscope,
+        reinterpret_cast<uintptr_t>(static_cast<void*>(new Result(result))),
         const_cast<uintptr_t*>(reinterpret_cast<const uintptr_t*>(&reply)),
         cancel_channel.get());
 }

@@ -17,7 +17,8 @@ using namespace unity::scopes;
 
 void run_scope(const char *scope_name, const char *runtime_config,
                void *pointer_to_iface) {
-    auto runtime = Runtime::create_scope_runtime(scope_name, runtime_config);
+    //auto runtime = Runtime::create_scope_runtime(scope_name, runtime_config);
+    auto runtime = Runtime::create(runtime_config);
     ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
     runtime->run_scope(&scope);
 }
@@ -89,27 +90,27 @@ void destroy_category_ptr(SharedPtrData data) {
     destroy_ptr<const Category>(data);
 }
 
-_CategorisedResult *new_categorised_result(SharedPtrData category) {
+_Result *new_categorised_result(SharedPtrData category) {
     auto cat = get_ptr<Category>(category);
-    return reinterpret_cast<_CategorisedResult*>(new CategorisedResult(cat));
+    return reinterpret_cast<_CategorisedResult*>(static_cast<Result*>(new CategorisedResult(cat)));
 }
 
-void destroy_categorised_result(_CategorisedResult *res) {
-    delete reinterpret_cast<CategorisedResult*>(res);
+void destroy_result(_Result *res) {
+    delete reinterpret_cast<Result*>(res);
 }
 
-void categorised_result_set_uri(_CategorisedResult *res, const char *uri) {
-    reinterpret_cast<CategorisedResult*>(res)->set_uri(uri);
+void result_set_uri(_Result *res, const char *uri) {
+    reinterpret_cast<Result*>(res)->set_uri(uri);
 }
 
-void categorised_result_set_title(_CategorisedResult *res, const char *title) {
-    reinterpret_cast<CategorisedResult*>(res)->set_title(title);
+void result_set_title(_Result *res, const char *title) {
+    reinterpret_cast<Result*>(res)->set_title(title);
 }
 
-void categorised_result_set_art(_CategorisedResult *res, const char *art) {
-    reinterpret_cast<CategorisedResult*>(res)->set_art(art);
+void result_set_art(_Result *res, const char *art) {
+    reinterpret_cast<Result*>(res)->set_art(art);
 }
 
-void categorised_result_set_dnd_uri(_CategorisedResult *res, const char *uri) {
-    reinterpret_cast<CategorisedResult*>(res)->set_dnd_uri(uri);
+void result_set_dnd_uri(_Result *res, const char *uri) {
+    reinterpret_cast<Result*>(res)->set_dnd_uri(uri);
 }

@@ -26,6 +26,10 @@ type SearchReply struct {
 	r C.SharedPtrData
 }
 
+func finalizeSearchReply(reply *SearchReply) {
+	C.destroy_search_reply_ptr(&reply.r[0])
+}
+
 func (reply *SearchReply) Finished() {
 	C.search_reply_finished(&reply.r[0])
 }
@@ -58,6 +62,10 @@ func (reply *SearchReply) Push(result *CategorisedResult) error {
 
 type PreviewReply struct {
 	r C.SharedPtrData
+}
+
+func finalizePreviewReply(reply *SearchReply) {
+	C.destroy_search_reply_ptr(&reply.r[0])
 }
 
 func (reply *PreviewReply) Finished() {
@@ -93,8 +101,43 @@ func finalizeCategory(cat *Category) {
 	C.destroy_category_ptr(&cat.c[0])
 }
 
-type CategorisedResult struct {
+type Result struct {
 	result unsafe.Pointer
+}
+
+func finalizeResult(res *Result) {
+	if res.result != nil {
+		C.destroy_result(res.result)
+	}
+	res.result = nil
+}
+
+func (res *Result) SetURI(uri string) {
+	cUri := C.CString(uri)
+	defer C.free(unsafe.Pointer(cUri))
+	C.result_set_uri(res.result, cUri)
+}
+
+func (res *Result) SetTitle(title string) {
+	cTitle := C.CString(title)
+	defer C.free(unsafe.Pointer(cTitle))
+	C.result_set_title(res.result, cTitle)
+}
+
+func (res *Result) SetArt(art string) {
+	cArt := C.CString(art)
+	defer C.free(unsafe.Pointer(cArt))
+	C.result_set_art(res.result, cArt)
+}
+
+func (res *Result) SetDndURI(uri string) {
+	cUri := C.CString(uri)
+	defer C.free(unsafe.Pointer(cUri))
+	C.result_set_dnd_uri(res.result, cUri)
+}
+
+type CategorisedResult struct {
+	Result
 }
 
 func NewCategorisedResult(category *Category) *CategorisedResult {
@@ -105,52 +148,43 @@ func NewCategorisedResult(category *Category) *CategorisedResult {
 }
 
 func finalizeCategorisedResult(res *CategorisedResult) {
-	if res.result != nil {
-		C.destroy_categorised_result(res.result)
-	}
-	res.result = nil
-}
-
-func (res *CategorisedResult) SetURI(uri string) {
-	cUri := C.CString(uri)
-	defer C.free(unsafe.Pointer(cUri))
-	C.categorised_result_set_uri(res.result, cUri)
-}
-
-func (res *CategorisedResult) SetTitle(title string) {
-	cTitle := C.CString(title)
-	defer C.free(unsafe.Pointer(cTitle))
-	C.categorised_result_set_title(res.result, cTitle)
-}
-
-func (res *CategorisedResult) SetArt(art string) {
-	cArt := C.CString(art)
-	defer C.free(unsafe.Pointer(cArt))
-	C.categorised_result_set_art(res.result, cArt)
-}
-
-func (res *CategorisedResult) SetDndURI(uri string) {
-	cUri := C.CString(uri)
-	defer C.free(unsafe.Pointer(cUri))
-	C.categorised_result_set_dnd_uri(res.result, cUri)
+	finalizeResult(&res.Result)
 }
 
 // Scope defines the interface that scope implementations must implement
 type Scope interface {
-	Query(query string, reply *SearchReply, cancelled <-chan bool) error
+	Search(query string, reply *SearchReply, cancelled <-chan bool) error
+	Preview(result *Result, reply *PreviewReply, cancelled <-chan bool) error
 }
 
-func finalizeSearchReply(reply *SearchReply) {
-	C.destroy_search_reply_ptr(&reply.r[0])
-}
-
-//export callScopeQuery
-func callScopeQuery(scope Scope, query *C.char, reply_data *C.uintptr_t, cancel <-chan bool) {
+//export callScopeSearch
+func callScopeSearch(scope Scope, query *C.char, reply_data *C.uintptr_t, cancel <-chan bool) {
 	reply := new(SearchReply)
 	runtime.SetFinalizer(reply, finalizeSearchReply)
 	C.init_search_reply_ptr(&reply.r[0], reply_data)
+
 	go func() {
-		err := scope.Query(C.GoString(query), reply, cancel)
+		err := scope.Search(C.GoString(query), reply, cancel)
+		if err != nil {
+			reply.Error(err)
+			return
+		}
+		reply.Finished()
+	}()
+}
+
+//export callScopePreview
+func callScopePreview(scope Scope, res uintptr, reply_data *C.uintptr_t, cancel <-chan bool) {
+	result := new(Result)
+	runtime.SetFinalizer(result, finalizeResult)
+	result.result = unsafe.Pointer(res)
+
+	reply := new(PreviewReply)
+	runtime.SetFinalizer(reply, finalizePreviewReply)
+	C.init_preview_reply_ptr(&reply.r[0], reply_data)
+
+	go func() {
+		err := scope.Preview(result, reply, cancel)
 		if err != nil {
 			reply.Error(err)
 			return

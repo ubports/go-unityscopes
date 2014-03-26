@@ -11,6 +11,7 @@
 class ScopeAdapter : public unity::scopes::ScopeBase
 {
     friend class QueryAdapter;
+    friend class PreviewAdapter;
 public:
     ScopeAdapter(GoInterface goscope);
     virtual int start(std::string const&, unity::scopes::RegistryProxy const &) override;
@@ -32,6 +33,18 @@ public:
 private:
     const ScopeAdapter &scope;
     const unity::scopes::CannedQuery query;
+    std::unique_ptr<void, void(*)(GoChan)> cancel_channel;
+};
+
+class PreviewAdapter : public unity::scopes::PreviewQueryBase
+{
+public:
+    PreviewAdapter(ScopeAdapter &scope, unity::scopes::Result const &result);
+    virtual void cancelled() override;
+    virtual void run(unity::scopes::PreviewReplyProxy const &reply) override;
+private:
+    const ScopeAdapter &scope;
+    const unity::scopes::Result result;
     std::unique_ptr<void, void(*)(GoChan)> cancel_channel;
 };
 

@@ -11,6 +11,7 @@ extern "C" {
 
 typedef uintptr_t SharedPtrData[2];
 
+typedef void _Result;
 typedef void _CategorisedResult;
 
 void run_scope(const char *scope_name, const char *runtime_config,
@@ -37,13 +38,13 @@ void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int c
 void destroy_category_ptr(SharedPtrData data);
 
 /* CategorisedResult objects */
-_CategorisedResult *new_categorised_result(SharedPtrData category);
-void destroy_categorised_result(_CategorisedResult *res);
+_Result *new_categorised_result(SharedPtrData category);
+void destroy_result(_Result *res);
 
-void categorised_result_set_uri(_CategorisedResult *res, const char *uri);
-void categorised_result_set_title(_CategorisedResult *res, const char *title);
-void categorised_result_set_art(_CategorisedResult *res, const char *art);
-void categorised_result_set_dnd_uri(_CategorisedResult *res, const char *uri);
+void result_set_uri(_Result *res, const char *uri);
+void result_set_title(_Result *res, const char *title);
+void result_set_art(_Result *res, const char *art);
+void result_set_dnd_uri(_Result *res, const char *uri);
 
 #ifdef __cplusplus
 }
