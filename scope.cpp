@@ -28,6 +28,11 @@ PreviewQueryBase::UPtr ScopeAdapter::preview(Result const& result, ActionMetadat
     return query;
 }
 
+ActivationQueryBase::UPtr ScopeAdapter::activate(Result const& result, ActionMetadata const &metadata) {
+    ActivationQueryBase::UPtr activation(new ActivationAdapter(*this, result));
+    return activation;
+}
+
 QueryAdapter::QueryAdapter(ScopeAdapter &scope, CannedQuery const &query)
     : scope(scope), query(query),
       cancel_channel(makeCancelChannel(), releaseCancelChannel) {
@@ -60,4 +65,12 @@ void PreviewAdapter::run(PreviewReplyProxy const &reply) {
         reinterpret_cast<uintptr_t>(static_cast<void*>(new Result(result))),
         const_cast<uintptr_t*>(reinterpret_cast<const uintptr_t*>(&reply)),
         cancel_channel.get());
+}
+
+ActivationAdapter::ActivationAdapter(ScopeAdapter &scope, Result const &result)
+    : scope(scope), result(result) {
+}
+
+ActivationResponse ActivationAdapter::activate() {
+    return ActivationResponse(ActivationResponse::NotHandled);
 }
