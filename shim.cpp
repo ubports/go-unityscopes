@@ -15,6 +15,11 @@ extern "C" {
 
 using namespace unity::scopes;
 
+static std::string from_gostring(void *str) {
+    GoString *s = static_cast<GoString*>(str);
+    return std::string(s->p, s->n);
+}
+
 void run_scope(const char *scope_name, const char *runtime_config,
                void *pointer_to_iface) {
     //auto runtime = Runtime::create_scope_runtime(scope_name, runtime_config);
@@ -36,13 +41,18 @@ void search_reply_finished(SharedPtrData reply) {
     get_ptr<SearchReply>(reply)->finished();
 }
 
-void search_reply_error(SharedPtrData reply, const char *err_string) {
+void search_reply_error(SharedPtrData reply, void *err_string) {
     get_ptr<SearchReply>(reply)->error(std::make_exception_ptr(
-                                     std::runtime_error(err_string)));
+        std::runtime_error(from_gostring(err_string))));
 }
 
-void search_reply_register_category(SharedPtrData reply, const char *id, const char *title, const char *icon, SharedPtrData category) {
-    auto cat = get_ptr<SearchReply>(reply)->register_category(id, title, icon);
+void search_reply_register_category(SharedPtrData reply, void *id, void *title, void *icon, void *cat_template, SharedPtrData category) {
+    CategoryRenderer renderer;
+    std::string renderer_template = from_gostring(cat_template);
+    if (!renderer_template.empty()) {
+        renderer = CategoryRenderer(renderer_template);
+    }
+    auto cat = get_ptr<SearchReply>(reply)->register_category(from_gostring(id), from_gostring(title), from_gostring(icon), renderer);
     init_ptr<const Category>(category, cat);
 }
 
@@ -67,9 +77,9 @@ void preview_reply_finished(SharedPtrData reply) {
     get_ptr<PreviewReply>(reply)->finished();
 }
 
-void preview_reply_error(SharedPtrData reply, const char *err_string) {
+void preview_reply_error(SharedPtrData reply, void *err_string) {
     get_ptr<PreviewReply>(reply)->error(std::make_exception_ptr(
-                                            std::runtime_error(err_string)));
+        std::runtime_error(from_gostring(err_string))));
 }
 
 void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int count, char **error) {

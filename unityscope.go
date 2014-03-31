@@ -35,22 +35,14 @@ func (reply *SearchReply) Finished() {
 }
 
 func (reply *SearchReply) Error(err error) {
-	errString := C.CString(err.Error())
-	defer C.free(unsafe.Pointer(errString))
-	C.search_reply_error(&reply.r[0], errString)
+	errString := err.Error()
+	C.search_reply_error(&reply.r[0], unsafe.Pointer(&errString))
 }
 
-func (reply *SearchReply) RegisterCategory(id, title, icon string) *Category {
-	cId := C.CString(id)
-	defer C.free(unsafe.Pointer(cId))
-	cTitle := C.CString(title)
-	defer C.free(unsafe.Pointer(cTitle))
-	cIcon := C.CString(icon)
-	defer C.free(unsafe.Pointer(cIcon))
-
+func (reply *SearchReply) RegisterCategory(id, title, icon, template string) *Category {
 	cat := new(Category)
 	runtime.SetFinalizer(cat, finalizeCategory)
-	C.search_reply_register_category(&reply.r[0], cId, cTitle, cIcon, &cat.c[0])
+	C.search_reply_register_category(&reply.r[0], unsafe.Pointer(&id), unsafe.Pointer(&title), unsafe.Pointer(&icon), unsafe.Pointer(&template), &cat.c[0])
 	return cat
 }
 
@@ -73,9 +65,8 @@ func (reply *PreviewReply) Finished() {
 }
 
 func (reply *PreviewReply) Error(err error) {
-	errString := C.CString(err.Error())
-	defer C.free(unsafe.Pointer(errString))
-	C.preview_reply_error(&reply.r[0], errString)
+	errString := err.Error()
+	C.preview_reply_error(&reply.r[0], unsafe.Pointer(&errString))
 }
 
 func (reply *PreviewReply) Push(widgets []PreviewWidget) error {
