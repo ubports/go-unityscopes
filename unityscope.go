@@ -56,7 +56,7 @@ type PreviewReply struct {
 	r C.SharedPtrData
 }
 
-func finalizePreviewReply(reply *SearchReply) {
+func finalizePreviewReply(reply *PreviewReply) {
 	C.destroy_search_reply_ptr(&reply.r[0])
 }
 

@@ -22,8 +22,7 @@ static std::string from_gostring(void *str) {
 
 void run_scope(const char *scope_name, const char *runtime_config,
                void *pointer_to_iface) {
-    //auto runtime = Runtime::create_scope_runtime(scope_name, runtime_config);
-    auto runtime = Runtime::create(runtime_config);
+    auto runtime = Runtime::create_scope_runtime(scope_name, runtime_config);
     ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
     runtime->run_scope(&scope);
 }
