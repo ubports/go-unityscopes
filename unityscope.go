@@ -92,56 +92,6 @@ func finalizeCategory(cat *Category) {
 	C.destroy_category_ptr(&cat.c[0])
 }
 
-type Result struct {
-	result unsafe.Pointer
-}
-
-func finalizeResult(res *Result) {
-	if res.result != nil {
-		C.destroy_result(res.result)
-	}
-	res.result = nil
-}
-
-func (res *Result) SetURI(uri string) {
-	cUri := C.CString(uri)
-	defer C.free(unsafe.Pointer(cUri))
-	C.result_set_uri(res.result, cUri)
-}
-
-func (res *Result) SetTitle(title string) {
-	cTitle := C.CString(title)
-	defer C.free(unsafe.Pointer(cTitle))
-	C.result_set_title(res.result, cTitle)
-}
-
-func (res *Result) SetArt(art string) {
-	cArt := C.CString(art)
-	defer C.free(unsafe.Pointer(cArt))
-	C.result_set_art(res.result, cArt)
-}
-
-func (res *Result) SetDndURI(uri string) {
-	cUri := C.CString(uri)
-	defer C.free(unsafe.Pointer(cUri))
-	C.result_set_dnd_uri(res.result, cUri)
-}
-
-type CategorisedResult struct {
-	Result
-}
-
-func NewCategorisedResult(category *Category) *CategorisedResult {
-	res := new(CategorisedResult)
-	runtime.SetFinalizer(res, finalizeCategorisedResult)
-	res.result = C.new_categorised_result(&category.c[0])
-	return res
-}
-
-func finalizeCategorisedResult(res *CategorisedResult) {
-	finalizeResult(&res.Result)
-}
-
 // Scope defines the interface that scope implementations must implement
 type Scope interface {
 	Search(query string, reply *SearchReply, cancelled <-chan bool) error
@@ -184,6 +134,16 @@ func callScopePreview(scope Scope, res uintptr, reply_data *C.uintptr_t, cancel 
 	}()
 }
 
+/*
+ Run will initialise the scope runtime and make a scope availble.  It
+ is intended to be called from the program's main function, and will
+ run until the program exits.  For example:
+
+   func main() {
+       scope := ...
+       unityscope.Run("myscope", os.Args[1], scope)
+   }
+*/
 func Run(scopeName, runtimeConfig string, scope Scope) {
 	cScopeName := C.CString(scopeName)
 	defer C.free(unsafe.Pointer(cScopeName))
