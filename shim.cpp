@@ -108,18 +108,23 @@ void destroy_result(_Result *res) {
     delete reinterpret_cast<Result*>(res);
 }
 
-void result_set_uri(_Result *res, const char *uri) {
-    reinterpret_cast<Result*>(res)->set_uri(uri);
+char *result_get_attr(_Result *res, void *attr, char **error) {
+    std::string json_data;
+    try {
+        Variant v = reinterpret_cast<Result*>(res)->value(from_gostring(attr));
+        json_data = v.serialize_json();
+    } catch (std::exception &e) {
+        *error = strdup(e.what());
+        return nullptr;
+    }
+    return strdup(json_data.c_str());
 }
 
-void result_set_title(_Result *res, const char *title) {
-    reinterpret_cast<Result*>(res)->set_title(title);
-}
-
-void result_set_art(_Result *res, const char *art) {
-    reinterpret_cast<Result*>(res)->set_art(art);
-}
-
-void result_set_dnd_uri(_Result *res, const char *uri) {
-    reinterpret_cast<Result*>(res)->set_dnd_uri(uri);
+void result_set_attr(_Result *res, void *attr, void *value, char **error) {
+    try {
+        Variant v = Variant::deserialize_json(from_gostring(value));
+        (*reinterpret_cast<Result*>(res))[from_gostring(attr)] = v;
+    } catch (std::exception &e) {
+        *error = strdup(e.what());
+    }
 }

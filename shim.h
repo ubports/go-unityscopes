@@ -41,10 +41,8 @@ void destroy_category_ptr(SharedPtrData data);
 _Result *new_categorised_result(SharedPtrData category);
 void destroy_result(_Result *res);
 
-void result_set_uri(_Result *res, const char *uri);
-void result_set_title(_Result *res, const char *title);
-void result_set_art(_Result *res, const char *art);
-void result_set_dnd_uri(_Result *res, const char *uri);
+char *result_get_attr(_Result *res, void *attr, char **error);
+void result_set_attr(_Result *res, void *attr, void *value, char **error);
 
 #ifdef __cplusplus
 }

@@ -4,6 +4,7 @@ package unityscope
 // #include "shim.h"
 import "C"
 import (
+	"encoding/json"
 	"runtime"
 	"unsafe"
 )
@@ -20,32 +21,50 @@ func finalizeResult(res *Result) {
 	res.result = nil
 }
 
+func (res *Result) Get(attr string) (interface{}, error) {
+	var errorString *C.char = nil
+	cData := C.result_get_attr(res.result, unsafe.Pointer(&attr), &errorString)
+	if err := checkError(errorString); err != nil {
+		return nil, err
+	}
+	data := C.GoString(cData)
+	C.free(unsafe.Pointer(cData))
+	var value interface{}
+	if err := json.Unmarshal([]byte(data), &value); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+func (res *Result) Set(attr string, value interface{}) error {
+	data, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+	stringValue := string(data)
+	var errorString *C.char = nil
+	C.result_set_attr(res.result, unsafe.Pointer(&attr), unsafe.Pointer(&stringValue), &errorString)
+	return checkError(errorString)
+}
+
 // SetURI sets the "uri" attribute of the result.
-func (res *Result) SetURI(uri string) {
-	cUri := C.CString(uri)
-	defer C.free(unsafe.Pointer(cUri))
-	C.result_set_uri(res.result, cUri)
+func (res *Result) SetURI(uri string) error {
+	return res.Set("uri", uri)
 }
 
 // SetTitle sets the "title" attribute of the result.
-func (res *Result) SetTitle(title string) {
-	cTitle := C.CString(title)
-	defer C.free(unsafe.Pointer(cTitle))
-	C.result_set_title(res.result, cTitle)
+func (res *Result) SetTitle(title string) error {
+	return res.Set("title", title)
 }
 
 // SetArt sets the "art" attribute of the result.
-func (res *Result) SetArt(art string) {
-	cArt := C.CString(art)
-	defer C.free(unsafe.Pointer(cArt))
-	C.result_set_art(res.result, cArt)
+func (res *Result) SetArt(art string) error {
+	return res.Set("art", art)
 }
 
 // SetDndURI sets the "dnd_uri" attribute of the result.
-func (res *Result) SetDndURI(uri string) {
-	cUri := C.CString(uri)
-	defer C.free(unsafe.Pointer(cUri))
-	C.result_set_dnd_uri(res.result, cUri)
+func (res *Result) SetDndURI(uri string) error {
+	return res.Set("dnd_uri", uri)
 }
 
 // CategorisedResult represents a result linked to a particular category.
