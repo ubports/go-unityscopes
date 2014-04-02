@@ -95,6 +95,15 @@ void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int c
     }
 }
 
+void preview_reply_push_attr(SharedPtrData reply, void *key, void *json_value, char **error) {
+    try {
+        Variant value = Variant::deserialize_json(from_gostring(json_value));
+        get_ptr<PreviewReply>(reply)->push(from_gostring(key), value);
+    } catch (std::exception &e) {
+        *error = strdup(e.what());
+    }
+}
+
 void destroy_category_ptr(SharedPtrData data) {
     destroy_ptr<const Category>(data);
 }
@@ -120,11 +129,15 @@ char *result_get_attr(_Result *res, void *attr, char **error) {
     return strdup(json_data.c_str());
 }
 
-void result_set_attr(_Result *res, void *attr, void *value, char **error) {
+void result_set_attr(_Result *res, void *attr, void *json_value, char **error) {
     try {
-        Variant v = Variant::deserialize_json(from_gostring(value));
+        Variant v = Variant::deserialize_json(from_gostring(json_value));
         (*reinterpret_cast<Result*>(res))[from_gostring(attr)] = v;
     } catch (std::exception &e) {
         *error = strdup(e.what());
     }
+}
+
+void result_set_intercept_activation(_Result *res) {
+    reinterpret_cast<Result*>(res)->set_intercept_activation();
 }

@@ -47,6 +47,10 @@ func (res *Result) Set(attr string, value interface{}) error {
 	return checkError(errorString)
 }
 
+func (res *Result) SetInterceptActivation() {
+	C.result_set_intercept_activation(res.result)
+}
+
 // SetURI sets the "uri" attribute of the result.
 func (res *Result) SetURI(uri string) error {
 	return res.Set("uri", uri)
@@ -65,6 +69,32 @@ func (res *Result) SetArt(art string) error {
 // SetDndURI sets the "dnd_uri" attribute of the result.
 func (res *Result) SetDndURI(uri string) error {
 	return res.Set("dnd_uri", uri)
+}
+
+func (res *Result) getString(attr string) string {
+	val, err := res.Get(attr)
+	if err != nil {
+		return ""
+	}
+	// If val is not a string, then s will be set to the zero value
+	s, _ := val.(string)
+	return s
+}
+
+func (res *Result) URI() string {
+	return res.getString("uri")
+}
+
+func (res *Result) Title() string {
+	return res.getString("title")
+}
+
+func (res *Result) Art() string {
+	return res.getString("art")
+}
+
+func (res *Result) DndURI() string {
+	return res.getString("dnd_uri")
 }
 
 // CategorisedResult represents a result linked to a particular category.

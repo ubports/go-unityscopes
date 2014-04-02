@@ -33,6 +33,7 @@ void destroy_preview_reply_ptr(SharedPtrData data);
 void preview_reply_finished(SharedPtrData reply);
 void preview_reply_error(SharedPtrData reply, void *err_string);
 void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int count, char **error);
+void preview_reply_push_attr(SharedPtrData reply, void *key, void *json_value, char **error);
 
 /* Category objects */
 void destroy_category_ptr(SharedPtrData data);
@@ -42,7 +43,8 @@ _Result *new_categorised_result(SharedPtrData category);
 void destroy_result(_Result *res);
 
 char *result_get_attr(_Result *res, void *attr, char **error);
-void result_set_attr(_Result *res, void *attr, void *value, char **error);
+void result_set_attr(_Result *res, void *attr, void *json_value, char **error);
+void result_set_intercept_activation(_Result *res);
 
 #ifdef __cplusplus
 }

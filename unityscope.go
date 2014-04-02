@@ -8,6 +8,7 @@ package unityscope
 */
 import "C"
 import (
+	"encoding/json"
 	"errors"
 	"runtime"
 	"sync"
@@ -69,7 +70,7 @@ func (reply *PreviewReply) Error(err error) {
 	C.preview_reply_error(&reply.r[0], unsafe.Pointer(&errString))
 }
 
-func (reply *PreviewReply) Push(widgets []PreviewWidget) error {
+func (reply *PreviewReply) PushWidgets(widgets []PreviewWidget) error {
 	widget_data := make([]string, len(widgets))
 	for i, w := range widgets {
 		data, err := w.data()
@@ -80,6 +81,17 @@ func (reply *PreviewReply) Push(widgets []PreviewWidget) error {
 	}
 	var errorString *C.char = nil
 	C.preview_reply_push_widgets(&reply.r[0], unsafe.Pointer(&widget_data[0]), C.int(len(widget_data)), &errorString)
+	return checkError(errorString)
+}
+
+func (reply *PreviewReply) PushAttr(attr string, value interface{}) error {
+	data, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+	json_value := string(data)
+	var errorString *C.char = nil
+	C.preview_reply_push_attr(&reply.r[0], unsafe.Pointer(&attr), unsafe.Pointer(&json_value), &errorString)
 	return checkError(errorString)
 }
 
