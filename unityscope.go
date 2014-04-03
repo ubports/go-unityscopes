@@ -1,4 +1,4 @@
-package unityscope
+package scopes
 
 /*
 #cgo CXXFLAGS: -std=c++11

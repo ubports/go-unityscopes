@@ -1,4 +1,4 @@
-package unityscope
+package scopes
 
 import (
 	"encoding/json"

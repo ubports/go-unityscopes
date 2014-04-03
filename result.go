@@ -1,4 +1,4 @@
-package unityscope
+package scopes
 
 // #include <stdlib.h>
 // #include "shim.h"
