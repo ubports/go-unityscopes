@@ -21,6 +21,9 @@ func finalizeResult(res *Result) {
 	res.result = nil
 }
 
+// Get returns the named result attribute.
+//
+// If the attribute does not exist, an error is returned.
 func (res *Result) Get(attr string) (interface{}, error) {
 	var errorString *C.char = nil
 	cData := C.result_get_attr(res.result, unsafe.Pointer(&attr), &errorString)
@@ -36,6 +39,10 @@ func (res *Result) Get(attr string) (interface{}, error) {
 	return value, nil
 }
 
+// Set sets the named result attribute.
+//
+// An error may be returned if the value can not be stored, or if
+// there is any other problems updating the result.
 func (res *Result) Set(attr string, value interface{}) error {
 	data, err := json.Marshal(value)
 	if err != nil {
@@ -47,6 +54,12 @@ func (res *Result) Set(attr string, value interface{}) error {
 	return checkError(errorString)
 }
 
+// SetInterceptActivation marks this result as needing custom activation handling.
+//
+// By default, results are activated by the client directly (e.g. by
+// running the application associated with the result URI).  For
+// results with this flag set though, the scope will be asked to
+// perform activation.
 func (res *Result) SetInterceptActivation() {
 	C.result_set_intercept_activation(res.result)
 }
@@ -81,23 +94,31 @@ func (res *Result) getString(attr string) string {
 	return s
 }
 
+// URI returns the "uri" attribute of the result if set, or an empty string.
 func (res *Result) URI() string {
 	return res.getString("uri")
 }
 
+// Title returns the "title" attribute of the result if set, or an empty string.
 func (res *Result) Title() string {
 	return res.getString("title")
 }
 
+// Art returns the "art" attribute of the result if set, or an empty string.
 func (res *Result) Art() string {
 	return res.getString("art")
 }
 
+// DndURI returns the "dnd_uri" attribute of the result if set, or an
+// empty string.
 func (res *Result) DndURI() string {
 	return res.getString("dnd_uri")
 }
 
 // CategorisedResult represents a result linked to a particular category.
+//
+// CategorisedResult embeds Result, so all of its attribute
+// manipulation methods can be used on variables of this type.
 type CategorisedResult struct {
 	Result
 }

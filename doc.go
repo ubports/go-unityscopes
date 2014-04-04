@@ -39,5 +39,25 @@ The shell may ask the scope to provide a preview of a result, which causes the P
 The scope should push one or more slices of PreviewWidgets using reply.PushWidgets.  PreviewWidgets can be created with NewPreviewWidget.
 
 Additional data for the preview can be pushed with reply.PushAttr.
+
+Finally, the scope can be exported in the main function:
+
+    func main() {
+        scopes.Run("scope-name", &MyScope{})
+    }
+
+The scope executable can be deployed to a scope directory named like:
+
+    /usr/lib/${arch}/unity-scopes/${scope_name}
+
+In addition to the scope executable, a scope configuration file named
+${scope_name}.ini should be placed in the directory.  Its contents
+should look something like:
+
+    [ScopeConfig]
+    DisplayName = Short name for the scope
+    Description = Long description of scope
+    Author =
+    ScopeRunner = ${scope_executable}
 */
 package scopes

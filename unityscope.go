@@ -10,6 +10,7 @@ import "C"
 import (
 	"encoding/json"
 	"errors"
+	"os"
 	"runtime"
 	"sync"
 	"unsafe"
@@ -186,16 +187,12 @@ func callScopePreview(scope Scope, res uintptr, reply_data *C.uintptr_t, cancel 
 }
 
 /*
- Run will initialise the scope runtime and make a scope availble.  It
- is intended to be called from the program's main function, and will
- run until the program exits.  For example:
-
-   func main() {
-       scope := ...
-       unityscope.Run("myscope", os.Args[1], scope)
-   }
+Run will initialise the scope runtime and make a scope availble.  It
+is intended to be called from the program's main function, and will
+run until the program exits.
 */
-func Run(scopeName, runtimeConfig string, scope Scope) {
+func Run(scopeName, scope Scope) {
+	runtimeConfig := os.Args[1]
 	cScopeName := C.CString(scopeName)
 	defer C.free(unsafe.Pointer(cScopeName))
 	cRuntimeConfig := C.CString(runtimeConfig)
