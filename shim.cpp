@@ -20,11 +20,12 @@ static std::string from_gostring(void *str) {
     return std::string(s->p, s->n);
 }
 
-void run_scope(const char *scope_name, const char *runtime_config,
+void run_scope(void *scope_name, void *runtime_config, void *scope_config,
                void *pointer_to_iface) {
-    auto runtime = Runtime::create_scope_runtime(scope_name, runtime_config);
+    auto runtime = Runtime::create_scope_runtime(
+        from_gostring(scope_name), from_gostring(runtime_config));
     ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
-    runtime->run_scope(&scope);
+    runtime->run_scope(&scope, from_gostring(scope_config));
 }
 
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src) {

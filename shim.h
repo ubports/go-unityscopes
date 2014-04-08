@@ -14,8 +14,8 @@ typedef uintptr_t SharedPtrData[2];
 typedef void _Result;
 typedef void _CategorisedResult;
 
-void run_scope(const char *scope_name, const char *runtime_config,
-               void *pointer_to_iface);
+void run_scope(void *scope_name, void *runtime_config,
+               void *scope_config, void *pointer_to_iface);
 
 /* SearchReply objects */
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src);
