@@ -23,20 +23,19 @@ func finalizeResult(res *Result) {
 
 // Get returns the named result attribute.
 //
+// The value is decoded into the variable pointed to by the second
+// argument.  If the types do not match, an error will be returned.
+//
 // If the attribute does not exist, an error is returned.
-func (res *Result) Get(attr string) (interface{}, error) {
+func (res *Result) Get(attr string, value interface{}) error {
 	var errorString *C.char = nil
 	cData := C.result_get_attr(res.result, unsafe.Pointer(&attr), &errorString)
 	if err := checkError(errorString); err != nil {
-		return nil, err
+		return err
 	}
 	data := C.GoString(cData)
 	C.free(unsafe.Pointer(cData))
-	var value interface{}
-	if err := json.Unmarshal([]byte(data), &value); err != nil {
-		return nil, err
-	}
-	return value, nil
+	return json.Unmarshal([]byte(data), value)
 }
 
 // Set sets the named result attribute.
@@ -85,13 +84,11 @@ func (res *Result) SetDndURI(uri string) error {
 }
 
 func (res *Result) getString(attr string) string {
-	val, err := res.Get(attr)
-	if err != nil {
+	var value string
+	if err := res.Get(attr, &value); err != nil {
 		return ""
 	}
-	// If val is not a string, then s will be set to the zero value
-	s, _ := val.(string)
-	return s
+	return value
 }
 
 // URI returns the "uri" attribute of the result if set, or an empty string.
