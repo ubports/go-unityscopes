@@ -109,6 +109,40 @@ void preview_reply_push_attr(SharedPtrData reply, void *key, void *json_value, c
     }
 }
 
+void destroy_canned_query(_CannedQuery *query) {
+    delete reinterpret_cast<CannedQuery*>(query);
+}
+
+_CannedQuery *new_canned_query(void *scope_id, void *query_str, void *department_id) {
+    return new CannedQuery(from_gostring(scope_id),
+                           from_gostring(query_str),
+                           from_gostring(department_id));
+}
+
+char *canned_query_get_scope_id(_CannedQuery *query) {
+    return strdup(reinterpret_cast<CannedQuery*>(query)->scope_id().c_str());
+}
+
+char *canned_query_get_department_id(_CannedQuery *query) {
+    return strdup(reinterpret_cast<CannedQuery*>(query)->department_id().c_str());
+}
+
+char *canned_query_get_query_string(_CannedQuery *query) {
+    return strdup(reinterpret_cast<CannedQuery*>(query)->query_string().c_str());
+}
+
+void canned_query_set_department_id(_CannedQuery *query, void *department_id) {
+    reinterpret_cast<CannedQuery*>(query)->set_department_id(from_gostring(department_id));
+}
+
+void canned_query_set_query_string(_CannedQuery *query, void *query_str) {
+    reinterpret_cast<CannedQuery*>(query)->set_query_string(from_gostring(query_str));
+}
+
+char *canned_query_to_uri(_CannedQuery *query) {
+    return strdup(reinterpret_cast<CannedQuery*>(query)->to_uri().c_str());
+}
+
 void destroy_category_ptr(SharedPtrData data) {
     destroy_ptr<const Category>(data);
 }

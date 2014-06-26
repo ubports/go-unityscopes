@@ -11,6 +11,7 @@ extern "C" {
 
 typedef uintptr_t SharedPtrData[2];
 
+typedef void _CannedQuery;
 typedef void _Result;
 typedef void _CategorisedResult;
 
@@ -36,6 +37,16 @@ void preview_reply_error(SharedPtrData reply, void *err_string);
 void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int count, char **error);
 void preview_reply_push_attr(SharedPtrData reply, void *key, void *json_value, char **error);
 
+/* CannedQuery objects */
+void destroy_canned_query(_CannedQuery *query);
+_CannedQuery *new_canned_query(void *scope_id, void *query_str, void *department_id);
+char *canned_query_get_scope_id(_CannedQuery *query);
+char *canned_query_get_department_id(_CannedQuery *query);
+char *canned_query_get_query_string(_CannedQuery *query);
+void canned_query_set_department_id(_CannedQuery *query, void *department_id);
+void canned_query_set_query_string(_CannedQuery *query, void *query_str);
+char *canned_query_to_uri(_CannedQuery *query);
+
 /* Category objects */
 void destroy_category_ptr(SharedPtrData data);
 
@@ -43,9 +54,11 @@ void destroy_category_ptr(SharedPtrData data);
 _Result *new_categorised_result(SharedPtrData category);
 void destroy_result(_Result *res);
 
+/* Result objects */
 char *result_get_attr(_Result *res, void *attr, char **error);
 void result_set_attr(_Result *res, void *attr, void *json_value, char **error);
 void result_set_intercept_activation(_Result *res);
+
 
 #ifdef __cplusplus
 }
