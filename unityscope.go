@@ -146,18 +146,19 @@ func finalizeCategory(cat *Category) {
 
 // Scope defines the interface that scope implementations must implement
 type Scope interface {
-	Search(query string, reply *SearchReply, cancelled <-chan bool) error
+	Search(query *CannedQuery, reply *SearchReply, cancelled <-chan bool) error
 	Preview(result *Result, reply *PreviewReply, cancelled <-chan bool) error
 }
 
 //export callScopeSearch
-func callScopeSearch(scope Scope, query *C.char, reply_data *C.uintptr_t, cancel <-chan bool) {
+func callScopeSearch(scope Scope, queryData uintptr, replyData *C.uintptr_t, cancel <-chan bool) {
+	query := makeCannedQuery(unsafe.Pointer(queryData))
 	reply := new(SearchReply)
 	runtime.SetFinalizer(reply, finalizeSearchReply)
-	C.init_search_reply_ptr(&reply.r[0], reply_data)
+	C.init_search_reply_ptr(&reply.r[0], replyData)
 
 	go func() {
-		err := scope.Search(C.GoString(query), reply, cancel)
+		err := scope.Search(query, reply, cancel)
 		if err != nil {
 			reply.Error(err)
 			return

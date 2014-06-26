@@ -46,7 +46,7 @@ void QueryAdapter::cancelled() {
 void QueryAdapter::run(SearchReplyProxy const &reply) {
     callScopeSearch(
         scope.goscope,
-        const_cast<char*>(query().query_string().c_str()),
+        reinterpret_cast<uintptr_t>(static_cast<void*>(new CannedQuery(query()))),
         const_cast<uintptr_t*>(reinterpret_cast<const uintptr_t*>(&reply)),
         cancel_channel.get());
 }
