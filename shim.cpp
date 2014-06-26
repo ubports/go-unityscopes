@@ -21,11 +21,15 @@ static std::string from_gostring(void *str) {
 }
 
 void run_scope(void *scope_name, void *runtime_config, void *scope_config,
-               void *pointer_to_iface) {
-    auto runtime = Runtime::create_scope_runtime(
-        from_gostring(scope_name), from_gostring(runtime_config));
-    ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
-    runtime->run_scope(&scope, from_gostring(scope_config));
+               void *pointer_to_iface, char **error) {
+    try {
+        auto runtime = Runtime::create_scope_runtime(
+            from_gostring(scope_name), from_gostring(runtime_config));
+        ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
+        runtime->run_scope(&scope, from_gostring(scope_config));
+    } catch (const std::exception &e) {
+        *error = strdup(e.what());
+    }
 }
 
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src) {

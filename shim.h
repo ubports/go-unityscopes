@@ -15,7 +15,8 @@ typedef void _Result;
 typedef void _CategorisedResult;
 
 void run_scope(void *scope_name, void *runtime_config,
-               void *scope_config, void *pointer_to_iface);
+               void *scope_config, void *pointer_to_iface,
+               char **error);
 
 /* SearchReply objects */
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src);

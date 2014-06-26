@@ -191,11 +191,16 @@ Run will initialise the scope runtime and make a scope availble.  It
 is intended to be called from the program's main function, and will
 run until the program exits.
 */
-func Run(scopeName string, scope Scope) {
+func Run(scopeName string, scope Scope) error {
+	if len(os.Args) < 3 {
+		return errors.New("Expected to find runtime and scope config command line arguments")
+	}
 	runtimeConfig := os.Args[1]
 	scopeConfig := os.Args[2]
 
-	C.run_scope(unsafe.Pointer(&scopeName), unsafe.Pointer(&runtimeConfig), unsafe.Pointer(&scopeConfig), unsafe.Pointer(&scope))
+	var errorString *C.char = nil
+	C.run_scope(unsafe.Pointer(&scopeName), unsafe.Pointer(&runtimeConfig), unsafe.Pointer(&scopeConfig), unsafe.Pointer(&scope), &errorString)
+	return checkError(errorString)
 }
 
 var (
