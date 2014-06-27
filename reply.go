@@ -60,6 +60,10 @@ func (reply *SearchReply) RegisterCategory(id, title, icon, template string) *Ca
 	return cat
 }
 
+func (reply *SearchReply) RegisterDepartments(parent *Department) {
+	C.search_reply_register_departments(&reply.r[0], &parent.d[0])
+}
+
 // Push sends a search result to the client.
 func (reply *SearchReply) Push(result *CategorisedResult) error {
 	var errorString *C.char = nil

@@ -26,6 +26,7 @@ void destroy_search_reply_ptr(SharedPtrData data);
 void search_reply_finished(SharedPtrData reply);
 void search_reply_error(SharedPtrData reply, void *err_string);
 void search_reply_register_category(SharedPtrData reply, void *id, void *title, void *icon, void *cat_template, SharedPtrData category);
+void search_reply_register_departments(SharedPtrData reply, SharedPtrData dept);
 void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **error);
 
 /* PreviewReply objects */
@@ -58,6 +59,14 @@ void destroy_result(_Result *res);
 char *result_get_attr(_Result *res, void *attr, char **error);
 void result_set_attr(_Result *res, void *attr, void *json_value, char **error);
 void result_set_intercept_activation(_Result *res);
+
+/* Department objects */
+void init_department_ptr(SharedPtrData dest, SharedPtrData src);
+void new_department(void *query, void *label, SharedPtrData dept, char **error);
+void destroy_department_ptr(SharedPtrData data);
+void department_add_subdepartment(SharedPtrData dept, SharedPtrData child);
+void department_set_alternate_label(SharedPtrData dept, void *label);
+void department_set_has_subdepartments(SharedPtrData dept, int subdepartments);
 
 
 #ifdef __cplusplus
