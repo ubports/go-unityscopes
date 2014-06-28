@@ -216,3 +216,33 @@ void department_set_alternate_label(SharedPtrData dept, void *label) {
 void department_set_has_subdepartments(SharedPtrData dept, int subdepartments) {
     get_ptr<Department>(dept)->set_has_subdepartments(subdepartments);
 }
+
+/* SearchMetadata objects */
+void destroy_search_metadata(_SearchMetadata *metadata) {
+    delete reinterpret_cast<SearchMetadata*>(metadata);
+}
+
+char *search_metadata_get_locale(_SearchMetadata *metadata) {
+    return strdup(reinterpret_cast<SearchMetadata*>(metadata)->locale().c_str());
+}
+
+char *search_metadata_get_form_factor(_SearchMetadata *metadata) {
+    return strdup(reinterpret_cast<SearchMetadata*>(metadata)->form_factor().c_str());
+}
+
+int search_metadata_get_cardinality(_SearchMetadata *metadata) {
+    return reinterpret_cast<SearchMetadata*>(metadata)->cardinality();
+}
+
+/* ActionMetadata objects */
+void destroy_action_metadata(_ActionMetadata *metadata) {
+    delete reinterpret_cast<ActionMetadata*>(metadata);
+}
+
+char *action_metadata_get_locale(_ActionMetadata *metadata) {
+    return strdup(reinterpret_cast<ActionMetadata*>(metadata)->locale().c_str());
+}
+
+char *action_metadata_get_form_factor(_ActionMetadata *metadata) {
+    return strdup(reinterpret_cast<ActionMetadata*>(metadata)->form_factor().c_str());
+}

@@ -14,10 +14,10 @@ type Result struct {
 	result unsafe.Pointer
 }
 
-func makeResult(res uintptr) *Result {
+func makeResult(res unsafe.Pointer) *Result {
 	result := new(Result)
 	runtime.SetFinalizer(result, finalizeResult)
-	result.result = unsafe.Pointer(res)
+	result.result = res
 	return result;
 }
 

@@ -35,17 +35,18 @@ func finalizeCategory(cat *Category) {
 
 // Scope defines the interface that scope implementations must implement
 type Scope interface {
-	Search(query *CannedQuery, reply *SearchReply, cancelled <-chan bool) error
-	Preview(result *Result, reply *PreviewReply, cancelled <-chan bool) error
+	Search(query *CannedQuery, metadata *SearchMetadata, reply *SearchReply, cancelled <-chan bool) error
+	Preview(result *Result, metadata *ActionMetadata, reply *PreviewReply, cancelled <-chan bool) error
 }
 
 //export callScopeSearch
-func callScopeSearch(scope Scope, queryData uintptr, replyData *C.uintptr_t, cancel <-chan bool) {
-	query := makeCannedQuery(unsafe.Pointer(queryData))
+func callScopeSearch(scope Scope, queryPtr, metadataPtr unsafe.Pointer, replyData *C.uintptr_t, cancel <-chan bool) {
+	query := makeCannedQuery(queryPtr)
+	metadata := makeSearchMetadata(metadataPtr)
 	reply := makeSearchReply(replyData)
 
 	go func() {
-		err := scope.Search(query, reply, cancel)
+		err := scope.Search(query, metadata, reply, cancel)
 		if err != nil {
 			reply.Error(err)
 			return
@@ -55,12 +56,13 @@ func callScopeSearch(scope Scope, queryData uintptr, replyData *C.uintptr_t, can
 }
 
 //export callScopePreview
-func callScopePreview(scope Scope, res uintptr, replyData *C.uintptr_t, cancel <-chan bool) {
-	result := makeResult(res)
+func callScopePreview(scope Scope, resultPtr, metadataPtr unsafe.Pointer, replyData *C.uintptr_t, cancel <-chan bool) {
+	result := makeResult(resultPtr)
+	metadata := makeActionMetadata(metadataPtr)
 	reply := makePreviewReply(replyData)
 
 	go func() {
-		err := scope.Preview(result, reply, cancel)
+		err := scope.Preview(result, metadata, reply, cancel)
 		if err != nil {
 			reply.Error(err)
 			return

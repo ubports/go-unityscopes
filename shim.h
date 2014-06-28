@@ -14,6 +14,8 @@ typedef uintptr_t SharedPtrData[2];
 typedef void _CannedQuery;
 typedef void _Result;
 typedef void _CategorisedResult;
+typedef void _SearchMetadata;
+typedef void _ActionMetadata;
 
 void run_scope(void *scope_name, void *runtime_config,
                void *scope_config, void *pointer_to_iface,
@@ -68,6 +70,16 @@ void department_add_subdepartment(SharedPtrData dept, SharedPtrData child);
 void department_set_alternate_label(SharedPtrData dept, void *label);
 void department_set_has_subdepartments(SharedPtrData dept, int subdepartments);
 
+/* SearchMetadata objects */
+void destroy_search_metadata(_SearchMetadata *metadata);
+char *search_metadata_get_locale(_SearchMetadata *metadata);
+char *search_metadata_get_form_factor(_SearchMetadata *metadata);
+int search_metadata_get_cardinality(_SearchMetadata *metadata);
+
+/* ActionMetadata objects */
+void destroy_action_metadata(_ActionMetadata *metadata);
+char *action_metadata_get_locale(_ActionMetadata *metadata);
+char *action_metadata_get_form_factor(_ActionMetadata *metadata);
 
 #ifdef __cplusplus
 }

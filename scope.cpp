@@ -46,7 +46,8 @@ void QueryAdapter::cancelled() {
 void QueryAdapter::run(SearchReplyProxy const &reply) {
     callScopeSearch(
         scope.goscope,
-        reinterpret_cast<uintptr_t>(static_cast<void*>(new CannedQuery(query()))),
+        static_cast<void*>(new CannedQuery(query())),
+        static_cast<void*>(new SearchMetadata(search_metadata())),
         const_cast<uintptr_t*>(reinterpret_cast<const uintptr_t*>(&reply)),
         cancel_channel.get());
 }
@@ -65,7 +66,8 @@ void PreviewAdapter::cancelled() {
 void PreviewAdapter::run(PreviewReplyProxy const &reply) {
     callScopePreview(
         scope.goscope,
-        reinterpret_cast<uintptr_t>(static_cast<void*>(new Result(result()))),
+        static_cast<void*>(new Result(result())),
+        static_cast<void*>(new ActionMetadata(action_metadata())),
         const_cast<uintptr_t*>(reinterpret_cast<const uintptr_t*>(&reply)),
         cancel_channel.get());
 }
