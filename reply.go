@@ -60,6 +60,12 @@ func (reply *SearchReply) RegisterCategory(id, title, icon, template string) *Ca
 	return cat
 }
 
+// RegisterDepartments registers the department set to display with
+// the search results.
+//
+// The parent department of the current search should be provided
+// here, with the current department identified among its children by
+// a matching department ID.
 func (reply *SearchReply) RegisterDepartments(parent *Department) {
 	C.search_reply_register_departments(&reply.r[0], &parent.d[0])
 }

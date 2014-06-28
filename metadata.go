@@ -8,7 +8,7 @@ import (
 	"unsafe"
 )
 
-// SearchMetadata holds additional metadata about the search request
+// SearchMetadata holds additional metadata about the search request.
 type SearchMetadata struct {
 	m unsafe.Pointer
 }
@@ -27,24 +27,27 @@ func makeSearchMetadata(m unsafe.Pointer) *SearchMetadata {
 	return metadata
 }
 
+// Locale returns the expected locale for the search request.
 func (metadata *SearchMetadata) Locale() string {
 	locale := C.search_metadata_get_locale(metadata.m)
 	defer C.free(unsafe.Pointer(locale))
 	return C.GoString(locale)
 }
 
+// FormFactor returns the form factor for the search request.
 func (metadata *SearchMetadata) FormFactor() string {
 	formFactor := C.search_metadata_get_form_factor(metadata.m)
 	defer C.free(unsafe.Pointer(formFactor))
 	return C.GoString(formFactor)
 }
 
+// Cardinality returns the desired number of results for the search request.
 func (metadata *SearchMetadata) Cardinality() int {
 	return int(C.search_metadata_get_cardinality(metadata.m))
 }
 
 // ActionMetadata holds additional metadata about the preview request
-// or result activation
+// or result activation.
 type ActionMetadata struct {
 	m unsafe.Pointer
 }
@@ -63,12 +66,14 @@ func makeActionMetadata(m unsafe.Pointer) *ActionMetadata {
 	return metadata
 }
 
+// Locale returns the expected locale for the preview or result activation.
 func (metadata *ActionMetadata) Locale() string {
 	locale := C.action_metadata_get_locale(metadata.m)
 	defer C.free(unsafe.Pointer(locale))
 	return C.GoString(locale)
 }
 
+// FormFactor returns the form factor for the preview or result activation.
 func (metadata *ActionMetadata) FormFactor() string {
 	formFactor := C.action_metadata_get_form_factor(metadata.m)
 	defer C.free(unsafe.Pointer(formFactor))

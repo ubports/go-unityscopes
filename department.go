@@ -35,14 +35,28 @@ func finalizeDepartment(dept *Department) {
 	C.destroy_department_ptr(&dept.d[0])
 }
 
+// AddSubdepartment adds a new child department to this department.
 func (dept *Department) AddSubdepartment(child *Department) {
 	C.department_add_subdepartment(&dept.d[0], &child.d[0])
 }
 
+// SetAlternateLabel sets the alternate label for this department.
+//
+// This should express the plural form of the normal label.  For
+// example, if the normal label is "Books", then the alternate label
+// should be "All Books".
+//
+// The alternate label only needs to be provided for the current
+// department.
 func (dept *Department) SetAlternateLabel(label string) {
 	C.department_set_alternate_label(&dept.d[0], unsafe.Pointer(&label))
 }
 
+// SetHasSubdepartments sets whether this department has subdepartments.
+//
+// It is not necessary to call this if AddSubdepartment has been
+// called.  It intended for cases where subdepartments have not been
+// specified but the shell should still act as if it has them.
 func (dept *Department) SetHasSubdepartments(subdepartments bool) {
 	var cSubdepts C.int
 	if subdepartments {
