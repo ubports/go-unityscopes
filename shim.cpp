@@ -191,10 +191,11 @@ void init_department_ptr(SharedPtrData dest, SharedPtrData src) {
     init_ptr<Department>(dest, dept);
 }
 
-void new_department(void *query, void *label, SharedPtrData dept, char **error) {
+void new_department(void *dept_id, void *query, void *label, SharedPtrData dept, char **error) {
     try {
-        auto d = Department::create(*reinterpret_cast<CannedQuery*>(query),
-                                       from_gostring(label));
+        auto d = Department::create(from_gostring(dept_id),
+                                    *reinterpret_cast<CannedQuery*>(query),
+                                    from_gostring(label));
         init_ptr<Department>(dept, std::move(d));
     } catch (const std::exception &e) {
         *error = strdup(e.what());
