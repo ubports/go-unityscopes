@@ -9,7 +9,9 @@ package scopes
 import "C"
 import (
 	"errors"
-	"os"
+	"flag"
+	"path"
+	"strings"
 	"sync"
 	"unsafe"
 )
@@ -67,20 +69,31 @@ func callScopePreview(scope Scope, res uintptr, replyData *C.uintptr_t, cancel <
 	}()
 }
 
+var (
+	runtimeConfig = flag.String("runtime", "", "The runtime configuration file for the Unity Scopes library")
+	scopeConfig = flag.String("scope", "", "The scope configuration file for the Unity Scopes library")
+)
+
 /*
 Run will initialise the scope runtime and make a scope availble.  It
 is intended to be called from the program's main function, and will
 run until the program exits.
 */
-func Run(scopeName string, scope Scope) error {
-	if len(os.Args) < 3 {
-		return errors.New("Expected to find runtime and scope config command line arguments")
+func Run(scope Scope) error {
+	if !flag.Parsed() {
+		flag.Parse()
 	}
-	runtimeConfig := os.Args[1]
-	scopeConfig := os.Args[2]
+	if *scopeConfig == "" {
+		return errors.New("Scope configuration file not set on command line")
+	}
+	base := path.Base(*scopeConfig)
+	if !strings.HasSuffix(base, ".ini") {
+		return errors.New("Scope configuration file does not end in '.ini'")
+	}
+	scopeId := base[:len(base)-len(".ini")]
 
 	var errorString *C.char = nil
-	C.run_scope(unsafe.Pointer(&scopeName), unsafe.Pointer(&runtimeConfig), unsafe.Pointer(&scopeConfig), unsafe.Pointer(&scope), &errorString)
+	C.run_scope(unsafe.Pointer(&scopeId), unsafe.Pointer(runtimeConfig), unsafe.Pointer(scopeConfig), unsafe.Pointer(&scope), &errorString)
 	return checkError(errorString)
 }
 
