@@ -14,6 +14,13 @@ type Result struct {
 	result unsafe.Pointer
 }
 
+func makeResult(res unsafe.Pointer) *Result {
+	result := new(Result)
+	runtime.SetFinalizer(result, finalizeResult)
+	result.result = res
+	return result;
+}
+
 func finalizeResult(res *Result) {
 	if res.result != nil {
 		C.destroy_result(res.result)

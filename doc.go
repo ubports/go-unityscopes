@@ -8,10 +8,10 @@ Scopes are implemented through types that conform to the Scope interface.
 The shell may ask the scope for search results, which will cause the
 Search method to be invoked:
 
-    func (s *MyScope) Search(query string, reply *SearchReply cancelled <-chan bool) error {
+    func (s *MyScope) Search(query *CannedQuery, metadata *SearchMetadata, reply *SearchReply cancelled <-chan bool) error {
         category := reply.RegisterCategory("cat_id", "category", "", "")
         result := NewCategorisedResult(category)
-        result.SetTitle("Title")
+        result.SetTitle("Result for " + query.QueryString())
         reply.Push(result)
         return nil
     }
@@ -29,7 +29,7 @@ results are wanted.
 
 The shell may ask the scope to provide a preview of a result, which causes the Preview method to be invoked:
 
-    func (s *MyScope) Preview(result *Result, reply *PreviewReply, cancelled <-chan bool) error {
+    func (s *MyScope) Preview(result *Result, metadata *ActionMetadata, reply *PreviewReply, cancelled <-chan bool) error {
         widget := NewPreviewWidget("foo", "text")
         widget.AddAttributeValue("text", "Hello")
         reply.PushWidgets(widget)
@@ -43,7 +43,9 @@ Additional data for the preview can be pushed with reply.PushAttr.
 Finally, the scope can be exported in the main function:
 
     func main() {
-        scopes.Run("scope-name", &MyScope{})
+        if err := scopes.Run(&MyScope{}); err != nil {
+            log.Fatalln(err)
+        }
     }
 
 The scope executable can be deployed to a scope directory named like:
@@ -58,6 +60,6 @@ should look something like:
     DisplayName = Short name for the scope
     Description = Long description of scope
     Author =
-    ScopeRunner = ${scope_executable}
+    ScopeRunner = ${scope_executable} --runtime %R --scope %S
 */
 package scopes

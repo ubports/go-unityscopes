@@ -21,11 +21,15 @@ static std::string from_gostring(void *str) {
 }
 
 void run_scope(void *scope_name, void *runtime_config, void *scope_config,
-               void *pointer_to_iface) {
-    auto runtime = Runtime::create_scope_runtime(
-        from_gostring(scope_name), from_gostring(runtime_config));
-    ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
-    runtime->run_scope(&scope, from_gostring(scope_config));
+               void *pointer_to_iface, char **error) {
+    try {
+        auto runtime = Runtime::create_scope_runtime(
+            from_gostring(scope_name), from_gostring(runtime_config));
+        ScopeAdapter scope(*reinterpret_cast<GoInterface*>(pointer_to_iface));
+        runtime->run_scope(&scope, from_gostring(scope_config));
+    } catch (const std::exception &e) {
+        *error = strdup(e.what());
+    }
 }
 
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src) {
@@ -54,6 +58,10 @@ void search_reply_register_category(SharedPtrData reply, void *id, void *title, 
     }
     auto cat = get_ptr<SearchReply>(reply)->register_category(from_gostring(id), from_gostring(title), from_gostring(icon), renderer);
     init_ptr<const Category>(category, cat);
+}
+
+void search_reply_register_departments(SharedPtrData reply, SharedPtrData dept) {
+    get_ptr<SearchReply>(reply)->register_departments(get_ptr<Department>(dept));
 }
 
 void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **error) {
@@ -105,6 +113,40 @@ void preview_reply_push_attr(SharedPtrData reply, void *key, void *json_value, c
     }
 }
 
+void destroy_canned_query(_CannedQuery *query) {
+    delete reinterpret_cast<CannedQuery*>(query);
+}
+
+_CannedQuery *new_canned_query(void *scope_id, void *query_str, void *department_id) {
+    return new CannedQuery(from_gostring(scope_id),
+                           from_gostring(query_str),
+                           from_gostring(department_id));
+}
+
+char *canned_query_get_scope_id(_CannedQuery *query) {
+    return strdup(reinterpret_cast<CannedQuery*>(query)->scope_id().c_str());
+}
+
+char *canned_query_get_department_id(_CannedQuery *query) {
+    return strdup(reinterpret_cast<CannedQuery*>(query)->department_id().c_str());
+}
+
+char *canned_query_get_query_string(_CannedQuery *query) {
+    return strdup(reinterpret_cast<CannedQuery*>(query)->query_string().c_str());
+}
+
+void canned_query_set_department_id(_CannedQuery *query, void *department_id) {
+    reinterpret_cast<CannedQuery*>(query)->set_department_id(from_gostring(department_id));
+}
+
+void canned_query_set_query_string(_CannedQuery *query, void *query_str) {
+    reinterpret_cast<CannedQuery*>(query)->set_query_string(from_gostring(query_str));
+}
+
+char *canned_query_to_uri(_CannedQuery *query) {
+    return strdup(reinterpret_cast<CannedQuery*>(query)->to_uri().c_str());
+}
+
 void destroy_category_ptr(SharedPtrData data) {
     destroy_ptr<const Category>(data);
 }
@@ -141,4 +183,67 @@ void result_set_attr(_Result *res, void *attr, void *json_value, char **error) {
 
 void result_set_intercept_activation(_Result *res) {
     reinterpret_cast<Result*>(res)->set_intercept_activation();
+}
+
+/* Department objects */
+void init_department_ptr(SharedPtrData dest, SharedPtrData src) {
+    std::shared_ptr<Department> dept = get_ptr<Department>(src);
+    init_ptr<Department>(dest, dept);
+}
+
+void new_department(void *dept_id, void *query, void *label, SharedPtrData dept, char **error) {
+    try {
+        auto d = Department::create(from_gostring(dept_id),
+                                    *reinterpret_cast<CannedQuery*>(query),
+                                    from_gostring(label));
+        init_ptr<Department>(dept, std::move(d));
+    } catch (const std::exception &e) {
+        *error = strdup(e.what());
+    }
+}
+
+void destroy_department_ptr(SharedPtrData data) {
+    destroy_ptr<PreviewReply>(data);
+}
+
+void department_add_subdepartment(SharedPtrData dept, SharedPtrData child) {
+    get_ptr<Department>(dept)->add_subdepartment(get_ptr<Department>(child));
+}
+
+void department_set_alternate_label(SharedPtrData dept, void *label) {
+    get_ptr<Department>(dept)->set_alternate_label(from_gostring(label));
+}
+
+void department_set_has_subdepartments(SharedPtrData dept, int subdepartments) {
+    get_ptr<Department>(dept)->set_has_subdepartments(subdepartments);
+}
+
+/* SearchMetadata objects */
+void destroy_search_metadata(_SearchMetadata *metadata) {
+    delete reinterpret_cast<SearchMetadata*>(metadata);
+}
+
+char *search_metadata_get_locale(_SearchMetadata *metadata) {
+    return strdup(reinterpret_cast<SearchMetadata*>(metadata)->locale().c_str());
+}
+
+char *search_metadata_get_form_factor(_SearchMetadata *metadata) {
+    return strdup(reinterpret_cast<SearchMetadata*>(metadata)->form_factor().c_str());
+}
+
+int search_metadata_get_cardinality(_SearchMetadata *metadata) {
+    return reinterpret_cast<SearchMetadata*>(metadata)->cardinality();
+}
+
+/* ActionMetadata objects */
+void destroy_action_metadata(_ActionMetadata *metadata) {
+    delete reinterpret_cast<ActionMetadata*>(metadata);
+}
+
+char *action_metadata_get_locale(_ActionMetadata *metadata) {
+    return strdup(reinterpret_cast<ActionMetadata*>(metadata)->locale().c_str());
+}
+
+char *action_metadata_get_form_factor(_ActionMetadata *metadata) {
+    return strdup(reinterpret_cast<ActionMetadata*>(metadata)->form_factor().c_str());
 }
