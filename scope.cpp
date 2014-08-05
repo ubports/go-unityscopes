@@ -10,7 +10,7 @@ using namespace unity::scopes;
 ScopeAdapter::ScopeAdapter(GoInterface goscope) : goscope(goscope) {
 }
 
-void ScopeAdapter::start(std::string const &, RegistryProxy const &) {
+void ScopeAdapter::start(std::string const &) {
 }
 
 void ScopeAdapter::stop() {

@@ -15,7 +15,7 @@ class ScopeAdapter : public unity::scopes::ScopeBase
     friend class ActivationAdapter;
 public:
     ScopeAdapter(GoInterface goscope);
-    virtual void start(std::string const&, unity::scopes::RegistryProxy const &) override;
+    virtual void start(std::string const&) override;
     virtual void stop() override;
     virtual unity::scopes::SearchQueryBase::UPtr search(unity::scopes::CannedQuery const &query, unity::scopes::SearchMetadata const &metadata) override;
 
