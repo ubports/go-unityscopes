@@ -4,8 +4,9 @@
 #include <unity/scopes/CategorisedResult.h>
 #include <unity/scopes/PreviewReply.h>
 #include <unity/scopes/PreviewWidget.h>
-#include <unity/scopes/SearchReply.h>
 #include <unity/scopes/Runtime.h>
+#include <unity/scopes/SearchReply.h>
+#include <unity/scopes/ScopeExceptions.h>
 
 extern "C" {
 #include "_cgo_export.h"
@@ -224,15 +225,34 @@ void destroy_search_metadata(_SearchMetadata *metadata) {
 }
 
 char *search_metadata_get_locale(_SearchMetadata *metadata) {
-    return strdup(reinterpret_cast<SearchMetadata*>(metadata)->locale().c_str());
+    auto m = reinterpret_cast<SearchMetadata*>(metadata);
+    try {
+        return strdup(m->locale().c_str());
+    } catch (const NotFoundException &) {
+        return nullptr;
+    }
 }
 
 char *search_metadata_get_form_factor(_SearchMetadata *metadata) {
-    return strdup(reinterpret_cast<SearchMetadata*>(metadata)->form_factor().c_str());
+    auto m = reinterpret_cast<SearchMetadata*>(metadata);
+    try {
+        return strdup(m->form_factor().c_str());
+    } catch (const NotFoundException &) {
+        return nullptr;
+    }
 }
 
 int search_metadata_get_cardinality(_SearchMetadata *metadata) {
     return reinterpret_cast<SearchMetadata*>(metadata)->cardinality();
+}
+
+char *search_metadata_get_location(_SearchMetadata *metadata) {
+    auto m = reinterpret_cast<SearchMetadata*>(metadata);
+    try {
+        return strdup(Variant(m->location().serialize()).serialize_json().c_str());
+    } catch (const NotFoundException &) {
+        return nullptr;
+    }
 }
 
 /* ActionMetadata objects */

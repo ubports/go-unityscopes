@@ -75,6 +75,7 @@ void destroy_search_metadata(_SearchMetadata *metadata);
 char *search_metadata_get_locale(_SearchMetadata *metadata);
 char *search_metadata_get_form_factor(_SearchMetadata *metadata);
 int search_metadata_get_cardinality(_SearchMetadata *metadata);
+char *search_metadata_get_location(_SearchMetadata *metadata);
 
 /* ActionMetadata objects */
 void destroy_action_metadata(_ActionMetadata *metadata);
