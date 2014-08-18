@@ -11,9 +11,11 @@ ScopeAdapter::ScopeAdapter(GoInterface goscope) : goscope(goscope) {
 }
 
 void ScopeAdapter::start(std::string const &) {
+    setScopeBase(goscope, reinterpret_cast<_ScopeBase*>(this));
 }
 
 void ScopeAdapter::stop() {
+    setScopeBase(goscope, nullptr);
 }
 
 SearchQueryBase::UPtr ScopeAdapter::search(CannedQuery const &q,

@@ -5,6 +5,16 @@ Scopes are implemented through types that conform to the Scope interface.
 
     type MyScope struct {}
 
+The scope has access to a ScopeBase instance, which can be used to access
+various pieces of information about the scope, such as its settings:
+
+    func (s *MyScope) SetScopeBase(base *ScopeBase) {
+    }
+
+If the scope needs access to this information, it should save the
+provided instance for later use.  Otherwise, it the method body can be
+left blank.
+
 The shell may ask the scope for search results, which will cause the
 Search method to be invoked:
 

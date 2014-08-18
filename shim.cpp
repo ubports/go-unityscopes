@@ -33,6 +33,27 @@ void run_scope(void *scope_name, void *runtime_config, void *scope_config,
     }
 }
 
+char *scope_base_scope_directory(_ScopeBase *scope) {
+    ScopeBase *s = reinterpret_cast<ScopeBase*>(scope);
+    return strdup(s->scope_directory().c_str());
+}
+
+char *scope_base_cache_directory(_ScopeBase *scope) {
+    ScopeBase *s = reinterpret_cast<ScopeBase*>(scope);
+    return strdup(s->cache_directory().c_str());
+}
+
+char *scope_base_tmp_directory(_ScopeBase *scope) {
+    ScopeBase *s = reinterpret_cast<ScopeBase*>(scope);
+    return strdup(s->tmp_directory().c_str());
+}
+
+char *scope_base_settings(_ScopeBase *scope) {
+    ScopeBase *s = reinterpret_cast<ScopeBase*>(scope);
+    Variant settings(s->settings());
+    return strdup(settings.serialize_json().c_str());
+}
+
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src) {
     std::shared_ptr<SearchReply> reply = get_ptr<SearchReply>(src);
     init_ptr<SearchReply>(dest, reply);

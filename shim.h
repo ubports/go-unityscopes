@@ -16,10 +16,17 @@ typedef void _Result;
 typedef void _CategorisedResult;
 typedef void _SearchMetadata;
 typedef void _ActionMetadata;
+typedef void _ScopeBase;
 
 void run_scope(void *scope_name, void *runtime_config,
                void *scope_config, void *pointer_to_iface,
                char **error);
+
+/* ScopeBase objects */
+char *scope_base_scope_directory(_ScopeBase *scope);
+char *scope_base_cache_directory(_ScopeBase *scope);
+char *scope_base_tmp_directory(_ScopeBase *scope);
+char *scope_base_settings(_ScopeBase *scope);
 
 /* SearchReply objects */
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src);
