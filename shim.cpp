@@ -276,10 +276,12 @@ char *search_metadata_get_location(_SearchMetadata *metadata) {
     } catch (const NotFoundException &) {
         return nullptr;
     }
+    // libjsoncpp generates invalid JSON for NaN or Inf values, so
+    // filter them out here.
     for (auto &pair : location) {
         if (pair.second.which() == Variant::Double) {
             double value = pair.second.get_double();
-            if (isnan(value) || isinf(value)) {
+            if (!isfinite(value)) {
                 pair.second = Variant();
             }
         }
