@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstring>
 
 #include <unity/scopes/Category.h>
@@ -269,11 +270,21 @@ int search_metadata_get_cardinality(_SearchMetadata *metadata) {
 
 char *search_metadata_get_location(_SearchMetadata *metadata) {
     auto m = reinterpret_cast<SearchMetadata*>(metadata);
+    VariantMap location;
     try {
-        return strdup(Variant(m->location().serialize()).serialize_json().c_str());
+        location = m->location().serialize();
     } catch (const NotFoundException &) {
         return nullptr;
     }
+    for (auto &pair : location) {
+        if (pair.second.which() == Variant::Double) {
+            double value = pair.second.get_double();
+            if (isnan(value) || isinf(value)) {
+                pair.second = Variant();
+            }
+        }
+    }
+    return strdup(Variant(location).serialize_json().c_str());
 }
 
 /* ActionMetadata objects */
