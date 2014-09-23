@@ -281,7 +281,7 @@ char *search_metadata_get_location(_SearchMetadata *metadata) {
     for (auto &pair : location) {
         if (pair.second.which() == Variant::Double) {
             double value = pair.second.get_double();
-            if (!isfinite(value)) {
+            if (!std::isfinite(value)) {
                 pair.second = Variant();
             }
         }
