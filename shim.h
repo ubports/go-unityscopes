@@ -37,6 +37,7 @@ void search_reply_error(SharedPtrData reply, void *err_string);
 void search_reply_register_category(SharedPtrData reply, void *id, void *title, void *icon, void *cat_template, SharedPtrData category);
 void search_reply_register_departments(SharedPtrData reply, SharedPtrData dept);
 void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **error);
+void search_reply_push_filters(SharedPtrData reply, void *filters_json, void *filter_state_json, char **error);
 
 /* PreviewReply objects */
 void init_preview_reply_ptr(SharedPtrData dest, SharedPtrData src);
@@ -53,6 +54,7 @@ _CannedQuery *new_canned_query(void *scope_id, void *query_str, void *department
 char *canned_query_get_scope_id(_CannedQuery *query);
 char *canned_query_get_department_id(_CannedQuery *query);
 char *canned_query_get_query_string(_CannedQuery *query);
+char *canned_query_get_filter_state(_CannedQuery *query);
 void canned_query_set_department_id(_CannedQuery *query, void *department_id);
 void canned_query_set_query_string(_CannedQuery *query, void *query_str);
 char *canned_query_to_uri(_CannedQuery *query);

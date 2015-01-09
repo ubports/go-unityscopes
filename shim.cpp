@@ -90,7 +90,22 @@ void search_reply_register_departments(SharedPtrData reply, SharedPtrData dept) 
 void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **error) {
     try {
         get_ptr<SearchReply>(reply)->push(*reinterpret_cast<CategorisedResult*>(result));
-    } catch (std::exception &e) {
+    } catch (const std::exception &e) {
+        *error = strdup(e.what());
+    }
+}
+
+void search_reply_push_filters(SharedPtrData reply, void *filters_json, void *filter_state_json, char **error) {
+    try {
+        Variant filters_var = Variant::deserialize_json(from_gostring(filters_json));
+        Variant filter_state_var = Variant::deserialize_json(from_gostring(filter_state_json));
+        Filters filters;
+        for (const auto &f : filters_var.get_array()) {
+            filters.emplace_back(FilterBase::deserialize(f.get_dict()));
+        }
+        auto filter_state = FilterState::deserialize(filter_state_var.get_dict());
+        get_ptr<SearchReply>(reply)->push(filters, filter_state);
+    } catch (const std::exception &e) {
         *error = strdup(e.what());
     }
 }
@@ -152,6 +167,17 @@ char *canned_query_get_scope_id(_CannedQuery *query) {
 
 char *canned_query_get_department_id(_CannedQuery *query) {
     return strdup(reinterpret_cast<CannedQuery*>(query)->department_id().c_str());
+}
+
+char *canned_query_get_filter_state(_CannedQuery *query) {
+    std::string json_data;
+    try {
+        Variant v(reinterpret_cast<CannedQuery*>(query)->filter_state().serialize());
+        json_data = v.serialize_json();
+    } catch (...) {
+        return nullptr;
+    }
+    return strdup(json_data.c_str());
 }
 
 char *canned_query_get_query_string(_CannedQuery *query) {

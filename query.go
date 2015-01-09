@@ -4,6 +4,7 @@ package scopes
 // #include "shim.h"
 import "C"
 import (
+	"encoding/json"
 	"runtime"
 	"unsafe"
 )
@@ -55,6 +56,17 @@ func (query *CannedQuery) QueryString() string {
 	s := C.canned_query_get_query_string(query.q)
 	defer C.free(unsafe.Pointer(s))
 	return C.GoString(s)
+}
+
+// FilterState returns the state of the filters for this canned query.
+func (query *CannedQuery) FilterState() FilterState {
+	s := C.canned_query_get_filter_state(query.q)
+	defer C.free(unsafe.Pointer(s))
+	var state FilterState
+	if err := json.Unmarshal([]byte(C.GoString(s)), &state); err != nil {
+		panic(err)
+	}
+	return state
 }
 
 // SetDepartmentID changes the department ID for this canned query.

@@ -77,6 +77,28 @@ func (reply *SearchReply) Push(result *CategorisedResult) error {
 	return checkError(errorString)
 }
 
+// Push the filter set for this result
+func (reply *SearchReply) PushFilters(filters []Filter, state FilterState) error {
+	var filtersJson, stateJson string
+	filterData := make([]interface{}, len(filters))
+	for i, f := range filters {
+		filterData[i] = f.serializeFilter()
+	}
+	if data, err := json.Marshal(filterData); err == nil {
+		filtersJson = string(data)
+	} else {
+		return err
+	}
+	if data, err := json.Marshal(state); err == nil {
+		stateJson = string(data)
+	} else {
+		return err
+	}
+	var errorString *C.char = nil
+	C.search_reply_push_filters(&reply.r[0], unsafe.Pointer(&filtersJson), unsafe.Pointer(&stateJson), &errorString)
+	return checkError(errorString)
+}
+
 // PreviewReply is used to send result previews to the client.
 type PreviewReply struct {
 	r C.SharedPtrData
