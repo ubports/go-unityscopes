@@ -77,7 +77,7 @@ func (reply *SearchReply) Push(result *CategorisedResult) error {
 	return checkError(errorString)
 }
 
-// Push the filter set for this result
+// PushFilters sends the set of filters and their state to the client.
 func (reply *SearchReply) PushFilters(filters []Filter, state FilterState) error {
 	var filtersJson, stateJson string
 	filterData := make([]interface{}, len(filters))

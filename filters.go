@@ -4,6 +4,7 @@ import (
 	"sort"
 )
 
+// Filter is implemented by all scope filter types.
 type Filter interface {
 	serializeFilter() interface{}
 }
@@ -15,8 +16,10 @@ const (
 	FilterDisplayPrimary FilterDisplayHints = 1 << iota
 )
 
+// FilterState represents the current state of a set of filters.
 type FilterState map[string]interface{}
 
+// OptionSelectorFilter is used to implement single-select or multi-select filters.
 type OptionSelectorFilter struct {
 	Id           string
 	DisplayHints FilterDisplayHints
@@ -30,6 +33,7 @@ type FilterOption struct {
 	Label string `json:"label"`
 }
 
+// NewOptionSelectorFilter creates a new option filter.
 func NewOptionSelectorFilter(id, label string, multiSelect bool) *OptionSelectorFilter {
 	return &OptionSelectorFilter{
 		Id:          id,
@@ -38,6 +42,7 @@ func NewOptionSelectorFilter(id, label string, multiSelect bool) *OptionSelector
 	}
 }
 
+// AddOption adds a new option to the filter.
 func (f *OptionSelectorFilter) AddOption(id, label string) {
 	f.Options = append(f.Options, FilterOption{
 		Id:    id,
@@ -45,6 +50,7 @@ func (f *OptionSelectorFilter) AddOption(id, label string) {
 	})
 }
 
+// SetDisplayHints changes how the filter is displayed.
 func (f *OptionSelectorFilter) SetDisplayHints(hints FilterDisplayHints) {
 	f.DisplayHints = hints
 }
@@ -58,6 +64,7 @@ func (f *OptionSelectorFilter) isValidOption(optionId string) bool {
 	return false
 }
 
+// HasActiveOption returns true if any of the filters options are active.
 func (f *OptionSelectorFilter) HasActiveOption(state FilterState) bool {
 	for _, optionId := range f.ActiveOptions(state) {
 		if f.isValidOption(optionId) {
@@ -67,11 +74,13 @@ func (f *OptionSelectorFilter) HasActiveOption(state FilterState) bool {
 	return false
 }
 
+// ActiveOptions returns the filter's active options from the filter state.
 func (f *OptionSelectorFilter) ActiveOptions(state FilterState) []string {
 	selected, _ := state[f.Id].([]string)
 	return selected
 }
 
+// UpdateState updates the value of a particular option in the filter state.
 func (f *OptionSelectorFilter) UpdateState(state FilterState, optionId string, active bool) {
 	if !f.isValidOption(optionId) {
 		panic("invalid option ID")

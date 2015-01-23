@@ -18,7 +18,7 @@ left blank.
 The shell may ask the scope for search results, which will cause the
 Search method to be invoked:
 
-    func (s *MyScope) Search(query *CannedQuery, metadata *SearchMetadata, reply *SearchReply cancelled <-chan bool) error {
+    func (s *MyScope) Search(query *CannedQuery, metadata *SearchMetadata, reply  *SearchReply cancelled <-chan bool) error {
         category := reply.RegisterCategory("cat_id", "category", "", "")
         result := NewCategorisedResult(category)
         result.SetTitle("Result for " + query.QueryString())
