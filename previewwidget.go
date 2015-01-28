@@ -49,6 +49,16 @@ func (widget PreviewWidget) AddAttributeMapping(key, fieldName string) {
 	components[key] = fieldName
 }
 
+// AddWidget adds a child widget to this widget.
+// This only makes sense for expandable type widgets.
+func (widget PreviewWidget) AddWidget(child PreviewWidget) {
+	if widget.WidgetType() != "expandable" {
+		panic("Can only add widgets to expandable type widgets")
+	}
+	subwidgets, _ := widget["widgets"].([]PreviewWidget)
+	widget["widgets"] = append(subwidgets, child)
+}
+
 func (widget PreviewWidget) data() ([]byte, error) {
 	return json.Marshal(widget)
 }
