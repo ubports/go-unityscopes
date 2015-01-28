@@ -49,7 +49,7 @@ func (reply *SearchReply) Error(err error) {
 // The template parameter should either be empty (to use the default
 // rendering template), or contain a JSON template as described here:
 //
-// http://developer.ubuntu.com/api/scopes/sdk-14.04/unity.scopes.CategoryRenderer/#details
+// http://developer.ubuntu.com/api/scopes/sdk-14.10/unity.scopes.CategoryRenderer/#details
 //
 // Categories can be passed to NewCategorisedResult in order to
 // construct search results.

@@ -16,7 +16,7 @@ AddAttributeMapping().
 A list of available widget types and their associated attributes is
 available here:
 
-http://developer.ubuntu.com/api/scopes/sdk-14.04/preview_20widget_20types/
+http://developer.ubuntu.com/api/scopes/sdk-14.10/previewwidgets/
 */
 func NewPreviewWidget(id, widgetType string) PreviewWidget {
 	return PreviewWidget{"id": id, "type": widgetType}
