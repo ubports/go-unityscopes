@@ -41,6 +41,20 @@ type Scope interface {
 	Preview(result *Result, metadata *ActionMetadata, reply *PreviewReply, cancelled <-chan bool) error
 }
 
+// Activator is an interface that should be implemented by scopes that
+// need to handle result activation directly.
+type Activator interface {
+	Scope
+	Activate(result *Result, metadata *ActionMetadata) *ActivationResponse
+}
+
+// PerformActioner is an interface that should be implemented by
+// scopes that need to handle preview actions directly.
+type PerformActioner interface {
+	Scope
+	PerformAction(result *Result, metadata *ActionMetadata, widgetId, actionId string) *ActivationResponse
+}
+
 //export callScopeSearch
 func callScopeSearch(scope Scope, queryPtr, metadataPtr unsafe.Pointer, replyData *C.uintptr_t, cancel <-chan bool) {
 	query := makeCannedQuery(queryPtr)
@@ -71,6 +85,32 @@ func callScopePreview(scope Scope, resultPtr, metadataPtr unsafe.Pointer, replyD
 		}
 		reply.Finished()
 	}()
+}
+
+//export callScopeActivate
+func callScopeActivate(scope Scope, resultPtr, metadataPtr, responsePtr unsafe.Pointer) {
+	switch s := scope.(type) {
+	case Activator:
+		result := makeResult(resultPtr)
+		metadata := makeActionMetadata(metadataPtr)
+		response := s.Activate(result, metadata)
+		// ???
+	default:
+		// nothing
+	}
+}
+
+//export callScopePerformAction
+func callScopePerformAction(scope Scope, resultPtr, metadataPtr unsafe.Pointer, widgetId, actionId *C.char, responsePtr unsafe.Pointer) {
+	switch s := scope.(type) {
+	case PerformActioner:
+		result := makeResult(resultPtr)
+		metadata := makeActionMetadata(metadataPtr)
+		response := s.PerformAction(result, metadata, C.GoString(widgetId), C.GoString(actionId))
+		// ???
+	default:
+		// nothing
+	}
 }
 
 var (

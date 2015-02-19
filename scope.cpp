@@ -34,6 +34,11 @@ ActivationQueryBase::UPtr ScopeAdapter::activate(Result const& result, ActionMet
     return activation;
 }
 
+ActivationQueryBase::UPtr ScopeAdapter::perform_action(Result const& result, ActionMetadata const &metadata, std::string const &widget_id, std::string const &action_id) {
+    ActivationQueryBase::UPtr activation(new ActivationAdapter(result, metadata, widget_id, action_id, *this));
+    return activation;
+}
+
 QueryAdapter::QueryAdapter(CannedQuery const &query,
                            SearchMetadata const &metadata,
                            ScopeAdapter &scope)
@@ -77,9 +82,35 @@ void PreviewAdapter::run(PreviewReplyProxy const &reply) {
 ActivationAdapter::ActivationAdapter(Result const &result,
                                      ActionMetadata const &metadata,
                                      ScopeAdapter &scope)
-    : ActivationQueryBase(result, metadata), scope(scope) {
+    : ActivationQueryBase(result, metadata), scope(scope),
+      is_action(false) {
+}
+
+ActivationAdapter::ActivationAdapter(Result const &result,
+                                     ActionMetadata const &metadata,
+                                     std::string const &widget_id,
+                                     std::string const &action_id,
+                                     ScopeAdapter &scope)
+    : ActivationQueryBase(result, metadata, widget_id, action_id),
+      scope(scope), is_action(true) {
 }
 
 ActivationResponse ActivationAdapter::activate() {
-    return ActivationResponse(ActivationResponse::NotHandled);
+    ActivationResponse response(ActivationResponse::NotHandled);
+    if (is_action) {
+        callScopePerformAction(
+            scope.goscope,
+            static_cast<void*>(new Result(result())),
+            static_cast<void*>(new ActionMetadata(action_metadata())),
+            const_cast<char*>(widget_id().c_str()),
+            const_cast<char*>(action_id().c_str()),
+            static_cast<void*>(&response));
+    } else {
+        callScopeActivate(
+            scope.goscope,
+            static_cast<void*>(new Result(result())),
+            static_cast<void*>(new ActionMetadata(action_metadata())),
+            static_cast<void*>(&response));
+    }
+    return response;
 }

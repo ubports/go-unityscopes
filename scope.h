@@ -21,6 +21,7 @@ public:
 
     virtual unity::scopes::PreviewQueryBase::UPtr preview(unity::scopes::Result const& result, unity::scopes::ActionMetadata const& metadata) override;
     virtual unity::scopes::ActivationQueryBase::UPtr activate(unity::scopes::Result const& result, unity::scopes::ActionMetadata const &metadata) override;
+    virtual unity::scopes::ActivationQueryBase::UPtr perform_action(unity::scopes::Result const& result, unity::scopes::ActionMetadata const &metadata, std::string const &widget_id, std::string const &action_id) override;
 
 private:
     GoInterface goscope;
@@ -58,9 +59,15 @@ public:
     ActivationAdapter(unity::scopes::Result const &result,
                       unity::scopes::ActionMetadata const &metadata,
                       ScopeAdapter &scope);
+    ActivationAdapter(unity::scopes::Result const &result,
+                      unity::scopes::ActionMetadata const &metadata,
+                      std::string const &widget_id,
+                      std::string const &action_id,
+                      ScopeAdapter &scope);
     virtual unity::scopes::ActivationResponse activate() override;
 private:
     const ScopeAdapter &scope;
+    bool is_action;
 };
 
 #endif
