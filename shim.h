@@ -17,6 +17,7 @@ typedef void _CategorisedResult;
 typedef void _SearchMetadata;
 typedef void _ActionMetadata;
 typedef void _ScopeBase;
+typedef void _ActivationResponse;
 
 void run_scope(void *scope_name, void *runtime_config,
                void *scope_config, void *pointer_to_iface,
@@ -90,6 +91,10 @@ char *search_metadata_get_location(_SearchMetadata *metadata);
 void destroy_action_metadata(_ActionMetadata *metadata);
 char *action_metadata_get_locale(_ActionMetadata *metadata);
 char *action_metadata_get_form_factor(_ActionMetadata *metadata);
+
+/* ActivationResponse objects */
+void activation_response_init_status(_ActivationResponse *response, int status);
+void activation_response_init_query(_ActivationResponse *response, _CannedQuery *query);
 
 #ifdef __cplusplus
 }

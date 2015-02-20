@@ -45,14 +45,14 @@ type Scope interface {
 // need to handle result activation directly.
 type Activator interface {
 	Scope
-	Activate(result *Result, metadata *ActionMetadata) *ActivationResponse
+	Activate(result *Result, metadata *ActionMetadata) (*ActivationResponse, error)
 }
 
 // PerformActioner is an interface that should be implemented by
 // scopes that need to handle preview actions directly.
 type PerformActioner interface {
 	Scope
-	PerformAction(result *Result, metadata *ActionMetadata, widgetId, actionId string) *ActivationResponse
+	PerformAction(result *Result, metadata *ActionMetadata, widgetId, actionId string) (*ActivationResponse, error)
 }
 
 //export callScopeSearch
@@ -88,26 +88,36 @@ func callScopePreview(scope Scope, resultPtr, metadataPtr unsafe.Pointer, replyD
 }
 
 //export callScopeActivate
-func callScopeActivate(scope Scope, resultPtr, metadataPtr, responsePtr unsafe.Pointer) {
+func callScopeActivate(scope Scope, resultPtr, metadataPtr, responsePtr unsafe.Pointer, errorPtr **C.char) {
 	switch s := scope.(type) {
 	case Activator:
 		result := makeResult(resultPtr)
 		metadata := makeActionMetadata(metadataPtr)
-		response := s.Activate(result, metadata)
-		// ???
+		response, err := s.Activate(result, metadata)
+		if err == nil {
+			err = response.update(responsePtr)
+		}
+		if err != nil {
+			*errorPtr = C.CString(err.Error())
+		}
 	default:
 		// nothing
 	}
 }
 
 //export callScopePerformAction
-func callScopePerformAction(scope Scope, resultPtr, metadataPtr unsafe.Pointer, widgetId, actionId *C.char, responsePtr unsafe.Pointer) {
+func callScopePerformAction(scope Scope, resultPtr, metadataPtr unsafe.Pointer, widgetId, actionId *C.char, responsePtr unsafe.Pointer, errorPtr **C.char) {
 	switch s := scope.(type) {
 	case PerformActioner:
 		result := makeResult(resultPtr)
 		metadata := makeActionMetadata(metadataPtr)
-		response := s.PerformAction(result, metadata, C.GoString(widgetId), C.GoString(actionId))
-		// ???
+		response, err := s.PerformAction(result, metadata, C.GoString(widgetId), C.GoString(actionId))
+		if err == nil {
+			err = response.update(responsePtr)
+		}
+		if err != nil {
+			*errorPtr = C.CString(err.Error())
+		}
 	default:
 		// nothing
 	}

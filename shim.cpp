@@ -327,3 +327,13 @@ char *action_metadata_get_locale(_ActionMetadata *metadata) {
 char *action_metadata_get_form_factor(_ActionMetadata *metadata) {
     return strdup(reinterpret_cast<ActionMetadata*>(metadata)->form_factor().c_str());
 }
+
+void activation_response_init_status(_ActivationResponse *response, int status) {
+    *reinterpret_cast<ActivationResponse*>(response) =
+        ActivationResponse(static_cast<ActivationResponse::Status>(status));
+}
+
+void activation_response_init_query(_ActivationResponse *response, _CannedQuery *query) {
+    *reinterpret_cast<ActivationResponse*>(response) =
+        ActivationResponse(*reinterpret_cast<CannedQuery*>(query));
+}

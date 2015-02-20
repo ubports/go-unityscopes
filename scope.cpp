@@ -97,6 +97,7 @@ ActivationAdapter::ActivationAdapter(Result const &result,
 
 ActivationResponse ActivationAdapter::activate() {
     ActivationResponse response(ActivationResponse::NotHandled);
+    char *error = nullptr;
     if (is_action) {
         callScopePerformAction(
             scope.goscope,
@@ -104,13 +105,20 @@ ActivationResponse ActivationAdapter::activate() {
             static_cast<void*>(new ActionMetadata(action_metadata())),
             const_cast<char*>(widget_id().c_str()),
             const_cast<char*>(action_id().c_str()),
-            static_cast<void*>(&response));
+            static_cast<void*>(&response),
+            &error);
     } else {
         callScopeActivate(
             scope.goscope,
             static_cast<void*>(new Result(result())),
             static_cast<void*>(new ActionMetadata(action_metadata())),
-            static_cast<void*>(&response));
+            static_cast<void*>(&response),
+            &error);
+    }
+    if (error != nullptr) {
+        const std::string message(error);
+        free(error);
+        throw std::runtime_error(message);
     }
     return response;
 }

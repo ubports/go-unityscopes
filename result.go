@@ -65,7 +65,7 @@ func (res *Result) Set(attr string, value interface{}) error {
 // By default, results are activated by the client directly (e.g. by
 // running the application associated with the result URI).  For
 // results with this flag set though, the scope will be asked to
-// perform activation.
+// perform activation and should implement the Activate method.
 func (res *Result) SetInterceptActivation() {
 	C.result_set_intercept_activation(res.result)
 }
