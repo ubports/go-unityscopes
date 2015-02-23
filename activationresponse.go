@@ -53,9 +53,9 @@ func NewActivationResponseForQuery(query *CannedQuery) *ActivationResponse {
 
 func (r *ActivationResponse) update(responsePtr unsafe.Pointer) error {
 	if r.Status == ActivationPerformQuery {
-		C.activation_response_init_status(responsePtr, C.int(r.Status))
-	} else {
 		C.activation_response_init_query(responsePtr, r.Query.q)
+	} else {
+		C.activation_response_init_status(responsePtr, C.int(r.Status))
 	}
 	if r.ScopeData != nil {
 		data, err := json.Marshal(r.ScopeData)
