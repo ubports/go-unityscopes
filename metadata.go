@@ -109,3 +109,14 @@ func (metadata *ActionMetadata) FormFactor() string {
 	defer C.free(unsafe.Pointer(formFactor))
 	return C.GoString(formFactor)
 }
+
+// ScopeData decodes the stored scope data into the given variable.
+//
+// Scope data is either set by the shell when calling a preview
+// action, or set by the scope through an ActivationResponse object.
+func (metadata *ActionMetadata) ScopeData(v interface{}) error {
+	var dataLength C.int
+	scopeData := C.action_metadata_get_scope_data(metadata.m, &dataLength)
+	defer C.free(scopeData)
+	return json.Unmarshal(C.GoBytes(scopeData, dataLength), v)
+}

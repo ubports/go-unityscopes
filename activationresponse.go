@@ -3,7 +3,10 @@ package scopes;
 // #include <stdlib.h>
 // #include "shim.h"
 import "C"
-import "unsafe"
+import (
+	"encoding/json"
+	"unsafe"
+)
 
 type ActivationStatus int
 
@@ -53,6 +56,17 @@ func (r *ActivationResponse) update(responsePtr unsafe.Pointer) error {
 		C.activation_response_init_status(responsePtr, C.int(r.Status))
 	} else {
 		C.activation_response_init_query(responsePtr, r.Query.q)
+	}
+	if r.ScopeData != nil {
+		data, err := json.Marshal(r.ScopeData)
+		if err != nil {
+			return err
+		}
+		var errorString *C.char = nil
+		C.activation_response_set_scope_data(responsePtr, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
+		if err = checkError(errorString); err != nil {
+			return err
+		}
 	}
 	return nil
 }

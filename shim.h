@@ -91,10 +91,12 @@ char *search_metadata_get_location(_SearchMetadata *metadata);
 void destroy_action_metadata(_ActionMetadata *metadata);
 char *action_metadata_get_locale(_ActionMetadata *metadata);
 char *action_metadata_get_form_factor(_ActionMetadata *metadata);
+void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length);
 
 /* ActivationResponse objects */
 void activation_response_init_status(_ActivationResponse *response, int status);
 void activation_response_init_query(_ActivationResponse *response, _CannedQuery *query);
+void activation_response_set_scope_data(_ActivationResponse *response, char *json_data, int json_data_length, char **error);
 
 #ifdef __cplusplus
 }
