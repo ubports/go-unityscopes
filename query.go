@@ -60,10 +60,11 @@ func (query *CannedQuery) QueryString() string {
 
 // FilterState returns the state of the filters for this canned query.
 func (query *CannedQuery) FilterState() FilterState {
-	s := C.canned_query_get_filter_state(query.q)
-	defer C.free(unsafe.Pointer(s))
+	var length C.int
+	s := C.canned_query_get_filter_state(query.q, &length)
+	defer C.free(s)
 	var state FilterState
-	if err := json.Unmarshal([]byte(C.GoString(s)), &state); err != nil {
+	if err := json.Unmarshal(C.GoBytes(s, length), &state); err != nil {
 		panic(err)
 	}
 	return state

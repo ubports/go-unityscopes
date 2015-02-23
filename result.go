@@ -35,14 +35,16 @@ func finalizeResult(res *Result) {
 //
 // If the attribute does not exist, an error is returned.
 func (res *Result) Get(attr string, value interface{}) error {
-	var errorString *C.char = nil
-	cData := C.result_get_attr(res.result, unsafe.Pointer(&attr), &errorString)
+	var (
+		length      C.int
+		errorString *C.char = nil
+	)
+	data := C.result_get_attr(res.result, unsafe.Pointer(&attr), &length, &errorString)
 	if err := checkError(errorString); err != nil {
 		return err
 	}
-	data := C.GoString(cData)
-	C.free(unsafe.Pointer(cData))
-	return json.Unmarshal([]byte(data), value)
+	C.free(data)
+	return json.Unmarshal(C.GoBytes(data, length), value)
 }
 
 // Set sets the named result attribute.

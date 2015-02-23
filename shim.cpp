@@ -59,10 +59,10 @@ char *scope_base_tmp_directory(_ScopeBase *scope) {
     return strdup(s->tmp_directory().c_str());
 }
 
-char *scope_base_settings(_ScopeBase *scope) {
+void *scope_base_settings(_ScopeBase *scope, int *length) {
     ScopeBase *s = reinterpret_cast<ScopeBase*>(scope);
     Variant settings(s->settings());
-    return strdup(settings.serialize_json().c_str());
+    return as_bytes(settings.serialize_json(), length);
 }
 
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src) {
@@ -179,7 +179,7 @@ char *canned_query_get_department_id(_CannedQuery *query) {
     return strdup(reinterpret_cast<CannedQuery*>(query)->department_id().c_str());
 }
 
-char *canned_query_get_filter_state(_CannedQuery *query) {
+void *canned_query_get_filter_state(_CannedQuery *query, int *length) {
     std::string json_data;
     try {
         Variant v(reinterpret_cast<CannedQuery*>(query)->filter_state().serialize());
@@ -187,7 +187,7 @@ char *canned_query_get_filter_state(_CannedQuery *query) {
     } catch (...) {
         return nullptr;
     }
-    return strdup(json_data.c_str());
+    return as_bytes(json_data, length);
 }
 
 char *canned_query_get_query_string(_CannedQuery *query) {
@@ -219,7 +219,7 @@ void destroy_result(_Result *res) {
     delete reinterpret_cast<Result*>(res);
 }
 
-char *result_get_attr(_Result *res, void *attr, char **error) {
+void *result_get_attr(_Result *res, void *attr, int *length, char **error) {
     std::string json_data;
     try {
         Variant v = reinterpret_cast<Result*>(res)->value(from_gostring(attr));
@@ -228,7 +228,7 @@ char *result_get_attr(_Result *res, void *attr, char **error) {
         *error = strdup(e.what());
         return nullptr;
     }
-    return strdup(json_data.c_str());
+    return as_bytes(json_data, length);
 }
 
 void result_set_attr(_Result *res, void *attr, void *json_value, char **error) {
@@ -304,7 +304,7 @@ int search_metadata_get_cardinality(_SearchMetadata *metadata) {
     return reinterpret_cast<SearchMetadata*>(metadata)->cardinality();
 }
 
-char *search_metadata_get_location(_SearchMetadata *metadata) {
+void *search_metadata_get_location(_SearchMetadata *metadata, int *length) {
     auto m = reinterpret_cast<SearchMetadata*>(metadata);
     VariantMap location;
     try {
@@ -322,7 +322,7 @@ char *search_metadata_get_location(_SearchMetadata *metadata) {
             }
         }
     }
-    return strdup(Variant(location).serialize_json().c_str());
+    return as_bytes(Variant(location).serialize_json(), length);
 }
 
 /* ActionMetadata objects */

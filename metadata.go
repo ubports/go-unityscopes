@@ -63,14 +63,14 @@ type Location struct {
 }
 
 func (metadata *SearchMetadata) Location() *Location {
-	locData := C.search_metadata_get_location(metadata.m)
+	var length C.int
+	locData := C.search_metadata_get_location(metadata.m, &length)
 	if locData == nil {
 		return nil
 	}
-	defer C.free(unsafe.Pointer(locData))
-	locString := C.GoString(locData)
+	defer C.free(locData)
 	var location Location
-	if err := json.Unmarshal([]byte(locString), &location); err != nil {
+	if err := json.Unmarshal(C.GoBytes(locData, length), &location); err != nil {
 		panic(err)
 	}
 	return &location

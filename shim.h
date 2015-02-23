@@ -27,7 +27,7 @@ void run_scope(void *scope_name, void *runtime_config,
 char *scope_base_scope_directory(_ScopeBase *scope);
 char *scope_base_cache_directory(_ScopeBase *scope);
 char *scope_base_tmp_directory(_ScopeBase *scope);
-char *scope_base_settings(_ScopeBase *scope);
+void *scope_base_settings(_ScopeBase *scope, int *length);
 
 /* SearchReply objects */
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src);
@@ -55,7 +55,7 @@ _CannedQuery *new_canned_query(void *scope_id, void *query_str, void *department
 char *canned_query_get_scope_id(_CannedQuery *query);
 char *canned_query_get_department_id(_CannedQuery *query);
 char *canned_query_get_query_string(_CannedQuery *query);
-char *canned_query_get_filter_state(_CannedQuery *query);
+void *canned_query_get_filter_state(_CannedQuery *query, int *length);
 void canned_query_set_department_id(_CannedQuery *query, void *department_id);
 void canned_query_set_query_string(_CannedQuery *query, void *query_str);
 char *canned_query_to_uri(_CannedQuery *query);
@@ -68,7 +68,7 @@ _Result *new_categorised_result(SharedPtrData category);
 void destroy_result(_Result *res);
 
 /* Result objects */
-char *result_get_attr(_Result *res, void *attr, char **error);
+void *result_get_attr(_Result *res, void *attr, int *length, char **error);
 void result_set_attr(_Result *res, void *attr, void *json_value, char **error);
 void result_set_intercept_activation(_Result *res);
 
@@ -85,7 +85,7 @@ void destroy_search_metadata(_SearchMetadata *metadata);
 char *search_metadata_get_locale(_SearchMetadata *metadata);
 char *search_metadata_get_form_factor(_SearchMetadata *metadata);
 int search_metadata_get_cardinality(_SearchMetadata *metadata);
-char *search_metadata_get_location(_SearchMetadata *metadata);
+void *search_metadata_get_location(_SearchMetadata *metadata, int *length);
 
 /* ActionMetadata objects */
 void destroy_action_metadata(_ActionMetadata *metadata);

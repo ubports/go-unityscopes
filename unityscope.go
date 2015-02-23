@@ -168,9 +168,10 @@ func (b *ScopeBase) TmpDirectory() string {
 // decoded into the given value according to the same rules used by
 // json.Unmarshal().
 func (b *ScopeBase) Settings(value interface{}) error {
-	data := C.scope_base_settings(b.b);
-	defer C.free(unsafe.Pointer(data));
-	return json.Unmarshal([]byte(C.GoString(data)), value)
+	var length C.int
+	data := C.scope_base_settings(b.b, &length);
+	defer C.free(data);
+	return json.Unmarshal(C.GoBytes(data, length), value)
 }
 
 /*
