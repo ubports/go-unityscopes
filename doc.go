@@ -50,6 +50,18 @@ The scope should push one or more slices of PreviewWidgets using reply.PushWidge
 
 Additional data for the preview can be pushed with reply.PushAttr.
 
+If any of the preview widgets perform actions that the scope should
+respond to, the scope should implement the PerformAction method:
+
+    func (s *MyScope) PerformAction(result *Result, metadata *ActionMetadata, widgetId, actionId string) (*ActivationResponse, error) {
+        // handle the action and then tell the dash what to do next
+        // through an ActivationResponse.
+        resp := NewActivationResponse(ActivationHideDash) return resp, nil
+    }
+
+The PerformAction method is not part of the main Scope interface, so
+the feature need only be implemented for scopes that use the feature.
+
 Finally, the scope can be exported in the main function:
 
     func main() {
