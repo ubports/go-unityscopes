@@ -4,18 +4,14 @@
 #include <unity/scopes/PreviewReply.h>
 #include <unity/scopes/SearchReply.h>
 
-#include "smartptr_helper.h"
-
 extern "C" {
 #include "_cgo_export.h"
 }
+#include "helpers.h"
+#include "smartptr_helper.h"
 
 using namespace unity::scopes;
-
-static std::string from_gostring(void *str) {
-    GoString *s = static_cast<GoString*>(str);
-    return std::string(s->p, s->n);
-}
+using namespace gounityscopes::internal;
 
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src) {
     std::shared_ptr<SearchReply> reply = get_ptr<SearchReply>(src);

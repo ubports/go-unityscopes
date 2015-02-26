@@ -1,6 +1,12 @@
+#ifndef UNITYSCOPE_SMARTPTR_HELPER_H
+#define UNITYSCOPE_SMARTPTR_HELPER_H
+
 #include <memory>
 
 #include "shim.h"
+
+namespace gounityscopes {
+namespace internal {
 
 template<typename T> inline void init_ptr(SharedPtrData data, std::shared_ptr<T> v) {
     typedef std::shared_ptr<T> Ptr;
@@ -31,3 +37,8 @@ template<typename T> inline void copy_ptr(SharedPtrData dest_data, SharedPtrData
     Ptr *src = reinterpret_cast<Ptr*>(src_data);
     *dest = *src;
 }
+
+}
+}
+
+#endif

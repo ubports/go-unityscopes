@@ -6,23 +6,10 @@
 extern "C" {
 #include "_cgo_export.h"
 }
+#include "helpers.h"
 
 using namespace unity::scopes;
-
-static std::string from_gostring(void *str) {
-    GoString *s = static_cast<GoString*>(str);
-    return std::string(s->p, s->n);
-}
-
-static void *as_bytes(const std::string &str, int *length) {
-    *length = str.size();
-    void *data = malloc(str.size());
-    if (data == nullptr) {
-        return nullptr;
-    }
-    memcpy(data, str.data(), str.size());
-    return data;
-}
+using namespace gounityscopes::internal;
 
 void destroy_canned_query(_CannedQuery *query) {
     delete reinterpret_cast<CannedQuery*>(query);

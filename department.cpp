@@ -3,18 +3,14 @@
 
 #include <unity/scopes/Department.h>
 
-#include "smartptr_helper.h"
-
 extern "C" {
 #include "_cgo_export.h"
 }
+#include "helpers.h"
+#include "smartptr_helper.h"
 
 using namespace unity::scopes;
-
-static std::string from_gostring(void *str) {
-    GoString *s = static_cast<GoString*>(str);
-    return std::string(s->p, s->n);
-}
+using namespace gounityscopes::internal;
 
 /* Department objects */
 void init_department_ptr(SharedPtrData dest, SharedPtrData src) {

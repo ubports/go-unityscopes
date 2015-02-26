@@ -5,28 +5,14 @@
 #include <unity/scopes/CategorisedResult.h>
 #include <unity/scopes/Result.h>
 
-#include "smartptr_helper.h"
-
 extern "C" {
 #include "_cgo_export.h"
 }
+#include "helpers.h"
+#include "smartptr_helper.h"
 
 using namespace unity::scopes;
-
-static std::string from_gostring(void *str) {
-    GoString *s = static_cast<GoString*>(str);
-    return std::string(s->p, s->n);
-}
-
-static void *as_bytes(const std::string &str, int *length) {
-    *length = str.size();
-    void *data = malloc(str.size());
-    if (data == nullptr) {
-        return nullptr;
-    }
-    memcpy(data, str.data(), str.size());
-    return data;
-}
+using namespace gounityscopes::internal;
 
 _Result *new_categorised_result(SharedPtrData category) {
     auto cat = get_ptr<Category>(category);
