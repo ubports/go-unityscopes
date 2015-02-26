@@ -4,8 +4,6 @@
 #include <unity/scopes/ActivationResponse.h>
 #include <unity/scopes/CannedQuery.h>
 
-#include "smartptr_helper.h"
-
 extern "C" {
 #include "_cgo_export.h"
 }
