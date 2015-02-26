@@ -1,12 +1,7 @@
 #include <cstring>
 
 #include <unity/scopes/Category.h>
-#include <unity/scopes/CategorisedResult.h>
-#include <unity/scopes/PreviewReply.h>
-#include <unity/scopes/PreviewWidget.h>
 #include <unity/scopes/Runtime.h>
-#include <unity/scopes/SearchReply.h>
-#include <unity/scopes/ScopeExceptions.h>
 
 extern "C" {
 #include "_cgo_export.h"
