@@ -1,7 +1,7 @@
 package scopes
 
 /*
-#cgo CXXFLAGS: -std=c++11
+#cgo CXXFLAGS: -std=c++11 -Wall
 #cgo pkg-config: libunity-scopes
 #include <stdlib.h>
 #include "shim.h"

@@ -4,9 +4,7 @@
 #include <memory>
 #include <string>
 
-#include <unity/scopes/SearchReply.h>
 #include <unity/scopes/ScopeBase.h>
-#include <unity/scopes/Variant.h>
 
 class ScopeAdapter : public unity::scopes::ScopeBase
 {
