@@ -56,7 +56,7 @@ type PerformActioner interface {
 }
 
 //export callScopeSearch
-func callScopeSearch(scope Scope, queryPtr unsafe.Pointer, metadataPtr *C._SearchMetadata, replyData *C.uintptr_t, cancel <-chan bool) {
+func callScopeSearch(scope Scope, queryPtr *C._CannedQuery, metadataPtr *C._SearchMetadata, replyData *C.uintptr_t, cancel <-chan bool) {
 	query := makeCannedQuery(queryPtr)
 	metadata := makeSearchMetadata(metadataPtr)
 	reply := makeSearchReply(replyData)

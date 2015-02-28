@@ -11,7 +11,7 @@ extern "C" {
 
 typedef uintptr_t SharedPtrData[2];
 
-typedef void _CannedQuery;
+typedef struct _CannedQuery _CannedQuery;
 typedef struct _Result _Result;
 typedef struct _Result _CategorisedResult;
 typedef struct _SearchMetadata _SearchMetadata;
@@ -74,7 +74,7 @@ void result_set_intercept_activation(_Result *res);
 
 /* Department objects */
 void init_department_ptr(SharedPtrData dest, SharedPtrData src);
-void new_department(void *deptt_id, void *query, void *label, SharedPtrData dept, char **error);
+void new_department(void *deptt_id, _CannedQuery *query, void *label, SharedPtrData dept, char **error);
 void destroy_department_ptr(SharedPtrData data);
 void department_add_subdepartment(SharedPtrData dept, SharedPtrData child);
 void department_set_alternate_label(SharedPtrData dept, void *label);

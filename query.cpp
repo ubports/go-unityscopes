@@ -16,9 +16,10 @@ void destroy_canned_query(_CannedQuery *query) {
 }
 
 _CannedQuery *new_canned_query(void *scope_id, void *query_str, void *department_id) {
-    return new CannedQuery(from_gostring(scope_id),
-                           from_gostring(query_str),
-                           from_gostring(department_id));
+    return reinterpret_cast<_CannedQuery*>(
+        new CannedQuery(from_gostring(scope_id),
+                        from_gostring(query_str),
+                        from_gostring(department_id)));
 }
 
 char *canned_query_get_scope_id(_CannedQuery *query) {

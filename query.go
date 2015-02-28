@@ -11,7 +11,7 @@ import (
 
 // CannedQuery represents a search query from the user.
 type CannedQuery struct {
-	q unsafe.Pointer
+	q *C._CannedQuery
 }
 
 func finalizeCannedQuery(query *CannedQuery) {
@@ -21,7 +21,7 @@ func finalizeCannedQuery(query *CannedQuery) {
 	query.q = nil
 }
 
-func makeCannedQuery(q unsafe.Pointer) *CannedQuery {
+func makeCannedQuery(q *C._CannedQuery) *CannedQuery {
 	query := new(CannedQuery)
 	runtime.SetFinalizer(query, finalizeCannedQuery)
 	query.q = q
