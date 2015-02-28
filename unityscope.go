@@ -72,7 +72,7 @@ func callScopeSearch(scope Scope, queryPtr, metadataPtr unsafe.Pointer, replyDat
 }
 
 //export callScopePreview
-func callScopePreview(scope Scope, resultPtr, metadataPtr unsafe.Pointer, replyData *C.uintptr_t, cancel <-chan bool) {
+func callScopePreview(scope Scope, resultPtr *C._Result, metadataPtr unsafe.Pointer, replyData *C.uintptr_t, cancel <-chan bool) {
 	result := makeResult(resultPtr)
 	metadata := makeActionMetadata(metadataPtr)
 	reply := makePreviewReply(replyData)
@@ -88,7 +88,7 @@ func callScopePreview(scope Scope, resultPtr, metadataPtr unsafe.Pointer, replyD
 }
 
 //export callScopeActivate
-func callScopeActivate(scope Scope, resultPtr, metadataPtr, responsePtr unsafe.Pointer, errorPtr **C.char) {
+func callScopeActivate(scope Scope, resultPtr *C._Result, metadataPtr, responsePtr unsafe.Pointer, errorPtr **C.char) {
 	switch s := scope.(type) {
 	case Activator:
 		result := makeResult(resultPtr)
@@ -106,7 +106,7 @@ func callScopeActivate(scope Scope, resultPtr, metadataPtr, responsePtr unsafe.P
 }
 
 //export callScopePerformAction
-func callScopePerformAction(scope Scope, resultPtr, metadataPtr unsafe.Pointer, widgetId, actionId *C.char, responsePtr unsafe.Pointer, errorPtr **C.char) {
+func callScopePerformAction(scope Scope, resultPtr *C._Result, metadataPtr unsafe.Pointer, widgetId, actionId *C.char, responsePtr unsafe.Pointer, errorPtr **C.char) {
 	switch s := scope.(type) {
 	case PerformActioner:
 		result := makeResult(resultPtr)

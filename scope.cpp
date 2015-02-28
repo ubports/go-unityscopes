@@ -73,7 +73,7 @@ void PreviewAdapter::cancelled() {
 void PreviewAdapter::run(PreviewReplyProxy const &reply) {
     callScopePreview(
         scope.goscope,
-        static_cast<void*>(new Result(result())),
+        reinterpret_cast<_Result*>(new Result(result())),
         static_cast<void*>(new ActionMetadata(action_metadata())),
         const_cast<uintptr_t*>(reinterpret_cast<const uintptr_t*>(&reply)),
         cancel_channel.get());
@@ -101,7 +101,7 @@ ActivationResponse ActivationAdapter::activate() {
     if (is_action) {
         callScopePerformAction(
             scope.goscope,
-            static_cast<void*>(new Result(result())),
+            reinterpret_cast<_Result*>(new Result(result())),
             static_cast<void*>(new ActionMetadata(action_metadata())),
             const_cast<char*>(widget_id().c_str()),
             const_cast<char*>(action_id().c_str()),
@@ -110,7 +110,7 @@ ActivationResponse ActivationAdapter::activate() {
     } else {
         callScopeActivate(
             scope.goscope,
-            static_cast<void*>(new Result(result())),
+            reinterpret_cast<_Result*>(new Result(result())),
             static_cast<void*>(new ActionMetadata(action_metadata())),
             static_cast<void*>(&response),
             &error);

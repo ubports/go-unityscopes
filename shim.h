@@ -12,8 +12,8 @@ extern "C" {
 typedef uintptr_t SharedPtrData[2];
 
 typedef void _CannedQuery;
-typedef void _Result;
-typedef void _CategorisedResult;
+typedef struct _Result _Result;
+typedef struct _Result _CategorisedResult;
 typedef void _SearchMetadata;
 typedef void _ActionMetadata;
 typedef void _ScopeBase;
