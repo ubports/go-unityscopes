@@ -11,7 +11,7 @@ import (
 
 // SearchMetadata holds additional metadata about the search request.
 type SearchMetadata struct {
-	m unsafe.Pointer
+	m *C._SearchMetadata
 }
 
 func finalizeSearchMetadata(metadata *SearchMetadata) {
@@ -21,7 +21,7 @@ func finalizeSearchMetadata(metadata *SearchMetadata) {
 	metadata.m = nil
 }
 
-func makeSearchMetadata(m unsafe.Pointer) *SearchMetadata {
+func makeSearchMetadata(m *C._SearchMetadata) *SearchMetadata {
 	metadata := new(SearchMetadata)
 	runtime.SetFinalizer(metadata, finalizeSearchMetadata)
 	metadata.m = m
@@ -79,7 +79,7 @@ func (metadata *SearchMetadata) Location() *Location {
 // ActionMetadata holds additional metadata about the preview request
 // or result activation.
 type ActionMetadata struct {
-	m unsafe.Pointer
+	m *C._ActionMetadata
 }
 
 func finalizeActionMetadata(metadata *ActionMetadata) {
@@ -89,7 +89,7 @@ func finalizeActionMetadata(metadata *ActionMetadata) {
 	metadata.m = nil
 }
 
-func makeActionMetadata(m unsafe.Pointer) *ActionMetadata {
+func makeActionMetadata(m *C._ActionMetadata) *ActionMetadata {
 	metadata := new(ActionMetadata)
 	runtime.SetFinalizer(metadata, finalizeActionMetadata)
 	metadata.m = m

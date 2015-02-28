@@ -14,8 +14,8 @@ typedef uintptr_t SharedPtrData[2];
 typedef void _CannedQuery;
 typedef struct _Result _Result;
 typedef struct _Result _CategorisedResult;
-typedef void _SearchMetadata;
-typedef void _ActionMetadata;
+typedef struct _SearchMetadata _SearchMetadata;
+typedef struct _ActionMetadata _ActionMetadata;
 typedef void _ScopeBase;
 typedef void _ActivationResponse;
 
