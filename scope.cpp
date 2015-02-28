@@ -105,14 +105,14 @@ ActivationResponse ActivationAdapter::activate() {
             reinterpret_cast<_ActionMetadata*>(new ActionMetadata(action_metadata())),
             const_cast<char*>(widget_id().c_str()),
             const_cast<char*>(action_id().c_str()),
-            static_cast<void*>(&response),
+            reinterpret_cast<_ActivationResponse*>(&response),
             &error);
     } else {
         callScopeActivate(
             scope.goscope,
             reinterpret_cast<_Result*>(new Result(result())),
             reinterpret_cast<_ActionMetadata*>(new ActionMetadata(action_metadata())),
-            static_cast<void*>(&response),
+            reinterpret_cast<_ActivationResponse*>(&response),
             &error);
     }
     if (error != nullptr) {

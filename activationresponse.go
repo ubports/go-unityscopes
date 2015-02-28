@@ -51,7 +51,7 @@ func NewActivationResponseForQuery(query *CannedQuery) *ActivationResponse {
 	}
 }
 
-func (r *ActivationResponse) update(responsePtr unsafe.Pointer) error {
+func (r *ActivationResponse) update(responsePtr *C._ActivationResponse) error {
 	if r.Status == ActivationPerformQuery {
 		C.activation_response_init_query(responsePtr, r.Query.q)
 	} else {

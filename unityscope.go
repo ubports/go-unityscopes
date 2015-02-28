@@ -88,7 +88,7 @@ func callScopePreview(scope Scope, resultPtr *C._Result, metadataPtr *C._ActionM
 }
 
 //export callScopeActivate
-func callScopeActivate(scope Scope, resultPtr *C._Result, metadataPtr *C._ActionMetadata, responsePtr unsafe.Pointer, errorPtr **C.char) {
+func callScopeActivate(scope Scope, resultPtr *C._Result, metadataPtr *C._ActionMetadata, responsePtr *C._ActivationResponse, errorPtr **C.char) {
 	switch s := scope.(type) {
 	case Activator:
 		result := makeResult(resultPtr)
@@ -106,7 +106,7 @@ func callScopeActivate(scope Scope, resultPtr *C._Result, metadataPtr *C._Action
 }
 
 //export callScopePerformAction
-func callScopePerformAction(scope Scope, resultPtr *C._Result, metadataPtr *C._ActionMetadata, widgetId, actionId *C.char, responsePtr unsafe.Pointer, errorPtr **C.char) {
+func callScopePerformAction(scope Scope, resultPtr *C._Result, metadataPtr *C._ActionMetadata, widgetId, actionId *C.char, responsePtr *C._ActivationResponse, errorPtr **C.char) {
 	switch s := scope.(type) {
 	case PerformActioner:
 		result := makeResult(resultPtr)

@@ -17,7 +17,7 @@ typedef struct _Result _CategorisedResult;
 typedef struct _SearchMetadata _SearchMetadata;
 typedef struct _ActionMetadata _ActionMetadata;
 typedef void _ScopeBase;
-typedef void _ActivationResponse;
+typedef struct _ActivationResponse _ActivationResponse;
 
 void run_scope(void *scope_name, void *runtime_config,
                void *scope_config, void *pointer_to_iface,
