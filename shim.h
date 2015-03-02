@@ -68,6 +68,7 @@ _Result *new_categorised_result(SharedPtrData category);
 void destroy_result(_Result *res);
 
 /* Result objects */
+_Result *new_result(void);
 void *result_get_attr(_Result *res, void *attr, int *length, char **error);
 void result_set_attr(_Result *res, void *attr, void *json_value, char **error);
 void result_set_intercept_activation(_Result *res);

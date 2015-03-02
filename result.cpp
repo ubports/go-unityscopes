@@ -19,6 +19,10 @@ _Result *new_categorised_result(SharedPtrData category) {
     return reinterpret_cast<_CategorisedResult*>(static_cast<Result*>(new CategorisedResult(cat)));
 }
 
+_Result *new_result() {
+    return reinterpret_cast<_Result*>(new Result);
+}
+
 void destroy_result(_Result *res) {
     delete reinterpret_cast<Result*>(res);
 }

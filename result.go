@@ -28,6 +28,10 @@ func finalizeResult(res *Result) {
 	res.result = nil
 }
 
+func newResult() *Result {
+	return makeResult(C.new_result())
+}
+
 // Get returns the named result attribute.
 //
 // The value is decoded into the variable pointed to by the second
