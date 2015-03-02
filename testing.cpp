@@ -6,6 +6,7 @@
 extern "C" {
 #include "_cgo_export.h"
 }
+#include "helpers.h"
 
 using namespace unity::scopes;
 using namespace gounityscopes::internal;
