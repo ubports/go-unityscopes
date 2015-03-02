@@ -125,7 +125,7 @@ func callScopePerformAction(scope Scope, resultPtr, metadataPtr unsafe.Pointer, 
 
 var (
 	runtimeConfig = flag.String("runtime", "", "The runtime configuration file for the Unity Scopes library")
-	scopeConfig = flag.String("scope", "", "The scope configuration file for the Unity Scopes library")
+	scopeConfig   = flag.String("scope", "", "The scope configuration file for the Unity Scopes library")
 )
 
 // ScopeBase exposes information about the scope including settings
@@ -145,23 +145,23 @@ func setScopeBase(scope Scope, b unsafe.Pointer) {
 
 // ScopeDirectory returns the directory where the scope has been installed
 func (b *ScopeBase) ScopeDirectory() string {
-	dir := C.scope_base_scope_directory(b.b);
-	defer C.free(unsafe.Pointer(dir));
-	return C.GoString(dir);
+	dir := C.scope_base_scope_directory(b.b)
+	defer C.free(unsafe.Pointer(dir))
+	return C.GoString(dir)
 }
 
 // CacheDirectory returns a directory the scope can use to store cache files
 func (b *ScopeBase) CacheDirectory() string {
-	dir := C.scope_base_cache_directory(b.b);
-	defer C.free(unsafe.Pointer(dir));
-	return C.GoString(dir);
+	dir := C.scope_base_cache_directory(b.b)
+	defer C.free(unsafe.Pointer(dir))
+	return C.GoString(dir)
 }
 
 // TmpDirectory returns a directory the scope can use to store temporary files
 func (b *ScopeBase) TmpDirectory() string {
-	dir := C.scope_base_tmp_directory(b.b);
-	defer C.free(unsafe.Pointer(dir));
-	return C.GoString(dir);
+	dir := C.scope_base_tmp_directory(b.b)
+	defer C.free(unsafe.Pointer(dir))
+	return C.GoString(dir)
 }
 
 // Settings returns the scope's settings.  The settings will be
@@ -169,8 +169,8 @@ func (b *ScopeBase) TmpDirectory() string {
 // json.Unmarshal().
 func (b *ScopeBase) Settings(value interface{}) error {
 	var length C.int
-	data := C.scope_base_settings(b.b, &length);
-	defer C.free(data);
+	data := C.scope_base_settings(b.b, &length)
+	defer C.free(data)
 	return json.Unmarshal(C.GoBytes(data, length), value)
 }
 
@@ -198,7 +198,7 @@ func Run(scope Scope) error {
 }
 
 var (
-	cancelChannels = make(map[chan bool] bool)
+	cancelChannels     = make(map[chan bool]bool)
 	cancelChannelsLock sync.Mutex
 )
 

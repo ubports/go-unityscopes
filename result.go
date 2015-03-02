@@ -18,7 +18,7 @@ func makeResult(res unsafe.Pointer) *Result {
 	result := new(Result)
 	runtime.SetFinalizer(result, finalizeResult)
 	result.result = res
-	return result;
+	return result
 }
 
 func finalizeResult(res *Result) {
