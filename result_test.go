@@ -6,7 +6,7 @@ import (
 )
 
 func (s *S) TestResultSetURI(c *C) {
-	r := scopes.NewResult()
+	r := scopes.NewTestingResult()
 	r.SetURI("http://example.com")
 	c.Check(r.URI(), Equals, "http://example.com")
 

@@ -1,7 +1,7 @@
 package scopes
 
-// These functions export some private functions for use by tests.
+// This file exports certain private functions for use by tests.
 
-func NewResult() *Result {
-	return newResult()
+func NewTestingResult() *Result {
+	return newTestingResult()
 }

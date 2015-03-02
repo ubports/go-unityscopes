@@ -68,7 +68,6 @@ _Result *new_categorised_result(SharedPtrData category);
 void destroy_result(_Result *res);
 
 /* Result objects */
-_Result *new_result(void);
 void *result_get_attr(_Result *res, void *attr, int *length, char **error);
 void result_set_attr(_Result *res, void *attr, void *json_value, char **error);
 void result_set_intercept_activation(_Result *res);
@@ -98,6 +97,10 @@ void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length
 void activation_response_init_status(_ActivationResponse *response, int status);
 void activation_response_init_query(_ActivationResponse *response, _CannedQuery *query);
 void activation_response_set_scope_data(_ActivationResponse *response, char *json_data, int json_data_length, char **error);
+
+/* Helpers for tests */
+_Result *new_testing_result(void);
+
 
 #ifdef __cplusplus
 }
