@@ -43,7 +43,7 @@ func (res *Result) Get(attr string, value interface{}) error {
 	if err := checkError(errorString); err != nil {
 		return err
 	}
-	C.free(data)
+	defer C.free(data)
 	return json.Unmarshal(C.GoBytes(data, length), value)
 }
 
