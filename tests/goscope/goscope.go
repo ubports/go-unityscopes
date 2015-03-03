@@ -2,7 +2,8 @@ package main
 
 import (
 	"log"
-	"scopes"
+	"launchpad.net/go-unityscopes/v1"
+	"fmt"
 )
 
 const searchCategoryTemplate = `{
@@ -42,12 +43,13 @@ func (s *MyScope) Preview(result *scopes.Result, metadata *scopes.ActionMetadata
 }
 
 func (s *MyScope) Search(query *scopes.CannedQuery, metadata *scopes.SearchMetadata, reply *scopes.SearchReply, cancelled <-chan bool) error {
+	fmt.Println("REPLY IS", reply)
 	root_department := s.CreateMainDepartments(query, metadata, reply)
 
 	if query.DepartmentID() == "Rock" {
-		//		root_department = s.AddRockSubdepartments(query, metadata, reply, root_department)
+//		root_department = s.AddRockSubdepartments(query, metadata, reply, root_department)
 	} else if query.DepartmentID() == "Soul" {
-		//		root_department = s.AddSoulSubdepartments(query, metadata, reply, root_department)
+//		root_department = s.AddSoulSubdepartments(query, metadata, reply, root_department)
 		//		active_dep := SearchDepartment(root_department, "Soul")
 		//		if active_dep != nil {
 		//			department, _ := scopes.NewDepartment("Motown", query, "Motown Soul")
@@ -59,8 +61,7 @@ func (s *MyScope) Search(query *scopes.CannedQuery, metadata *scopes.SearchMetad
 	}
 
 	reply.RegisterDepartments(root_department)
-
-	return s.AddEmptyQueryResults(reply)
+	return s.AddQueryResults(reply, query.QueryString())
 }
 
 func (s *MyScope) SetScopeBase(base *scopes.ScopeBase) {
@@ -125,28 +126,28 @@ func (s *MyScope) AddSoulSubdepartments(query *scopes.CannedQuery, metadata *sco
 	return root_dept
 }
 
-func (s *MyScope) AddEmptyQueryResults(reply *scopes.SearchReply) error {
+func (s *MyScope) AddQueryResults(reply *scopes.SearchReply, query string) error {
 	cat := reply.RegisterCategory("category", "Category", "", searchCategoryTemplate)
 
 	result := scopes.NewCategorisedResult(cat)
-	result.SetURI("http://localhost/")
-	result.SetDndURI("http://localhost_dnduri")
-	result.SetTitle("TEST")
+	result.SetURI("http://localhost/" + query)
+	result.SetDndURI("http://localhost_dnduri" + query)
+	result.SetTitle("TEST"+ query)
 	result.SetArt("https://pbs.twimg.com/profile_images/1117820653/5ttls5.jpg.png")
 	result.Set("test_value_bool", true)
-	result.Set("test_value_string", "test_value")
+	result.Set("test_value_string", "test_value" + query)
 	result.Set("test_value_int", 1999)
 	result.Set("test_value_float", 1.999)
 	if err := reply.Push(result); err != nil {
 		return err
 	}
 
-	result.SetURI("http://localhost2/")
-	result.SetDndURI("http://localhost_dnduri2")
+	result.SetURI("http://localhost2/" + query )
+	result.SetDndURI("http://localhost_dnduri2" + query)
 	result.SetTitle("TEST2")
 	result.SetArt("https://pbs.twimg.com/profile_images/1117820653/5ttls5.jpg.png")
 	result.Set("test_value_bool", false)
-	result.Set("test_value_string", "test_value2")
+	result.Set("test_value_string", "test_value2" + query)
 	result.Set("test_value_int", 2000)
 	result.Set("test_value_float", 2.100)
 

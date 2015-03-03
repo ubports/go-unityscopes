@@ -139,6 +139,47 @@ class ResultsTest(ScopeHarnessTestCase):
             .match(self.view.categories)
         self.assertMatchResult(match)
 
+    def test_result_data_query(self):
+        self.view.active_scope = 'goscope'
+        test_query = "test_query"
+        self.view.search_query = test_query
+
+        match = CategoryListMatcher() \
+            .has_at_least(1) \
+            .mode(CategoryListMatcherMode.BY_ID) \
+            .category(CategoryMatcher("category") \
+                    .has_at_least(1) \
+                    .mode(CategoryMatcherMode.BY_URI) \
+                    .result(ResultMatcher("http://localhost/" + test_query) \
+                    .properties({'test_value_bool': True}) \
+                    .properties({'test_value_string': "test_value" + test_query}) \
+                    .properties({'test_value_int': 1999}) \
+                    .properties({'test_value_float': 1.999}) \
+                    .dnd_uri("http://localhost_dnduri" + test_query) \
+                    .art("https://pbs.twimg.com/profile_images/1117820653/5ttls5.jpg.png") \
+                    )) \
+            .match(self.view.categories)
+        self.assertMatchResult(match)
+
+        match = CategoryListMatcher() \
+            .has_at_least(1) \
+            .mode(CategoryListMatcherMode.BY_ID) \
+            .category(CategoryMatcher("category") \
+                    .has_at_least(1) \
+                    .mode(CategoryMatcherMode.BY_URI) \
+                    .result(ResultMatcher("http://localhost2/" + test_query) \
+                    .properties({'test_value_bool': False}) \
+                    .properties({'test_value_string': "test_value2" + test_query}) \
+                    .properties({'test_value_int': 2000}) \
+                    .properties({'test_value_float': 2.1}) \
+                    .dnd_uri("http://localhost_dnduri2" + test_query) \
+                    .properties({'test_value_map': {'value1':1,'value2':'string_value'}}) \
+                    .properties({'test_value_array': [1999,"string_value"]}) \
+                    .art("https://pbs.twimg.com/profile_images/1117820653/5ttls5.jpg.png") \
+                    )) \
+            .match(self.view.categories)
+        self.assertMatchResult(match)
+
 class DepartmentsTest(ScopeHarnessTestCase):
     @classmethod
     def setUpClass(cls):
@@ -190,6 +231,38 @@ class DepartmentsTest(ScopeHarnessTestCase):
                    ) \
             .match(departments)
         )
+    def test_child_department(self):
+        self.view.active_scope = 'goscope'
+        departments = self.view.browse_department('Rock')
+        self.assertEqual(len(departments), 2)
+        # excercise different methods for getting children
+        dep = departments[0]
+        dep2 = departments.child(0)
+        dep3 = departments.children[0]
+        self.assertEqual(dep.id, dep2.id)
+        self.assertEqual(dep2.id, dep3.id)
+
+        self.assertMatchResult(DepartmentMatcher() \
+            .has_exactly(2) \
+            .label('Rock Music') \
+            .all_label('Rock Music Alt') \
+            .parent_id('') \
+            .parent_label('Browse Music') \
+            .is_root(False) \
+            .is_hidden(False) \
+            .child(ChildDepartmentMatcher('60s') \
+                   .label('Rock from the 60s') \
+                   .has_children(False) \
+                   .is_active(False) \
+                   ) \
+            .child(ChildDepartmentMatcher('70s') \
+                   .label('Rock from the 70s') \
+                   .has_children(False) \
+                   .is_active(False) \
+                   ) \
+            .match(departments)
+        )
+
 
 if __name__ == '__main__':
     unittest.main(argv = sys.argv[:1])
