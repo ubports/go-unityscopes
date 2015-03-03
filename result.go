@@ -11,10 +11,10 @@ import (
 
 // Result represents a result from the scope
 type Result struct {
-	result unsafe.Pointer
+	result *C._Result
 }
 
-func makeResult(res unsafe.Pointer) *Result {
+func makeResult(res *C._Result) *Result {
 	result := new(Result)
 	runtime.SetFinalizer(result, finalizeResult)
 	result.result = res
@@ -43,7 +43,7 @@ func (res *Result) Get(attr string, value interface{}) error {
 	if err := checkError(errorString); err != nil {
 		return err
 	}
-	C.free(data)
+	defer C.free(data)
 	return json.Unmarshal(C.GoBytes(data, length), value)
 }
 

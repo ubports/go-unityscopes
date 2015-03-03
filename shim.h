@@ -11,13 +11,13 @@ extern "C" {
 
 typedef uintptr_t SharedPtrData[2];
 
-typedef void _CannedQuery;
-typedef void _Result;
-typedef void _CategorisedResult;
-typedef void _SearchMetadata;
-typedef void _ActionMetadata;
+typedef struct _CannedQuery _CannedQuery;
+typedef struct _Result _Result;
+typedef struct _Result _CategorisedResult;
+typedef struct _SearchMetadata _SearchMetadata;
+typedef struct _ActionMetadata _ActionMetadata;
 typedef void _ScopeBase;
-typedef void _ActivationResponse;
+typedef struct _ActivationResponse _ActivationResponse;
 
 void run_scope(void *scope_name, void *runtime_config,
                void *scope_config, void *pointer_to_iface,
@@ -74,7 +74,7 @@ void result_set_intercept_activation(_Result *res);
 
 /* Department objects */
 void init_department_ptr(SharedPtrData dest, SharedPtrData src);
-void new_department(void *deptt_id, void *query, void *label, SharedPtrData dept, char **error);
+void new_department(void *deptt_id, _CannedQuery *query, void *label, SharedPtrData dept, char **error);
 void destroy_department_ptr(SharedPtrData data);
 void department_add_subdepartment(SharedPtrData dept, SharedPtrData child);
 void department_set_alternate_label(SharedPtrData dept, void *label);
@@ -106,6 +106,10 @@ void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length
 void activation_response_init_status(_ActivationResponse *response, int status);
 void activation_response_init_query(_ActivationResponse *response, _CannedQuery *query);
 void activation_response_set_scope_data(_ActivationResponse *response, char *json_data, int json_data_length, char **error);
+
+/* Helpers for tests */
+_Result *new_testing_result(void);
+
 
 #ifdef __cplusplus
 }
