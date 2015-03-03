@@ -22,7 +22,7 @@ var scope_interface scopes.Scope
 
 func SearchDepartment(root *scopes.Department, id string) *scopes.Department {
 	sub_depts := root.Subdepartments()
-	for _,element := range sub_depts {
+	for _, element := range sub_depts {
 		if element.Id() == id {
 			return element
 		}
@@ -45,21 +45,21 @@ func (s *MyScope) Search(query *scopes.CannedQuery, metadata *scopes.SearchMetad
 	root_department := s.CreateMainDepartments(query, metadata, reply)
 
 	if query.DepartmentID() == "Rock" {
-//		root_department = s.AddRockSubdepartments(query, metadata, reply, root_department)
+		//		root_department = s.AddRockSubdepartments(query, metadata, reply, root_department)
 	} else if query.DepartmentID() == "Soul" {
-//		root_department = s.AddSoulSubdepartments(query, metadata, reply, root_department)
-//		active_dep := SearchDepartment(root_department, "Soul")
-//		if active_dep != nil {
-//			department, _ := scopes.NewDepartment("Motown", query, "Motown Soul")
-//			active_dep.AddSubdepartment(department)
-//			
-//			department2, _ := scopes.NewDepartment("NewSoul", query, "New Soul")
-//			active_dep.AddSubdepartment(department2)
-//		}
+		//		root_department = s.AddSoulSubdepartments(query, metadata, reply, root_department)
+		//		active_dep := SearchDepartment(root_department, "Soul")
+		//		if active_dep != nil {
+		//			department, _ := scopes.NewDepartment("Motown", query, "Motown Soul")
+		//			active_dep.AddSubdepartment(department)
+		//
+		//			department2, _ := scopes.NewDepartment("NewSoul", query, "New Soul")
+		//			active_dep.AddSubdepartment(department2)
+		//		}
 	}
-	
+
 	reply.RegisterDepartments(root_department)
-	
+
 	return s.AddEmptyQueryResults(reply)
 }
 
@@ -70,32 +70,32 @@ func (s *MyScope) SetScopeBase(base *scopes.ScopeBase) {
 func (s *MyScope) CreateMainDepartments(query *scopes.CannedQuery, metadata *scopes.SearchMetadata, reply *scopes.SearchReply) *scopes.Department {
 	department, _ := scopes.NewDepartment("", query, "Browse Music")
 	department.SetAlternateLabel("Browse Music Alt")
-	
+
 	// ROCK MUSIC
 	department2, _ := scopes.NewDepartment("Rock", query, "Rock Music")
 	department2.SetAlternateLabel("Rock Music Alt")
 	// add Rock subdepartments
 	rock1, _ := scopes.NewDepartment("60s", query, "Rock from the 60s")
 	department2.AddSubdepartment(rock1)
-	
+
 	rock2, _ := scopes.NewDepartment("70s", query, "Rock from the 70s")
 	department2.AddSubdepartment(rock2)
 
 	// SOUL MUSIC
 	department3, _ := scopes.NewDepartment("Soul", query, "Soul Music")
 	department3.SetAlternateLabel("Soul Music Alt")
-	
+
 	// add Soul subdepartments
 	soul1, _ := scopes.NewDepartment("Motown", query, "Motown Soul")
 	department3.AddSubdepartment(soul1)
-	
+
 	soul2, _ := scopes.NewDepartment("NewSoul", query, "New Soul")
 	department3.AddSubdepartment(soul2)
-	
+
 	// Add top subdepartments
 	department.AddSubdepartment(department2)
 	department.AddSubdepartment(department3)
-	
+
 	return department
 }
 
@@ -104,11 +104,11 @@ func (s *MyScope) AddRockSubdepartments(query *scopes.CannedQuery, metadata *sco
 	if active_dep != nil {
 		department, _ := scopes.NewDepartment("60s", query, "Rock from the 60s")
 		active_dep.AddSubdepartment(department)
-		
+
 		department2, _ := scopes.NewDepartment("70s", query, "Rock from the 70s")
 		active_dep.AddSubdepartment(department2)
 	}
-	
+
 	return root_dept
 }
 
@@ -117,11 +117,11 @@ func (s *MyScope) AddSoulSubdepartments(query *scopes.CannedQuery, metadata *sco
 	if active_dep != nil {
 		department, _ := scopes.NewDepartment("Motown", query, "Motown Soul")
 		active_dep.AddSubdepartment(department)
-		
+
 		department2, _ := scopes.NewDepartment("NewSoul", query, "New Soul")
 		active_dep.AddSubdepartment(department2)
 	}
-	
+
 	return root_dept
 }
 
@@ -164,12 +164,12 @@ func (s *MyScope) AddEmptyQueryResults(reply *scopes.SearchReply) error {
 	if err := reply.Push(result); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
 func (s *MyScope) AddRockResults(query *scopes.CannedQuery, metadata *scopes.SearchMetadata, reply *scopes.SearchReply, root_dept *scopes.Department) error {
-	
+
 	cat := reply.RegisterCategory("category", "Category", "", searchCategoryTemplate)
 
 	result := scopes.NewCategorisedResult(cat)
@@ -208,7 +208,7 @@ func (s *MyScope) AddRockResults(query *scopes.CannedQuery, metadata *scopes.Sea
 	if err := reply.Push(result); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 

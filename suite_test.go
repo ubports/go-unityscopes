@@ -1,11 +1,11 @@
 package scopes_test
 
 import (
-	"testing"
 	. "gopkg.in/check.v1"
+	"testing"
 )
 
-type S struct {}
+type S struct{}
 
 func init() {
 	Suite(&S{})

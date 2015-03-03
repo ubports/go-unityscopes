@@ -35,7 +35,7 @@ func (s *S) TestDepartment(c *C) {
 
 	department.SetSubdepartments([]*scopes.Department{department2, department3})
 	subdepartments = department.Subdepartments()
-	
+
 	c.Check(len(subdepartments), Equals, 2)
 	c.Check(department.HasSubdepartments(), Equals, true)
 
@@ -47,7 +47,7 @@ func (s *S) TestDepartment(c *C) {
 	c.Check(subdepartments[1].Label(), Equals, department3.Label())
 	c.Check(subdepartments[1].AlternateLabel(), Equals, department3.AlternateLabel())
 
-	sub_depts := make([]*scopes.Department,0)
+	sub_depts := make([]*scopes.Department, 0)
 	department.SetSubdepartments(sub_depts)
 
 	subdepartments = department.Subdepartments()
@@ -55,7 +55,7 @@ func (s *S) TestDepartment(c *C) {
 	c.Check(department.HasSubdepartments(), Equals, false)
 
 	department.SetSubdepartments([]*scopes.Department{department2, department3})
-	
+
 	subdepartments = department.Subdepartments()
 	c.Check(len(subdepartments), Equals, 2)
 	c.Check(department.HasSubdepartments(), Equals, true)

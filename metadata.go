@@ -31,7 +31,7 @@ func makeSearchMetadata(m *C._SearchMetadata) *SearchMetadata {
 // NewSearchMetadata creates a new SearchMetadata with the given locale and
 // form_factor
 func NewSearchMetadata(cardinality int, locale, form_factor string) *SearchMetadata {
-	return makeSearchMetadata(C.new_search_metadata( C.int(cardinality),
+	return makeSearchMetadata(C.new_search_metadata(C.int(cardinality),
 		unsafe.Pointer(&locale),
 		unsafe.Pointer(&form_factor)))
 }
