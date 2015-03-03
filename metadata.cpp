@@ -15,6 +15,12 @@ using namespace unity::scopes;
 using namespace gounityscopes::internal;
 
 /* SearchMetadata objects */
+_SearchMetadata *new_search_metadata(int cardinality, void *locale, void *form_factor) {
+    return reinterpret_cast<_SearchMetadata*>(new SearchMetadata(cardinality,
+                                                                from_gostring(locale),
+                                                                from_gostring(form_factor)));
+}
+
 void destroy_search_metadata(_SearchMetadata *metadata) {
     delete reinterpret_cast<SearchMetadata*>(metadata);
 }

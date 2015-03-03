@@ -17,6 +17,7 @@ typedef struct _Result _CategorisedResult;
 typedef struct _SearchMetadata _SearchMetadata;
 typedef struct _ActionMetadata _ActionMetadata;
 typedef void _ScopeBase;
+
 typedef struct _ActivationResponse _ActivationResponse;
 
 void run_scope(void *scope_name, void *runtime_config,
@@ -78,9 +79,19 @@ void new_department(void *deptt_id, _CannedQuery *query, void *label, SharedPtrD
 void destroy_department_ptr(SharedPtrData data);
 void department_add_subdepartment(SharedPtrData dept, SharedPtrData child);
 void department_set_alternate_label(SharedPtrData dept, void *label);
+char *department_get_alternate_label(SharedPtrData dept);
+char *department_get_id(SharedPtrData dept);
+char *department_get_label(SharedPtrData dept);
 void department_set_has_subdepartments(SharedPtrData dept, int subdepartments);
+int department_has_subdepartments(SharedPtrData dept);
+int department_get_nb_subdepartments(SharedPtrData dept);
+//void department_get_subdepartments(SharedPtrData dept, SharedPtrData **ret_data);
+SharedPtrData * department_get_subdepartments(SharedPtrData dept, int *n_subdepts);
+void department_set_subdepartments(SharedPtrData dept, SharedPtrData **subdepartments, int nb_subdepartments);
+_CannedQuery * department_get_query(SharedPtrData dept);
 
 /* SearchMetadata objects */
+_SearchMetadata *new_search_metadata(int cardinality, void *locale, void *form_factor);
 void destroy_search_metadata(_SearchMetadata *metadata);
 char *search_metadata_get_locale(_SearchMetadata *metadata);
 char *search_metadata_get_form_factor(_SearchMetadata *metadata);

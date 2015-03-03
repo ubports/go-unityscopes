@@ -28,6 +28,14 @@ func makeSearchMetadata(m *C._SearchMetadata) *SearchMetadata {
 	return metadata
 }
 
+// NewSearchMetadata creates a new SearchMetadata with the given locale and
+// form_factor
+func NewSearchMetadata(cardinality int, locale, form_factor string) *SearchMetadata {
+	return makeSearchMetadata(C.new_search_metadata( C.int(cardinality),
+		unsafe.Pointer(&locale),
+		unsafe.Pointer(&form_factor)))
+}
+
 // Locale returns the expected locale for the search request.
 func (metadata *SearchMetadata) Locale() string {
 	locale := C.search_metadata_get_locale(metadata.m)
