@@ -11,7 +11,8 @@ import (
 // Department represents a section of the a scope's results.  A
 // department can have sub-departments.
 type Department struct {
-	d C.SharedPtrData
+	d     C.SharedPtrData
+	query *CannedQuery
 }
 
 func makeDepartment() *Department {
@@ -36,6 +37,19 @@ func NewDepartment(departmentID string, query *CannedQuery, label string) (*Depa
 	if err := checkError(errorString); err != nil {
 		return nil, err
 	}
+	dept.query = query
+	return dept, nil
+}
+
+// NewDepartment creates a new department using the given canned query.
+func NewDepartmentWithoutId(query *CannedQuery, label string) (*Department, error) {
+	dept := makeDepartment()
+	var errorString *C.char = nil
+	C.new_department(nil, query.q, unsafe.Pointer(&label), &dept.d[0], &errorString)
+	if err := checkError(errorString); err != nil {
+		return nil, err
+	}
+	dept.query = query
 	return dept, nil
 }
 

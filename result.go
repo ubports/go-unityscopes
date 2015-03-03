@@ -18,7 +18,7 @@ func makeResult(res *C._Result) *Result {
 	result := new(Result)
 	runtime.SetFinalizer(result, finalizeResult)
 	result.result = res
-	return result;
+	return result
 }
 
 func finalizeResult(res *Result) {

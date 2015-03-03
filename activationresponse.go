@@ -1,4 +1,4 @@
-package scopes;
+package scopes
 
 // #include <stdlib.h>
 // #include "shim.h"
@@ -22,8 +22,8 @@ const (
 // PerformAction() call on the scope to instruct the dash on what to
 // do next.
 type ActivationResponse struct {
-	Status ActivationStatus
-	Query *CannedQuery
+	Status    ActivationStatus
+	Query     *CannedQuery
 	ScopeData interface{}
 }
 
@@ -33,12 +33,12 @@ type ActivationResponse struct {
 // ActivationPerformQuery response: use NewActivationResponseForQuery
 // instead.
 func NewActivationResponse(status ActivationStatus) *ActivationResponse {
-	if (status == ActivationPerformQuery) {
+	if status == ActivationPerformQuery {
 		panic("Use NewActivationResponseFromQuery for PerformQuery responses")
 	}
 	return &ActivationResponse{
 		Status: status,
-		Query: nil,
+		Query:  nil,
 	}
 }
 
@@ -47,7 +47,7 @@ func NewActivationResponse(status ActivationStatus) *ActivationResponse {
 func NewActivationResponseForQuery(query *CannedQuery) *ActivationResponse {
 	return &ActivationResponse{
 		Status: ActivationPerformQuery,
-		Query: query,
+		Query:  query,
 	}
 }
 
