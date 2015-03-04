@@ -1,7 +1,7 @@
 package main
 
 import (
-	"launchpad.net/go-unityscopes/v1" 
+	"launchpad.net/go-unityscopes/v1"
 	"log"
 )
 
@@ -27,16 +27,50 @@ type MyScope struct {
 }
 
 func (s *MyScope) Preview(result *scopes.Result, metadata *scopes.ActionMetadata, reply *scopes.PreviewReply, cancelled <-chan bool) error {
-	widget := scopes.NewPreviewWidget("foo", "text")
-	widget.AddAttributeValue("text", "Hello")
-	reply.PushWidgets(widget)
+	layout1col := scopes.NewColumnLayout(1)
+	layout2col := scopes.NewColumnLayout(2)
+	layout3col := scopes.NewColumnLayout(3)
+
+	// Single column layout
+	layout1col.AddColumn([]string{"image", "header", "summary"})
+
+	// Two column layout
+	layout2col.AddColumn([]string{"image"})
+	layout2col.AddColumn([]string{"header", "summary"})
+
+	// Three cokumn layout
+	layout3col.AddColumn([]string{"image"})
+	layout3col.AddColumn([]string{"header", "summary"})
+	layout3col.AddColumn([]string{})
+
+	// Register the layouts we just created
+	reply.RegisterLayout([]*scopes.ColumnLayout{layout1col, layout2col, layout3col})
+
+	header := scopes.NewPreviewWidget("header", "header")
+
+	// It has title and a subtitle properties
+	header.AddAttributeMapping("title", "title")
+	header.AddAttributeMapping("subtitle", "subtitle")
+
+	// Define the image section
+	image := scopes.NewPreviewWidget("image", "image")
+	// It has a single source property, mapped to the result's art property
+	image.AddAttributeMapping("source", "art")
+
+	// Define the summary section
+	description := scopes.NewPreviewWidget("summary", "text")
+	// It has a text property, mapped to the result's description property
+	description.AddAttributeMapping("text", "description")
+
+	reply.PushWidgets(header, image, description)
+
 	return nil
 }
 
 func (s *MyScope) Search(query *scopes.CannedQuery, metadata *scopes.SearchMetadata, reply *scopes.SearchReply, cancelled <-chan bool) error {
 	root_department := s.CreateDepartments(query, metadata, reply)
 	reply.RegisterDepartments(root_department)
-	
+
 	return s.AddQueryResults(reply, query.QueryString())
 }
 
