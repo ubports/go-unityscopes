@@ -51,6 +51,7 @@ void preview_reply_finished(SharedPtrData reply);
 void preview_reply_error(SharedPtrData reply, void *err_string);
 void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int count, char **error);
 void preview_reply_push_attr(SharedPtrData reply, void *key, void *json_value, char **error);
+void preview_reply_register_layout(SharedPtrData reply, _ColumnLayout **layout, int n_items, char **error);
 
 /* CannedQuery objects */
 void destroy_canned_query(_CannedQuery *query);
