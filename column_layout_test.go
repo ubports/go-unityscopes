@@ -57,4 +57,9 @@ func (s *S) TestColumnLayout(c *C) {
 	// check size again
 	c.Check(layout.Size(), Equals, 3)
 	c.Check(layout.NumberOfColumns(), Equals, 3)
+
+	// check empty list
+	layout1col := scopes.NewColumnLayout(1)
+	err = layout1col.AddColumn([]string{})
+	c.Check(err, IsNil)
 }

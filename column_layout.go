@@ -45,7 +45,13 @@ func (layout *ColumnLayout) AddColumn(columns []string) error {
 		api_columns[i] = (*C._GoString)(unsafe.Pointer((&columns[i])))
 	}
 	var errorString *C.char = nil
-	C.column_layout_add_column(layout.c, (**C._GoString)(unsafe.Pointer(&api_columns[0])), C.int(len(columns)), &errorString)
+	var ptr_columns **C._GoString
+	if len(columns) > 0 {
+		ptr_columns = (**C._GoString)(unsafe.Pointer(&api_columns[0]))
+	} else {
+		ptr_columns = nil
+	}
+	C.column_layout_add_column(layout.c, ptr_columns, C.int(len(columns)), &errorString)
 
 	if err := checkError(errorString); err != nil {
 		return err
