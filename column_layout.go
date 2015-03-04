@@ -63,6 +63,7 @@ func (layout *ColumnLayout) Size() int {
 	return int(C.column_layout_size(layout.c))
 }
 
+// Column retrieves the list of widgets for given column.
 func (layout *ColumnLayout) Column(column int) ([]string, error) {
 	var (
 		length      C.int
