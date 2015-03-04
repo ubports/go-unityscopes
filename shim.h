@@ -16,7 +16,9 @@ typedef struct _Result _Result;
 typedef struct _Result _CategorisedResult;
 typedef struct _SearchMetadata _SearchMetadata;
 typedef struct _ActionMetadata _ActionMetadata;
+typedef struct _ColumnLayout _ColumnLayout;
 typedef void _ScopeBase;
+typedef struct _GoString _GoString;
 
 typedef struct _ActivationResponse _ActivationResponse;
 
@@ -108,6 +110,15 @@ void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length
 void activation_response_init_status(_ActivationResponse *response, int status);
 void activation_response_init_query(_ActivationResponse *response, _CannedQuery *query);
 void activation_response_set_scope_data(_ActivationResponse *response, char *json_data, int json_data_length, char **error);
+
+/* ColumnLayout objects */
+_ColumnLayout *new_column_layout(int num_columns);
+void destroy_column_layout(_ColumnLayout *layout);
+void column_layout_add_column(_ColumnLayout *layout, _GoString **columns, int nb_columns, char **error);
+int column_layout_number_of_columns(_ColumnLayout *layout);
+int column_layout_size(_ColumnLayout *layout);
+void *column_layout_column(_ColumnLayout *layout, int column, int *n_items, char **error);
+
 
 /* Helpers for tests */
 _Result *new_testing_result(void);
