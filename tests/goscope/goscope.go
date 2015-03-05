@@ -32,15 +32,15 @@ func (s *MyScope) Preview(result *scopes.Result, metadata *scopes.ActionMetadata
 	layout3col := scopes.NewColumnLayout(3)
 
 	// Single column layout
-	layout1col.AddColumn([]string{"image", "header", "summary"})
+	layout1col.AddColumn([]string{"image", "header", "summary", "actions"})
 
 	// Two column layout
 	layout2col.AddColumn([]string{"image"})
-	layout2col.AddColumn([]string{"header", "summary"})
+	layout2col.AddColumn([]string{"header", "summary", "actions"})
 
 	// Three cokumn layout
 	layout3col.AddColumn([]string{"image"})
-	layout3col.AddColumn([]string{"header", "summary"})
+	layout3col.AddColumn([]string{"header", "summary", "actions"})
 	layout3col.AddColumn([]string{})
 
 	// Register the layouts we just created
@@ -62,7 +62,32 @@ func (s *MyScope) Preview(result *scopes.Result, metadata *scopes.ActionMetadata
 	// It has a text property, mapped to the result's description property
 	description.AddAttributeMapping("text", "description")
 
-	reply.PushWidgets(header, image, description)
+	// build variant map.
+	tuple1 := make(map[string]interface{})
+	tuple1["id"] = "open"
+	tuple1["label"] = "Open"
+	tuple1["uri"] = "application:///tmp/non-existent.desktop"
+
+	tuple2 := make(map[string]interface{})
+	tuple1["id"] = "download"
+	tuple1["label"] = "Download"
+
+	tuple3 := make(map[string]interface{})
+	tuple1["id"] = "hide"
+	tuple1["label"] = "Hide"
+
+	actions := scopes.NewPreviewWidget("actions", "actions")
+	actions.AddAttributeValue("actions", []interface{}{tuple1, tuple2, tuple3})
+
+	var scope_data string
+	metadata.ScopeData(scope_data)
+	if len(scope_data) > 0 {
+		extra := scopes.NewPreviewWidget("extra", "text")
+		extra.AddAttributeValue("text", "test Text")
+		reply.PushWidgets(header, image, description, actions, extra)
+	} else {
+		reply.PushWidgets(header, image, description, actions)
+	}
 
 	return nil
 }

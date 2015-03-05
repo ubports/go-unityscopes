@@ -263,6 +263,68 @@ class DepartmentsTest(ScopeHarnessTestCase):
             .match(departments)
         )
 
+class PreviewTest(ScopeHarnessTestCase):
+    @classmethod
+    def setUpClass(cls):
+        copy_binary()
+        prepare_ini_file()
+        cls.harness = ScopeHarness.new_from_scope_list(Parameters([
+                    TEST_DATA_DIR + "/goscope.ini"
+            ]))
+        cls.view = cls.harness.results_view
+        cls.view.active_scope = "goscope"
+        cls.view.search_query = ""
+
+
+    def test_preview_layouts(self):
+        pview = self.view.category(0).result(0).tap()
+        self.assertIsInstance(pview, PreviewView)
+
+        pview.column_count = 3
+        self.assertMatchResult(PreviewColumnMatcher()
+                 .column(PreviewMatcher()
+                         .widget(PreviewWidgetMatcher("image")))
+                 .column(PreviewMatcher()
+                         .widget(PreviewWidgetMatcher("header"))
+                         .widget(PreviewWidgetMatcher("summary"))
+                         .widget(PreviewWidgetMatcher("actions")))
+                 .column(PreviewMatcher()
+                        ).match(pview.widgets))
+
+        pview.column_count = 2
+        self.assertMatchResult(PreviewColumnMatcher()
+                 .column(PreviewMatcher()
+                         .widget(PreviewWidgetMatcher("image")))
+                 .column(PreviewMatcher()
+                         .widget(PreviewWidgetMatcher("header"))
+                         .widget(PreviewWidgetMatcher("summary"))
+                         .widget(PreviewWidgetMatcher("actions"))
+                        ).match(pview.widgets))
+
+        pview.column_count = 1
+        self.assertMatchResult(PreviewColumnMatcher()
+                 .column(PreviewMatcher()
+                         .widget(PreviewWidgetMatcher("image"))
+                         .widget(PreviewWidgetMatcher("header"))
+                         .widget(PreviewWidgetMatcher("summary"))
+                         .widget(PreviewWidgetMatcher("actions"))
+                        ).match(pview.widgets))
+
+    def test_preview_action(self):
+        pview = self.view.category(0).result(0).tap()
+        self.assertIsInstance(pview, PreviewView)
+
+        pview.column_count = 1
+        self.assertMatchResult(PreviewColumnMatcher()
+                 .column(PreviewMatcher()
+                         .widget(PreviewWidgetMatcher("image"))
+                         .widget(PreviewWidgetMatcher("header"))
+                         .widget(PreviewWidgetMatcher("summary"))
+                         .widget(PreviewWidgetMatcher("actions"))
+                        ).match(pview.widgets))
+
+        next_view = pview.widgets_in_first_column["actions"].trigger("hide", None)
+        self.assertEqual(pview, next_view)
 
 if __name__ == '__main__':
     unittest.main(argv = sys.argv[:1])
