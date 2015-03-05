@@ -173,8 +173,8 @@ func (reply *PreviewReply) PushAttr(attr string, value interface{}) error {
 // Returns an error if RegisterLayout() is called more than once.
 func (reply *PreviewReply) RegisterLayout(layout []*ColumnLayout) error {
 	api_layout := make([]*C._ColumnLayout, len(layout))
-	for i := 0; i < len(layout); i++ {
-		api_layout[i] = layout[i].c
+	for i, l := range layout {
+		api_layout[i] = l.c
 	}
 	var errorString *C.char = nil
 	C.preview_reply_register_layout(&reply.r[0], &api_layout[0], C.int(len(api_layout)), &errorString)

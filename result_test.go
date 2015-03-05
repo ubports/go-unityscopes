@@ -72,3 +72,28 @@ func (s *S) TestResultSetComplexValue(c *C) {
 		Attr{"two"},
 	})
 }
+
+func testMarshallingThisFunction(i int) int {
+	return i
+}
+
+func (s *S) TestResultSetBadValue(c *C) {
+	type Attr struct {
+		value  int
+		value2 float64
+	}
+
+	r := scopes.NewTestingResult()
+	c.Check(r.Set("attributes", testMarshallingThisFunction), Not(Equals), nil)
+}
+
+func (s *S) TestResultGetBadValue(c *C) {
+	type Attr struct {
+		value  int
+		value2 float64
+	}
+
+	r := scopes.NewTestingResult()
+	var attr string
+	c.Check(r.Get("bad_attribute", &attr), Not(Equals), nil)
+}

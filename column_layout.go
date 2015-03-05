@@ -39,24 +39,17 @@ func NewColumnLayout(num_columns int) *ColumnLayout {
 // AddColumn adds a new column and assigns widgets to it.
 // ColumnLayout expects exactly the number of columns passed to the constructor to be created with the
 // AddColumn method.
-func (layout *ColumnLayout) AddColumn(columns []string) error {
-	api_columns := make([]*C._GoString, len(columns))
-	for i := 0; i < len(columns); i++ {
-		api_columns[i] = (*C._GoString)(unsafe.Pointer((&columns[i])))
-	}
-	var errorString *C.char = nil
-	var ptr_columns **C._GoString
-	if len(columns) > 0 {
-		ptr_columns = (**C._GoString)(unsafe.Pointer(&api_columns[0]))
+func (layout *ColumnLayout) AddColumn(widgetIds []string) error {
+	var errorString *C.char
+	var ptr_columns unsafe.Pointer
+	if len(widgetIds) > 0 {
+		ptr_columns = unsafe.Pointer(&widgetIds[0])
 	} else {
 		ptr_columns = nil
 	}
-	C.column_layout_add_column(layout.c, ptr_columns, C.int(len(columns)), &errorString)
+	C.column_layout_add_column(layout.c, ptr_columns, C.int(len(widgetIds)), &errorString)
 
-	if err := checkError(errorString); err != nil {
-		return err
-	}
-	return nil
+	return checkError(errorString)
 }
 
 // NumberOfColumns gets the number of columns expected by this layout as specified in the constructor.

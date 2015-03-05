@@ -87,7 +87,6 @@ char *department_get_id(SharedPtrData dept);
 char *department_get_label(SharedPtrData dept);
 void department_set_has_subdepartments(SharedPtrData dept, int subdepartments);
 int department_has_subdepartments(SharedPtrData dept);
-int department_get_nb_subdepartments(SharedPtrData dept);
 //void department_get_subdepartments(SharedPtrData dept, SharedPtrData **ret_data);
 SharedPtrData * department_get_subdepartments(SharedPtrData dept, int *n_subdepts);
 void department_set_subdepartments(SharedPtrData dept, SharedPtrData **subdepartments, int nb_subdepartments);
@@ -100,6 +99,7 @@ char *search_metadata_get_locale(_SearchMetadata *metadata);
 char *search_metadata_get_form_factor(_SearchMetadata *metadata);
 int search_metadata_get_cardinality(_SearchMetadata *metadata);
 void *search_metadata_get_location(_SearchMetadata *metadata, int *length);
+void search_metadata_set_location(_SearchMetadata *metadata, void *location_json, char **error);
 
 /* ActionMetadata objects */
 void destroy_action_metadata(_ActionMetadata *metadata);
@@ -115,7 +115,7 @@ void activation_response_set_scope_data(_ActivationResponse *response, char *jso
 /* ColumnLayout objects */
 _ColumnLayout *new_column_layout(int num_columns);
 void destroy_column_layout(_ColumnLayout *layout);
-void column_layout_add_column(_ColumnLayout *layout, _GoString **columns, int nb_columns, char **error);
+void column_layout_add_column(_ColumnLayout *layout, void *gostring_array_widgets, int nb_widgets, char **error);
 int column_layout_number_of_columns(_ColumnLayout *layout);
 int column_layout_size(_ColumnLayout *layout);
 void *column_layout_column(_ColumnLayout *layout, int column, int *n_items, char **error);

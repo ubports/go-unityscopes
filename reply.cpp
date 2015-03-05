@@ -115,8 +115,8 @@ void preview_reply_register_layout(SharedPtrData reply, _ColumnLayout **layout, 
         for(auto i = 0; i < n_items; ++i) {
             ColumnLayout api_layout(*(reinterpret_cast<ColumnLayout*>(layout[i])));
             api_layout_list.push_back(api_layout);
-            get_ptr<PreviewReply>(reply)->register_layout(api_layout_list);
         }
+        get_ptr<PreviewReply>(reply)->register_layout(api_layout_list);
     } catch (const std::exception &e) {
         *error = strdup(e.what());
     }

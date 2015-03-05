@@ -68,6 +68,17 @@ void *search_metadata_get_location(_SearchMetadata *metadata, int *length) {
     return as_bytes(Variant(location).serialize_json(), length);
 }
 
+void search_metadata_set_location(_SearchMetadata *metadata, void *location_json, char **error) {
+
+    try {
+        Variant value = Variant::deserialize_json(from_gostring(location_json));
+        Location location(value.get_dict());
+        reinterpret_cast<SearchMetadata*>(metadata)->set_location(location);
+    } catch (const std::exception & e) {
+        *error = strdup(e.what());
+    }
+}
+
 /* ActionMetadata objects */
 void destroy_action_metadata(_ActionMetadata *metadata) {
     delete reinterpret_cast<ActionMetadata*>(metadata);

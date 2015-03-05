@@ -57,6 +57,7 @@ func (res *Result) Set(attr string, value interface{}) error {
 		return err
 	}
 	stringValue := string(data)
+
 	var errorString *C.char = nil
 	C.result_set_attr(res.result, unsafe.Pointer(&attr), unsafe.Pointer(&stringValue), &errorString)
 	return checkError(errorString)

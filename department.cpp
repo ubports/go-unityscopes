@@ -67,9 +67,6 @@ void department_set_has_subdepartments(SharedPtrData dept, int subdepartments) {
 int department_has_subdepartments(SharedPtrData dept) {
     return static_cast<int>(get_ptr<Department>(dept)->has_subdepartments());
 }
-int department_get_nb_subdepartments(SharedPtrData dept) {
-    return  get_ptr<Department>(dept)->subdepartments().size();
-}
 
 SharedPtrData * department_get_subdepartments(SharedPtrData dept, int *n_subdepts) {
     auto subdepts = get_ptr<Department>(dept)->subdepartments();
