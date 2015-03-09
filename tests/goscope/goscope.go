@@ -210,6 +210,21 @@ func (s *MyScope) CreateDepartments(query *scopes.CannedQuery,
 
 	return department
 }
+	
+func (s *MyScope) PerformAction(result *scopes.Result, metadata *scopes.ActionMetadata, widgetId, actionId string) (*scopes.ActivationResponse, error) {
+	
+	if (widgetId == "actions" && actionId == "hide")
+    {
+        return ActivationQueryBase::UPtr(new MyActivation(result, meta));
+    }
+    else if (widget_id == "actions" && action_id == "download")
+    {
+        MyActivation* response = new MyActivation(result, meta, ActivationResponse::ShowPreview);
+        response->setExtraData(meta.scope_data());
+        return ActivationQueryBase::UPtr(response);
+    }
+    return ActivationQueryBase::UPtr(new MyActivation(result, meta, ActivationResponse::NotHandled));
+}
 
 // MAIN ************************************************************************
 

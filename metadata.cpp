@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <cstring>
+#include <iostream>
 
 #include <unity/scopes/ActionMetadata.h>
 #include <unity/scopes/SearchMetadata.h>
@@ -94,5 +95,6 @@ char *action_metadata_get_form_factor(_ActionMetadata *metadata) {
 
 void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length) {
     const std::string data = reinterpret_cast<ActionMetadata*>(metadata)->scope_data().serialize_json();
+    std::cout << "METADATA CGO: " << data << std::endl;
     return as_bytes(data, data_length);
 }

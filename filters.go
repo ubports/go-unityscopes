@@ -50,11 +50,6 @@ func (f *OptionSelectorFilter) AddOption(id, label string) {
 	})
 }
 
-// SetDisplayHints changes how the filter is displayed.
-func (f *OptionSelectorFilter) SetDisplayHints(hints FilterDisplayHints) {
-	f.DisplayHints = hints
-}
-
 func (f *OptionSelectorFilter) isValidOption(optionId string) bool {
 	for _, o := range f.Options {
 		if o.Id == optionId {
@@ -95,7 +90,9 @@ func (f *OptionSelectorFilter) UpdateState(state FilterState, optionId string, a
 	sort.Strings(selected)
 	pos := sort.SearchStrings(selected, optionId)
 	if active {
-		if pos < len(selected) && selected[pos] != optionId {
+		if pos == len(selected) {
+			selected = append(selected, optionId)
+		} else if pos < len(selected) && selected[pos] != optionId {
 			selected = append(selected[:pos], append([]string{optionId}, selected[pos:]...)...)
 		}
 	} else {
