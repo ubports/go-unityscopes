@@ -20,116 +20,114 @@ func (s *S) TestRangeInputFilter(c *C) {
 	c.Check(start, IsNil)
 	c.Check(end, IsNil)
 	c.Check(found, Equals, false)
-	
+
 	// test setting floats
 	err := filter1.UpdateState(fstate, 10.2, 100.4)
 	c.Check(err, IsNil)
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, 10.2)
 	c.Check(end, Equals, 100.4)
 	c.Check(found, Equals, true)
-	
+
 	// test setting floats with no decimals
 	err = filter1.UpdateState(fstate, 10.0, 100.0)
 	c.Check(err, IsNil)
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, 10.0)
 	c.Check(end, Equals, 100.0)
 	c.Check(found, Equals, true)
-	
-	// test setting mixed floats and integers 
+
+	// test setting mixed floats and integers
 	err = filter1.UpdateState(fstate, 10, 100.0)
 	c.Check(err, IsNil)
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, 10)
 	c.Check(end, Equals, 100.0)
 	c.Check(found, Equals, true)
-	
+
 	// test integers
 	err = filter1.UpdateState(fstate, 10, 100)
 	c.Check(err, IsNil)
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, 10)
 	c.Check(end, Equals, 100)
 	c.Check(found, Equals, true)
-	
+
 	// test integer and nil
 	err = filter1.UpdateState(fstate, nil, 100)
 	c.Check(err, IsNil)
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, nil)
 	c.Check(end, Equals, 100)
 	c.Check(found, Equals, true)
-	
+
 	// test float and nil
 	err = filter1.UpdateState(fstate, 10.4, nil)
 	c.Check(err, IsNil)
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, 10.4)
 	c.Check(end, Equals, nil)
 	c.Check(found, Equals, true)
-	
+
 	// test both nil
 	err = filter1.UpdateState(fstate, nil, nil)
 	c.Check(err, IsNil)
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, nil)
 	c.Check(end, Equals, nil)
 	c.Check(found, Equals, false)
-	
+
 	// start greater then end
 	err = filter1.UpdateState(fstate, 10, 0.6)
 	c.Check(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "RangeInputFilter::UpdateState(): start_value 10 is greater or equal to end_value 0.6 for filter f1")
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, nil)
 	c.Check(end, Equals, nil)
 	c.Check(found, Equals, false)
-	
+
 	// start equals end
 	err = filter1.UpdateState(fstate, 10, 10.0)
 	c.Check(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "RangeInputFilter::UpdateState(): start_value 10 is greater or equal to end_value 10 for filter f1")
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, nil)
 	c.Check(end, Equals, nil)
 	c.Check(found, Equals, false)
-	
+
 	// bad values
 	err = filter1.UpdateState(fstate, "", 10.0)
 	c.Check(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "RangeInputFilter:UpdateState: Bad type for start value. Valid types are int float64 and nil")
-	
+
 	err = filter1.UpdateState(fstate, 1, "")
 	c.Check(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "RangeInputFilter:UpdateState: Bad type for end value. Valid types are int float64 and nil")
-	
-	err = filter1.UpdateState(fstate, 1, []int{1,2})
+
+	err = filter1.UpdateState(fstate, 1, []int{1, 2})
 	c.Check(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "RangeInputFilter:UpdateState: Bad type for end value. Valid types are int float64 and nil")
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, nil)
 	c.Check(end, Equals, nil)
 	c.Check(found, Equals, false)
-	
+
 	// try to set values again
 	err = filter1.UpdateState(fstate, 10, 100)
 	c.Check(err, IsNil)
-	
+
 	start, end, found = filter1.Values(fstate)
 	c.Check(start, Equals, 10)
 	c.Check(end, Equals, 100)
 	c.Check(found, Equals, true)
 }
-
-

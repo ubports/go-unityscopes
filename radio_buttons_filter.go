@@ -1,9 +1,5 @@
 package scopes
 
-import (
-//	"fmt"
-)
-
 // RadioButtonsFilter is a filter that displays mutually exclusive list of options
 type RadioButtonsFilter struct {
 	filterWithOptions
