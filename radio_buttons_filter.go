@@ -5,7 +5,7 @@ type RadioButtonsFilter struct {
 	filterWithOptions
 }
 
-// NewRadioButtonsFilter creates a new option filter.
+// NewRadioButtonsFilter creates a new radio button filter.
 func NewRadioButtonsFilter(id, label string) *RadioButtonsFilter {
 	return &RadioButtonsFilter{
 		filterWithOptions: filterWithOptions{

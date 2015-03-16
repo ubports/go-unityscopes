@@ -4,7 +4,7 @@ import (
 	"sort"
 )
 
-// RatingFilter is a filter that displays mutually exclusive list of options
+// RatingFilter is a filter that allows for rating-based selection
 type RatingFilter struct {
 	filterWithOptions
 	OnIcon  string
