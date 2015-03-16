@@ -1,7 +1,6 @@
 #include <stdexcept>
 #include <cmath>
 #include <cstring>
-#include <iostream>
 
 #include <unity/scopes/ActionMetadata.h>
 #include <unity/scopes/SearchMetadata.h>
@@ -69,10 +68,10 @@ void *search_metadata_get_location(_SearchMetadata *metadata, int *length) {
     return as_bytes(Variant(location).serialize_json(), length);
 }
 
-void search_metadata_set_location(_SearchMetadata *metadata, void *location_json, char **error) {
+void search_metadata_set_location(_SearchMetadata *metadata, char *json_data, int json_data_length, char **error) {
 
     try {
-        Variant value = Variant::deserialize_json(from_gostring(location_json));
+        Variant value = Variant::deserialize_json(std::string(json_data, json_data_length));
         Location location(value.get_dict());
         reinterpret_cast<SearchMetadata*>(metadata)->set_location(location);
     } catch (const std::exception & e) {
@@ -95,6 +94,5 @@ char *action_metadata_get_form_factor(_ActionMetadata *metadata) {
 
 void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length) {
     const std::string data = reinterpret_cast<ActionMetadata*>(metadata)->scope_data().serialize_json();
-    std::cout << "METADATA CGO: " << data << std::endl;
     return as_bytes(data, data_length);
 }

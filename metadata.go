@@ -56,27 +56,19 @@ func (metadata *SearchMetadata) Cardinality() int {
 	return int(C.search_metadata_get_cardinality(metadata.m))
 }
 
-// we use this type to reimplement the marshaller interface in order to make values
-// like 1.0 not being converted as 1 (integer).
-type Float float64
-
-func (n Float) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("%f", n)), nil
-}
-
 type Location struct {
-	Latitude           Float  `json:"latitude"`
-	Longitude          Float  `json:"longitude"`
-	Altitude           Float  `json:"altitude"`
-	AreaCode           string `json:"area_code"`
-	City               string `json:"city"`
-	CountryCode        string `json:"country_code"`
-	CountryName        string `json:"country_name"`
-	HorizontalAccuracy Float  `json:"horizontal_accuracy"`
-	VerticalAccuracy   Float  `json:"vertical_accuracy"`
-	RegionCode         string `json:"region_code"`
-	RegionName         string `json:"region_name"`
-	ZipPostalCode      string `json:"zip_postal_code"`
+	Latitude           float64 `json:"latitude"`
+	Longitude          float64 `json:"longitude"`
+	Altitude           float64 `json:"altitude"`
+	AreaCode           string  `json:"area_code"`
+	City               string  `json:"city"`
+	CountryCode        string  `json:"country_code"`
+	CountryName        string  `json:"country_name"`
+	HorizontalAccuracy float64 `json:"horizontal_accuracy"`
+	VerticalAccuracy   float64 `json:"vertical_accuracy"`
+	RegionCode         string  `json:"region_code"`
+	RegionName         string  `json:"region_name"`
+	ZipPostalCode      string  `json:"zip_postal_code"`
 }
 
 func (metadata *SearchMetadata) Location() *Location {
@@ -94,14 +86,25 @@ func (metadata *SearchMetadata) Location() *Location {
 }
 
 // SetLocation sets the location
-func (metadata *SearchMetadata) SetLocation(location *Location) error {
+func (metadata *SearchMetadata) SetLocation(l *Location) error {
+	location := locationMarshal{marshalFloat(l.Latitude),
+		marshalFloat(l.Longitude),
+		marshalFloat(l.Altitude),
+		l.AreaCode,
+		l.City,
+		l.CountryCode,
+		l.CountryName,
+		marshalFloat(l.HorizontalAccuracy),
+		marshalFloat(l.VerticalAccuracy),
+		l.RegionCode,
+		l.RegionName,
+		l.ZipPostalCode}
 	data, err := json.Marshal(location)
 	if err != nil {
 		return err
 	}
-	json_value := string(data)
 	var errorString *C.char = nil
-	C.search_metadata_set_location(metadata.m, unsafe.Pointer(&json_value), &errorString)
+	C.search_metadata_set_location(metadata.m, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
 	return checkError(errorString)
 }
 
@@ -148,4 +151,29 @@ func (metadata *ActionMetadata) ScopeData(v interface{}) error {
 	scopeData := C.action_metadata_get_scope_data(metadata.m, &dataLength)
 	defer C.free(scopeData)
 	return json.Unmarshal(C.GoBytes(scopeData, dataLength), v)
+}
+
+// we use this type to reimplement the marshaller interface in order to make values
+// like 1.0 not being converted as 1 (integer).
+type marshalFloat float64
+
+func (n marshalFloat) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("%f", n)), nil
+}
+
+// the following structure is only used to control how the float64 types are
+// marshaled. It is not exported.
+type locationMarshal struct {
+	Latitude           marshalFloat `json:"latitude"`
+	Longitude          marshalFloat `json:"longitude"`
+	Altitude           marshalFloat `json:"altitude"`
+	AreaCode           string       `json:"area_code"`
+	City               string       `json:"city"`
+	CountryCode        string       `json:"country_code"`
+	CountryName        string       `json:"country_name"`
+	HorizontalAccuracy marshalFloat `json:"horizontal_accuracy"`
+	VerticalAccuracy   marshalFloat `json:"vertical_accuracy"`
+	RegionCode         string       `json:"region_code"`
+	RegionName         string       `json:"region_name"`
+	ZipPostalCode      string       `json:"zip_postal_code"`
 }

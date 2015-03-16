@@ -20,10 +20,11 @@
 This is a test of a go-bindings scope.
 """
 
-from pyscope_harness import ScopeHarness, CategoryMatcher, CategoryMatcherMode, CategoryListMatcher
-from pyscope_harness import CategoryListMatcherMode, ResultMatcher, PreviewMatcher, PreviewWidgetMatcher, PreviewColumnMatcher, PreviewView
-from pyscope_harness import Parameters, DepartmentMatcher, ChildDepartmentMatcher
-from pyscope_harness.testing import ScopeHarnessTestCase
+from scope_harness import ( ScopeHarness, CategoryMatcher, CategoryMatcherMode, CategoryListMatcher,
+                            CategoryListMatcherMode, ResultMatcher, PreviewMatcher, PreviewWidgetMatcher,
+                            PreviewColumnMatcher, PreviewView,
+                            Parameters, DepartmentMatcher, ChildDepartmentMatcher )
+from scope_harness.testing import ScopeHarnessTestCase
 import unittest
 import sys
 import os

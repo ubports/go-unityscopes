@@ -11,7 +11,7 @@ func (s *S) TestColumnLayout(c *C) {
 	c.Check(layout.Size(), Equals, 0)
 	c.Check(layout.NumberOfColumns(), Equals, 3)
 
-	err := layout.AddColumn([]string{"widget_1", "widget_2"})
+	err := layout.AddColumn("widget_1", "widget_2")
 	c.Assert(err, IsNil)
 
 	c.Check(layout.Size(), Equals, 1)
@@ -24,7 +24,7 @@ func (s *S) TestColumnLayout(c *C) {
 	c.Check(col, DeepEquals, []string{"widget_1", "widget_2"})
 
 	// add another column
-	err = layout.AddColumn([]string{"widget_3", "widget_4", "widget_5"})
+	err = layout.AddColumn("widget_3", "widget_4", "widget_5")
 	c.Assert(err, IsNil)
 
 	col, err = layout.Column(1)
@@ -38,7 +38,7 @@ func (s *S) TestColumnLayout(c *C) {
 	c.Assert(err, Not(Equals), nil)
 
 	// now add the last column
-	err = layout.AddColumn([]string{"widget_6"})
+	err = layout.AddColumn("widget_6")
 	c.Assert(err, IsNil)
 
 	col, err = layout.Column(2)
@@ -48,7 +48,7 @@ func (s *S) TestColumnLayout(c *C) {
 	c.Check(col[0], Equals, "widget_6")
 
 	// try to add more columns ... should obtain an error
-	err = layout.AddColumn([]string{"widget_3", "widget_4", "widget_5"})
+	err = layout.AddColumn("widget_3", "widget_4", "widget_5")
 	c.Assert(err, Not(Equals), nil)
 
 	// check size again
@@ -57,6 +57,6 @@ func (s *S) TestColumnLayout(c *C) {
 
 	// check empty list
 	layout1col := scopes.NewColumnLayout(1)
-	err = layout1col.AddColumn([]string{})
+	err = layout1col.AddColumn()
 	c.Check(err, IsNil)
 }

@@ -99,7 +99,7 @@ char *search_metadata_get_locale(_SearchMetadata *metadata);
 char *search_metadata_get_form_factor(_SearchMetadata *metadata);
 int search_metadata_get_cardinality(_SearchMetadata *metadata);
 void *search_metadata_get_location(_SearchMetadata *metadata, int *length);
-void search_metadata_set_location(_SearchMetadata *metadata, void *location_json, char **error);
+void search_metadata_set_location(_SearchMetadata *metadata, char *json_data, int json_data_length, char **error);
 
 /* ActionMetadata objects */
 void destroy_action_metadata(_ActionMetadata *metadata);

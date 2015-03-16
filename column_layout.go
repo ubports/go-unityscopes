@@ -39,7 +39,7 @@ func NewColumnLayout(num_columns int) *ColumnLayout {
 // AddColumn adds a new column and assigns widgets to it.
 // ColumnLayout expects exactly the number of columns passed to the constructor to be created with the
 // AddColumn method.
-func (layout *ColumnLayout) AddColumn(widgetIds []string) error {
+func (layout *ColumnLayout) AddColumn(widgetIds ...string) error {
 	var errorString *C.char
 	var ptr_columns unsafe.Pointer
 	if len(widgetIds) > 0 {
@@ -66,16 +66,16 @@ func (layout *ColumnLayout) Size() int {
 func (layout *ColumnLayout) Column(column int) ([]string, error) {
 	var (
 		length      C.int
-		errorString *C.char = nil
+		errorString *C.char
 	)
 
-	var value []string
 	data := C.column_layout_column(layout.c, C.int(column), &length, &errorString)
 	if err := checkError(errorString); err != nil {
 		return nil, err
 	}
 	defer C.free(data)
 
+	var value []string
 	err := json.Unmarshal(C.GoBytes(data, length), &value)
 
 	return value, err

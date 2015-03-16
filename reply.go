@@ -171,7 +171,7 @@ func (reply *PreviewReply) PushAttr(attr string, value interface{}) error {
 // Layouts must be registered before pushing a unity::scopes::PreviewWidgetList, and must be
 // registered only once.
 // Returns an error if RegisterLayout() is called more than once.
-func (reply *PreviewReply) RegisterLayout(layout []*ColumnLayout) error {
+func (reply *PreviewReply) RegisterLayout(layout ...*ColumnLayout) error {
 	api_layout := make([]*C._ColumnLayout, len(layout))
 	for i, l := range layout {
 		api_layout[i] = l.c
