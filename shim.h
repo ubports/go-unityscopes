@@ -107,8 +107,8 @@ void destroy_action_metadata(_ActionMetadata *metadata);
 char *action_metadata_get_locale(_ActionMetadata *metadata);
 char *action_metadata_get_form_factor(_ActionMetadata *metadata);
 void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length);
-void action_metadata_set_scope_data(_ActionMetadata *metadata, void *json_data, char **error);
-void action_metadata_set_hint(_ActionMetadata *metadata, void *key, void *json_data, char **error);
+void action_metadata_set_scope_data(_ActionMetadata *metadata, char *json_data, int json_data_length, char **error);
+void action_metadata_set_hint(_ActionMetadata *metadata, void *key, char *json_data, int json_data_length, char **error);
 void *action_metadata_get_hint(_ActionMetadata *metadata, void *key, int *data_length);
 void *action_metadata_get_hints(_ActionMetadata *metadata, int *length);
 

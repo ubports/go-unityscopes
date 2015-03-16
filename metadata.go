@@ -166,9 +166,8 @@ func (metadata *ActionMetadata) SetScopeData(v interface{}) error {
 	if err != nil {
 		return err
 	}
-	json_value := string(data)
 	var errorString *C.char = nil
-	C.action_metadata_set_scope_data(metadata.m, unsafe.Pointer(&json_value), &errorString)
+	C.action_metadata_set_scope_data(metadata.m, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
 	return checkError(errorString)
 }
 
@@ -178,9 +177,8 @@ func (metadata *ActionMetadata) SetHint(key string, value interface{}) error {
 	if err != nil {
 		return err
 	}
-	json_value := string(data)
 	var errorString *C.char = nil
-	C.action_metadata_set_hint(metadata.m, unsafe.Pointer(&key), unsafe.Pointer(&json_value), &errorString)
+	C.action_metadata_set_hint(metadata.m, unsafe.Pointer(&key), (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
 	return checkError(errorString)
 }
 

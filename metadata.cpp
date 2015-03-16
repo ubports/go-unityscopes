@@ -102,18 +102,18 @@ void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length
     return as_bytes(data, data_length);
 }
 
-void action_metadata_set_scope_data(_ActionMetadata *metadata, void *json_data, char **error) {
+void action_metadata_set_scope_data(_ActionMetadata *metadata, char *json_data, int json_data_length, char **error) {
     try {
-        Variant value = Variant::deserialize_json(from_gostring(json_data));
+        Variant value = Variant::deserialize_json(std::string(json_data, json_data_length));
         reinterpret_cast<ActionMetadata*>(metadata)->set_scope_data(value);
     } catch (const std::exception & e) {
         *error = strdup(e.what());
     }
 }
 
-void action_metadata_set_hint(_ActionMetadata *metadata, void *key, void *json_data, char **error) {
+void action_metadata_set_hint(_ActionMetadata *metadata, void *key, char *json_data, int json_data_length, char **error) {
     try {
-        Variant value = Variant::deserialize_json(from_gostring(json_data));
+        Variant value = Variant::deserialize_json(std::string(json_data, json_data_length));
         reinterpret_cast<ActionMetadata*>(metadata)->set_hint(from_gostring(key), value);
     } catch (const std::exception & e) {
         *error = strdup(e.what());
