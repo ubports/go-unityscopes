@@ -73,7 +73,7 @@ func (f *RangeInputFilter) convertToFloat(value interface{}) float64 {
 		if !ok {
 			iVal, ok := value.(int)
 			if !ok {
-				panic(fmt.Sprint("RangeInputFilter:convertToFloat unexpected type for given value %s", value))
+				panic(fmt.Sprint("RangeInputFilter:convertToFloat unexpected type for given value %v", value))
 			}
 			return float64(iVal)
 		}
