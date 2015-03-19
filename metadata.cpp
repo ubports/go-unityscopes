@@ -15,6 +15,12 @@ using namespace unity::scopes;
 using namespace gounityscopes::internal;
 
 /* SearchMetadata objects */
+_SearchMetadata *new_search_metadata(int cardinality, void *locale, void *form_factor) {
+    return reinterpret_cast<_SearchMetadata*>(new SearchMetadata(cardinality,
+                                                                from_gostring(locale),
+                                                                from_gostring(form_factor)));
+}
+
 void destroy_search_metadata(_SearchMetadata *metadata) {
     delete reinterpret_cast<SearchMetadata*>(metadata);
 }
@@ -60,6 +66,17 @@ void *search_metadata_get_location(_SearchMetadata *metadata, int *length) {
         }
     }
     return as_bytes(Variant(location).serialize_json(), length);
+}
+
+void search_metadata_set_location(_SearchMetadata *metadata, char *json_data, int json_data_length, char **error) {
+
+    try {
+        Variant value = Variant::deserialize_json(std::string(json_data, json_data_length));
+        Location location(value.get_dict());
+        reinterpret_cast<SearchMetadata*>(metadata)->set_location(location);
+    } catch (const std::exception & e) {
+        *error = strdup(e.what());
+    }
 }
 
 /* ActionMetadata objects */

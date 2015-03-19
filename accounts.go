@@ -3,19 +3,19 @@ package scopes
 type PostLoginAction int
 
 const (
-        _ = PostLoginAction(iota)
-        PostLoginDoNothing
-        PostLoginInvalidateResults
-        PostLoginContinueActivation
+	_ = PostLoginAction(iota)
+	PostLoginDoNothing
+	PostLoginInvalidateResults
+	PostLoginContinueActivation
 )
 
 type accountDetails struct {
-	ScopeID string `json:"scope_id"`
-        ServiceName string `json:"service_name"`
-        ServiceType string `json:"service_type"`
-        ProviderName string `json:"provider_name"`
-        LoginPassedAction PostLoginAction `json:"login_passed_action"`
-        LoginFailedAction PostLoginAction `json:"login_failed_action"`
+	ScopeID           string          `json:"scope_id"`
+	ServiceName       string          `json:"service_name"`
+	ServiceType       string          `json:"service_type"`
+	ProviderName      string          `json:"provider_name"`
+	LoginPassedAction PostLoginAction `json:"login_passed_action"`
+	LoginFailedAction PostLoginAction `json:"login_failed_action"`
 }
 
 // RegisterAccountLoginResult configures a result such that the dash
@@ -31,10 +31,10 @@ func RegisterAccountLoginResult(result *CategorisedResult, query *CannedQuery, s
 		}
 	}
 	return result.Set("online_account_details", accountDetails{
-		ScopeID: query.ScopeID(),
-		ServiceName: serviceName,
-		ServiceType: serviceType,
-		ProviderName: providerName,
+		ScopeID:           query.ScopeID(),
+		ServiceName:       serviceName,
+		ServiceType:       serviceType,
+		ProviderName:      providerName,
 		LoginPassedAction: passedAction,
 		LoginFailedAction: failedAction,
 	})

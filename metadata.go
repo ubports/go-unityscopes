@@ -5,6 +5,7 @@ package scopes
 import "C"
 import (
 	"encoding/json"
+	"fmt"
 	"runtime"
 	"unsafe"
 )
@@ -26,6 +27,14 @@ func makeSearchMetadata(m *C._SearchMetadata) *SearchMetadata {
 	runtime.SetFinalizer(metadata, finalizeSearchMetadata)
 	metadata.m = m
 	return metadata
+}
+
+// NewSearchMetadata creates a new SearchMetadata with the given locale and
+// form_factor
+func NewSearchMetadata(cardinality int, locale, form_factor string) *SearchMetadata {
+	return makeSearchMetadata(C.new_search_metadata(C.int(cardinality),
+		unsafe.Pointer(&locale),
+		unsafe.Pointer(&form_factor)))
 }
 
 // Locale returns the expected locale for the search request.
@@ -76,6 +85,29 @@ func (metadata *SearchMetadata) Location() *Location {
 	return &location
 }
 
+// SetLocation sets the location
+func (metadata *SearchMetadata) SetLocation(l *Location) error {
+	location := locationMarshal{marshalFloat(l.Latitude),
+		marshalFloat(l.Longitude),
+		marshalFloat(l.Altitude),
+		l.AreaCode,
+		l.City,
+		l.CountryCode,
+		l.CountryName,
+		marshalFloat(l.HorizontalAccuracy),
+		marshalFloat(l.VerticalAccuracy),
+		l.RegionCode,
+		l.RegionName,
+		l.ZipPostalCode}
+	data, err := json.Marshal(location)
+	if err != nil {
+		return err
+	}
+	var errorString *C.char = nil
+	C.search_metadata_set_location(metadata.m, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
+	return checkError(errorString)
+}
+
 // ActionMetadata holds additional metadata about the preview request
 // or result activation.
 type ActionMetadata struct {
@@ -119,4 +151,29 @@ func (metadata *ActionMetadata) ScopeData(v interface{}) error {
 	scopeData := C.action_metadata_get_scope_data(metadata.m, &dataLength)
 	defer C.free(scopeData)
 	return json.Unmarshal(C.GoBytes(scopeData, dataLength), v)
+}
+
+// we use this type to reimplement the marshaller interface in order to make values
+// like 1.0 not being converted as 1 (integer).
+type marshalFloat float64
+
+func (n marshalFloat) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("%f", n)), nil
+}
+
+// the following structure is only used to control how the float64 types are
+// marshaled. It is not exported.
+type locationMarshal struct {
+	Latitude           marshalFloat `json:"latitude"`
+	Longitude          marshalFloat `json:"longitude"`
+	Altitude           marshalFloat `json:"altitude"`
+	AreaCode           string       `json:"area_code"`
+	City               string       `json:"city"`
+	CountryCode        string       `json:"country_code"`
+	CountryName        string       `json:"country_name"`
+	HorizontalAccuracy marshalFloat `json:"horizontal_accuracy"`
+	VerticalAccuracy   marshalFloat `json:"vertical_accuracy"`
+	RegionCode         string       `json:"region_code"`
+	RegionName         string       `json:"region_name"`
+	ZipPostalCode      string       `json:"zip_postal_code"`
 }
