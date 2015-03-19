@@ -32,19 +32,19 @@ func (s *MyScope) Preview(result *scopes.Result, metadata *scopes.ActionMetadata
 	layout3col := scopes.NewColumnLayout(3)
 
 	// Single column layout
-	layout1col.AddColumn([]string{"image", "header", "summary", "actions"})
+	layout1col.AddColumn("image", "header", "summary", "actions")
 
 	// Two column layout
-	layout2col.AddColumn([]string{"image"})
-	layout2col.AddColumn([]string{"header", "summary", "actions"})
+	layout2col.AddColumn("image")
+	layout2col.AddColumn("header", "summary", "actions")
 
 	// Three cokumn layout
-	layout3col.AddColumn([]string{"image"})
-	layout3col.AddColumn([]string{"header", "summary", "actions"})
-	layout3col.AddColumn([]string{})
+	layout3col.AddColumn("image")
+	layout3col.AddColumn("header", "summary", "actions")
+	layout3col.AddColumn()
 
 	// Register the layouts we just created
-	reply.RegisterLayout([]*scopes.ColumnLayout{layout1col, layout2col, layout3col})
+	reply.RegisterLayout(layout1col, layout2col, layout3col)
 
 	header := scopes.NewPreviewWidget("header", "header")
 
@@ -209,21 +209,6 @@ func (s *MyScope) CreateDepartments(query *scopes.CannedQuery,
 	}
 
 	return department
-}
-	
-func (s *MyScope) PerformAction(result *scopes.Result, metadata *scopes.ActionMetadata, widgetId, actionId string) (*scopes.ActivationResponse, error) {
-	
-	if (widgetId == "actions" && actionId == "hide")
-    {
-        return ActivationQueryBase::UPtr(new MyActivation(result, meta));
-    }
-    else if (widget_id == "actions" && action_id == "download")
-    {
-        MyActivation* response = new MyActivation(result, meta, ActivationResponse::ShowPreview);
-        response->setExtraData(meta.scope_data());
-        return ActivationQueryBase::UPtr(response);
-    }
-    return ActivationQueryBase::UPtr(new MyActivation(result, meta, ActivationResponse::NotHandled));
 }
 
 // MAIN ************************************************************************
