@@ -5,6 +5,7 @@ package scopes
 import "C"
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"runtime"
 	"unsafe"
@@ -183,17 +184,15 @@ func (metadata *ActionMetadata) SetHint(key string, value interface{}) error {
 }
 
 // GetHint returns a hint.
-
-// If the hint does not exist it returns false, otherwise returns true and the
-// passed paramter value is filled.
-func (metadata *ActionMetadata) GetHint(key string, value interface{}) (error, bool) {
+// Returns error if the hint does not exist or if we got an error unmarshaling
+func (metadata *ActionMetadata) GetHint(key string, value interface{}) error {
 	var dataLength C.int
 	scopeData := C.action_metadata_get_hint(metadata.m, unsafe.Pointer(&key), &dataLength)
 	if dataLength > 0 {
 		defer C.free(scopeData)
-		return json.Unmarshal(C.GoBytes(scopeData, dataLength), value), true
+		return json.Unmarshal(C.GoBytes(scopeData, dataLength), value)
 	} else {
-		return nil, false
+		return errors.New(fmt.Sprintf("ActionMetadata:GetHint() value not found for key [%s]", key))
 	}
 }
 

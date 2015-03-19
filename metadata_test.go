@@ -1,9 +1,20 @@
 package scopes_test
 
 import (
+	"errors"
 	. "gopkg.in/check.v1"
 	"launchpad.net/go-unityscopes/v1"
 )
+
+type unserializable struct{}
+
+func (u *unserializable) MarshalJSON() ([]byte, error) {
+	return nil, errors.New("Can not marshal to JSON")
+}
+
+func (u *unserializable) UnmarshalJSON(data []byte) error {
+	return errors.New("Can not unmarshal from JSON")
+}
 
 func (s *S) TestMetadataBasic(c *C) {
 	metadata := scopes.NewSearchMetadata(2, "us", "phone")
@@ -32,10 +43,6 @@ func (s *S) TestSetLocation(c *C) {
 	c.Check(stored_location, DeepEquals, &location)
 }
 
-func metadata_test_bad_marshall(test int) int {
-	return test
-}
-
 func (s *S) TestActionMetadata(c *C) {
 	metadata := scopes.NewActionMetadata("us", "phone")
 
@@ -54,34 +61,20 @@ func (s *S) TestActionMetadata(c *C) {
 	c.Check(err, IsNil)
 	c.Check(scope_data, DeepEquals, []interface{}{"test1", "test2", "test3"})
 
-	err = metadata.ScopeData(metadata_test_bad_marshall)
+	// try to pass a non-pointer object
+	var errorJsonUnserialize unserializable
+	err = metadata.ScopeData(errorJsonUnserialize)
 	c.Check(err, Not(Equals), nil)
+	c.Check(err.Error(), Equals, "json: Unmarshal(non-pointer scopes_test.unserializable)")
 
-	err = metadata.SetScopeData(metadata_test_bad_marshall)
+	// try to use an unserializable object
+	// We should get an error
+	err = metadata.ScopeData(&errorJsonUnserialize)
 	c.Check(err, Not(Equals), nil)
-
-	tuple1 := make(map[string]interface{})
-	tuple1["id"] = "open"
-	tuple1["label"] = "Open"
-	tuple1["uri"] = "application:///tmp/non-existent.desktop"
-
-	tuple2 := make(map[string]interface{})
-	tuple2["id"] = "download"
-	tuple2["label"] = "Download"
-
-	tuple3 := make(map[string]interface{})
-	tuple3["id"] = "hide"
-	tuple3["label"] = "Hide"
-
-	err = metadata.SetScopeData([]interface{}{tuple1, tuple2, tuple3})
-	c.Check(err, IsNil)
-
-	err = metadata.ScopeData(&scope_data)
-	c.Check(err, IsNil)
-	c.Check(scope_data, DeepEquals, []interface{}{tuple1, tuple2, tuple3})
+	c.Check(err.Error(), Equals, "Can not unmarshal from JSON")
 }
 
-func (s *S) TestHints(c *C) {
+func (s *S) TestActionMetadataHints(c *C) {
 	metadata := scopes.NewActionMetadata("us", "phone")
 
 	var value interface{}
@@ -94,14 +87,13 @@ func (s *S) TestHints(c *C) {
 	err = metadata.SetHint("test_1", "value_1")
 	c.Check(err, IsNil)
 
-	err, ok := metadata.GetHint("test_1", &value)
+	err = metadata.GetHint("test_1", &value)
 	c.Check(err, IsNil)
-	c.Check(ok, Equals, true)
 	c.Check(value, Equals, "value_1")
 
-	err, ok = metadata.GetHint("test_1_not_exists", &value)
-	c.Check(err, IsNil)
-	c.Check(ok, Equals, false)
+	err = metadata.GetHint("test_1_not_exists", &value)
+	c.Check(err, Not(Equals), nil)
+	c.Check(err.Error(), Equals, "ActionMetadata:GetHint() value not found for key [test_1_not_exists]")
 
 	err = metadata.Hints(&value)
 	expected_results := make(map[string]interface{})
@@ -124,9 +116,18 @@ func (s *S) TestHints(c *C) {
 	c.Check(err, IsNil)
 	c.Check(expected_results, DeepEquals, value)
 
-	err = metadata.Hints(metadata_test_bad_marshall)
+	// pass non-pointer
+	var errorJsonUnserialize unserializable
+	err = metadata.Hints(errorJsonUnserialize)
 	c.Check(err, Not(Equals), nil)
+	c.Check(err.Error(), Equals, "json: Unmarshal(non-pointer scopes_test.unserializable)")
 
-	err = metadata.SetHint("bad_hint", metadata_test_bad_marshall)
+	// pass non-serializable object
+	err = metadata.Hints(&errorJsonUnserialize)
 	c.Check(err, Not(Equals), nil)
+	c.Check(err.Error(), Equals, "Can not unmarshal from JSON")
+
+	err = metadata.SetHint("bad_hint", &errorJsonUnserialize)
+	c.Check(err, Not(Equals), nil)
+	c.Check(err.Error(), Equals, "json: error calling MarshalJSON for type *scopes_test.unserializable: Can not marshal to JSON")
 }
