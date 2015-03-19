@@ -6,6 +6,7 @@
 extern "C" {
 #include "_cgo_export.h"
 }
+#include "version.h"
 #include "helpers.h"
 #include "smartptr_helper.h"
 #include "scope.h"
