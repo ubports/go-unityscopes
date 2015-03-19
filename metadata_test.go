@@ -1,20 +1,9 @@
 package scopes_test
 
 import (
-	"errors"
 	. "gopkg.in/check.v1"
 	"launchpad.net/go-unityscopes/v1"
 )
-
-type unserializable struct{}
-
-func (u *unserializable) MarshalJSON() ([]byte, error) {
-	return nil, errors.New("Can not marshal to JSON")
-}
-
-func (u *unserializable) UnmarshalJSON(data []byte) error {
-	return errors.New("Can not unmarshal from JSON")
-}
 
 func (s *S) TestMetadataBasic(c *C) {
 	metadata := scopes.NewSearchMetadata(2, "us", "phone")
