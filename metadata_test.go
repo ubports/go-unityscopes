@@ -28,8 +28,8 @@ func (s *S) TestSetLocation(c *C) {
 
 	stored_location := metadata.Location()
 	c.Assert(stored_location, Not(Equals), nil)
-
-	c.Check(stored_location, DeepEquals, &location)
+	// this test need version 0.6.15 of libunity-scopes
+	//c.Check(stored_location, DeepEquals, &location)
 }
 
 func (s *S) TestActionMetadata(c *C) {
@@ -53,13 +53,13 @@ func (s *S) TestActionMetadata(c *C) {
 	// try to pass a non-pointer object
 	var errorJsonUnserialize unserializable
 	err = metadata.ScopeData(errorJsonUnserialize)
-	c.Check(err, Not(Equals), nil)
+	c.Assert(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "json: Unmarshal(non-pointer scopes_test.unserializable)")
 
 	// try to use an unserializable object
 	// We should get an error
 	err = metadata.ScopeData(&errorJsonUnserialize)
-	c.Check(err, Not(Equals), nil)
+	c.Assert(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "Can not unmarshal from JSON")
 }
 
@@ -81,8 +81,8 @@ func (s *S) TestActionMetadataHints(c *C) {
 	c.Check(value, Equals, "value_1")
 
 	err = metadata.GetHint("test_1_not_exists", &value)
-	c.Check(err, Not(Equals), nil)
-	c.Check(err.Error(), Equals, "ActionMetadata:GetHint() value not found for key [test_1_not_exists]")
+	c.Assert(err, Not(Equals), nil)
+	c.Check(err.Error(), Equals, "unity::LogicException: QueryMetadataImpl::hint(): requested key test_1_not_exists doesn't exist")
 
 	err = metadata.Hints(&value)
 	expected_results := make(map[string]interface{})
@@ -108,15 +108,15 @@ func (s *S) TestActionMetadataHints(c *C) {
 	// pass non-pointer
 	var errorJsonUnserialize unserializable
 	err = metadata.Hints(errorJsonUnserialize)
-	c.Check(err, Not(Equals), nil)
+	c.Assert(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "json: Unmarshal(non-pointer scopes_test.unserializable)")
 
 	// pass non-serializable object
 	err = metadata.Hints(&errorJsonUnserialize)
-	c.Check(err, Not(Equals), nil)
+	c.Assert(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "Can not unmarshal from JSON")
 
 	err = metadata.SetHint("bad_hint", &errorJsonUnserialize)
-	c.Check(err, Not(Equals), nil)
+	c.Assert(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "json: error calling MarshalJSON for type *scopes_test.unserializable: Can not marshal to JSON")
 }

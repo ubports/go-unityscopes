@@ -5,7 +5,6 @@ package scopes
 import "C"
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"runtime"
 	"unsafe"
@@ -104,7 +103,7 @@ func (metadata *SearchMetadata) SetLocation(l *Location) error {
 	if err != nil {
 		return err
 	}
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.search_metadata_set_location(metadata.m, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
 	return checkError(errorString)
 }
@@ -167,7 +166,7 @@ func (metadata *ActionMetadata) SetScopeData(v interface{}) error {
 	if err != nil {
 		return err
 	}
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.action_metadata_set_scope_data(metadata.m, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
 	return checkError(errorString)
 }
@@ -178,7 +177,7 @@ func (metadata *ActionMetadata) SetHint(key string, value interface{}) error {
 	if err != nil {
 		return err
 	}
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.action_metadata_set_hint(metadata.m, unsafe.Pointer(&key), (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
 	return checkError(errorString)
 }
@@ -187,12 +186,13 @@ func (metadata *ActionMetadata) SetHint(key string, value interface{}) error {
 // Returns error if the hint does not exist or if we got an error unmarshaling
 func (metadata *ActionMetadata) GetHint(key string, value interface{}) error {
 	var dataLength C.int
-	scopeData := C.action_metadata_get_hint(metadata.m, unsafe.Pointer(&key), &dataLength)
-	if dataLength > 0 {
+	var errorString *C.char
+	scopeData := C.action_metadata_get_hint(metadata.m, unsafe.Pointer(&key), &dataLength, &errorString)
+	if dataLength > 0 && errorString == nil {
 		defer C.free(scopeData)
 		return json.Unmarshal(C.GoBytes(scopeData, dataLength), value)
 	} else {
-		return errors.New(fmt.Sprintf("ActionMetadata:GetHint() value not found for key [%s]", key))
+		return checkError(errorString)
 	}
 }
 

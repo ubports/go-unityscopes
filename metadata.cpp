@@ -120,7 +120,7 @@ void action_metadata_set_hint(_ActionMetadata *metadata, void *key, char *json_d
     }
 }
 
-void *action_metadata_get_hint(_ActionMetadata *metadata, void *key, int *data_length) {
+void *action_metadata_get_hint(_ActionMetadata *metadata, void *key, int *data_length, char **error) {
     try {
         ActionMetadata const*api_metadata = reinterpret_cast<ActionMetadata const*>(metadata);
         Variant value = (*api_metadata)[from_gostring(key)];
@@ -128,6 +128,7 @@ void *action_metadata_get_hint(_ActionMetadata *metadata, void *key, int *data_l
         return as_bytes(data, data_length);
     } catch (const std::exception & e) {
         *data_length = 0;
+        *error = strdup(e.what());
         return 0;
     }
 }

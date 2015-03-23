@@ -9,7 +9,7 @@ import (
 // The following type is used only for testing unserializable cases
 type unserializable struct{}
 
-func (u *unserializable) MarshalJSON() ([]byte, error) {
+func (u unserializable) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("Can not marshal to JSON")
 }
 
