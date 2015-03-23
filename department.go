@@ -23,7 +23,7 @@ func makeDepartment() *Department {
 // NewDepartment creates a new department using the given canned query.
 func NewDepartment(departmentID string, query *CannedQuery, label string) (*Department, error) {
 	dept := makeDepartment()
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.new_department(unsafe.Pointer(&departmentID), query.q, unsafe.Pointer(&label), &dept.d[0], &errorString)
 
 	if err := checkError(errorString); err != nil {

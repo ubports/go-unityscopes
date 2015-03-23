@@ -103,7 +103,7 @@ func (metadata *SearchMetadata) SetLocation(l *Location) error {
 	if err != nil {
 		return err
 	}
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.search_metadata_set_location(metadata.m, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
 	return checkError(errorString)
 }

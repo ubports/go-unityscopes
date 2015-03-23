@@ -192,7 +192,7 @@ func Run(scope Scope) error {
 	}
 	scopeId := base[:len(base)-len(".ini")]
 
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.run_scope(unsafe.Pointer(&scopeId), unsafe.Pointer(runtimeConfig), unsafe.Pointer(scopeConfig), unsafe.Pointer(&scope), &errorString)
 	return checkError(errorString)
 }

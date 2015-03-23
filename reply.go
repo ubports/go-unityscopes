@@ -72,7 +72,7 @@ func (reply *SearchReply) RegisterDepartments(parent *Department) {
 
 // Push sends a search result to the client.
 func (reply *SearchReply) Push(result *CategorisedResult) error {
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.search_reply_push(&reply.r[0], result.result, &errorString)
 	return checkError(errorString)
 }
@@ -94,7 +94,7 @@ func (reply *SearchReply) PushFilters(filters []Filter, state FilterState) error
 	} else {
 		return err
 	}
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.search_reply_push_filters(&reply.r[0], unsafe.Pointer(&filtersJson), unsafe.Pointer(&stateJson), &errorString)
 	return checkError(errorString)
 }
@@ -144,7 +144,7 @@ func (reply *PreviewReply) PushWidgets(widgets ...PreviewWidget) error {
 		}
 		widget_data[i] = string(data)
 	}
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.preview_reply_push_widgets(&reply.r[0], unsafe.Pointer(&widget_data[0]), C.int(len(widget_data)), &errorString)
 	return checkError(errorString)
 }
@@ -161,7 +161,7 @@ func (reply *PreviewReply) PushAttr(attr string, value interface{}) error {
 		return err
 	}
 	json_value := string(data)
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.preview_reply_push_attr(&reply.r[0], unsafe.Pointer(&attr), unsafe.Pointer(&json_value), &errorString)
 	return checkError(errorString)
 }
@@ -176,7 +176,7 @@ func (reply *PreviewReply) RegisterLayout(layout ...*ColumnLayout) error {
 	for i, l := range layout {
 		api_layout[i] = l.c
 	}
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.preview_reply_register_layout(&reply.r[0], &api_layout[0], C.int(len(api_layout)), &errorString)
 	return checkError(errorString)
 }
