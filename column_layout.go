@@ -44,8 +44,6 @@ func (layout *ColumnLayout) AddColumn(widgetIds ...string) error {
 	var ptr_columns unsafe.Pointer
 	if len(widgetIds) > 0 {
 		ptr_columns = unsafe.Pointer(&widgetIds[0])
-	} else {
-		ptr_columns = nil
 	}
 	C.column_layout_add_column(layout.c, ptr_columns, C.int(len(widgetIds)), &errorString)
 

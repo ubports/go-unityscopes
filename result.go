@@ -37,7 +37,7 @@ func finalizeResult(res *Result) {
 func (res *Result) Get(attr string, value interface{}) error {
 	var (
 		length      C.int
-		errorString *C.char = nil
+		errorString *C.char
 	)
 	data := C.result_get_attr(res.result, unsafe.Pointer(&attr), &length, &errorString)
 	if err := checkError(errorString); err != nil {
@@ -58,7 +58,7 @@ func (res *Result) Set(attr string, value interface{}) error {
 	}
 	stringValue := string(data)
 
-	var errorString *C.char = nil
+	var errorString *C.char
 	C.result_set_attr(res.result, unsafe.Pointer(&attr), unsafe.Pointer(&stringValue), &errorString)
 	return checkError(errorString)
 }

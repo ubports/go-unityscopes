@@ -62,7 +62,7 @@ func (r *ActivationResponse) update(responsePtr *C._ActivationResponse) error {
 		if err != nil {
 			return err
 		}
-		var errorString *C.char = nil
+		var errorString *C.char
 		C.activation_response_set_scope_data(responsePtr, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
 		if err = checkError(errorString); err != nil {
 			return err
