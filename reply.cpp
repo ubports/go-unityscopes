@@ -56,7 +56,7 @@ void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **e
 
 void search_reply_push_filters(SharedPtrData reply, void *filters_json, void *filter_state_json, char **error) {
 #if (UNITY_SCOPES_VERSION_MAJOR == 0 && UNITY_SCOPES_VERSION_MINOR == 6 && UNITY_SCOPES_VERSION_MICRO == 9)
-    #warning "This feature is only available from version 0.9.10 of libunity-scopes"
+    *error = strdup("This feature is only available from version 0.9.10 of libunity-scopes");
 #else
     try {
         Variant filters_var = Variant::deserialize_json(from_gostring(filters_json));

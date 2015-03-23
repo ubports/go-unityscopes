@@ -7,6 +7,9 @@ import (
 	"encoding/json"
 	"runtime"
 	"unsafe"
+	"strings"
+	"log"
+	"errors"
 )
 
 // SearchReply is used to send results of search queries to the client.
@@ -96,7 +99,7 @@ func (reply *SearchReply) PushFilters(filters []Filter, state FilterState) error
 	}
 	var errorString *C.char = nil
 	C.search_reply_push_filters(&reply.r[0], unsafe.Pointer(&filtersJson), unsafe.Pointer(&stateJson), &errorString)
-	return checkError(errorString)
+	return checkReplyErrorAndAvailability("SearchReply:PushFilters", errorString)
 }
 
 // PreviewReply is used to send result previews to the client.
@@ -179,4 +182,16 @@ func (reply *PreviewReply) RegisterLayout(layout ...*ColumnLayout) error {
 	var errorString *C.char = nil
 	C.preview_reply_register_layout(&reply.r[0], &api_layout[0], C.int(len(api_layout)), &errorString)
 	return checkError(errorString)
+}
+
+func checkReplyErrorAndAvailability(functionName string, errorString *C.char) (err error) {
+	if errorString != nil {
+		message := C.GoString(errorString)
+		C.free(unsafe.Pointer(errorString))
+		if strings.Contains(message, "only available from version 0.9.10") {
+			log.Println(functionName + ": " + message)
+		}
+		err = errors.New(message)
+	}
+	return
 }
