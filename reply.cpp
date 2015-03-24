@@ -1,5 +1,7 @@
 #include <stdexcept>
 #include <cstring>
+#include <iostream>
+#include <sstream>
 
 #include <unity/scopes/PreviewReply.h>
 #include <unity/scopes/SearchReply.h>
@@ -55,8 +57,14 @@ void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **e
 }
 
 void search_reply_push_filters(SharedPtrData reply, void *filters_json, void *filter_state_json, char **error) {
-#if (UNITY_SCOPES_VERSION_MAJOR == 0 && UNITY_SCOPES_VERSION_MINOR == 6 && UNITY_SCOPES_VERSION_MICRO == 9)
-    *error = strdup("This feature is only available from version 0.9.10 of libunity-scopes");
+#if UNITY_SCOPES_VERSION_MAJOR == 0 && (UNITY_SCOPES_VERSION_MINOR < 6 || (UNITY_SCOPES_VERSION_MINOR == 6 && UNITY_SCOPES_VERSION_MICRO < 10))
+    std::ostringstream sErrorMess;
+    sErrorMess << "SearchReply:PushFilters() is only available for versions greater than 0.6.9 of libunity-scopes-dev. Version installed: "
+                << UNITY_SCOPES_VERSION_MAJOR << "."
+                << UNITY_SCOPES_VERSION_MINOR << "."
+                << UNITY_SCOPES_VERSION_MICRO << ".";
+    *error = strdup(sErrorMess.str().c_str());
+    std::cerr << sErrorMess.str() << std::endl;
 #else
     try {
         Variant filters_var = Variant::deserialize_json(from_gostring(filters_json));
