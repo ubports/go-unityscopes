@@ -56,9 +56,9 @@ type PerformActioner interface {
 }
 
 //export callScopeSearch
-func callScopeSearch(scope Scope, queryPtr *C._CannedQuery, metadataPtr *C._SearchMetadata, replyData *C.uintptr_t, cancel <-chan bool) {
-	query := makeCannedQuery(queryPtr)
-	metadata := makeSearchMetadata(metadataPtr)
+func callScopeSearch(scope Scope, queryPtr, metadataPtr unsafe.Pointer, replyData *C.uintptr_t, cancel <-chan bool) {
+	query := makeCannedQuery((*C._CannedQuery)(queryPtr))
+	metadata := makeSearchMetadata((*C._SearchMetadata)(metadataPtr))
 	reply := makeSearchReply(replyData)
 
 	go func() {
@@ -72,9 +72,9 @@ func callScopeSearch(scope Scope, queryPtr *C._CannedQuery, metadataPtr *C._Sear
 }
 
 //export callScopePreview
-func callScopePreview(scope Scope, resultPtr *C._Result, metadataPtr *C._ActionMetadata, replyData *C.uintptr_t, cancel <-chan bool) {
-	result := makeResult(resultPtr)
-	metadata := makeActionMetadata(metadataPtr)
+func callScopePreview(scope Scope, resultPtr, metadataPtr unsafe.Pointer, replyData *C.uintptr_t, cancel <-chan bool) {
+	result := makeResult((*C._Result)(resultPtr))
+	metadata := makeActionMetadata((*C._ActionMetadata)(metadataPtr))
 	reply := makePreviewReply(replyData)
 
 	go func() {
@@ -88,14 +88,14 @@ func callScopePreview(scope Scope, resultPtr *C._Result, metadataPtr *C._ActionM
 }
 
 //export callScopeActivate
-func callScopeActivate(scope Scope, resultPtr *C._Result, metadataPtr *C._ActionMetadata, responsePtr *C._ActivationResponse, errorPtr **C.char) {
+func callScopeActivate(scope Scope, resultPtr, metadataPtr, responsePtr unsafe.Pointer, errorPtr **C.char) {
 	switch s := scope.(type) {
 	case Activator:
-		result := makeResult(resultPtr)
-		metadata := makeActionMetadata(metadataPtr)
+		result := makeResult((*C._Result)(resultPtr))
+		metadata := makeActionMetadata((*C._ActionMetadata)(metadataPtr))
 		response, err := s.Activate(result, metadata)
 		if err == nil {
-			err = response.update(responsePtr)
+			err = response.update((*C._ActivationResponse)(responsePtr))
 		}
 		if err != nil {
 			*errorPtr = C.CString(err.Error())
@@ -106,14 +106,14 @@ func callScopeActivate(scope Scope, resultPtr *C._Result, metadataPtr *C._Action
 }
 
 //export callScopePerformAction
-func callScopePerformAction(scope Scope, resultPtr *C._Result, metadataPtr *C._ActionMetadata, widgetId, actionId *C.char, responsePtr *C._ActivationResponse, errorPtr **C.char) {
+func callScopePerformAction(scope Scope, resultPtr, metadataPtr unsafe.Pointer, widgetId, actionId *C.char, responsePtr unsafe.Pointer, errorPtr **C.char) {
 	switch s := scope.(type) {
 	case PerformActioner:
-		result := makeResult(resultPtr)
-		metadata := makeActionMetadata(metadataPtr)
+		result := makeResult((*C._Result)(resultPtr))
+		metadata := makeActionMetadata((*C._ActionMetadata)(metadataPtr))
 		response, err := s.PerformAction(result, metadata, C.GoString(widgetId), C.GoString(actionId))
 		if err == nil {
-			err = response.update(responsePtr)
+			err = response.update((*C._ActivationResponse)(responsePtr))
 		}
 		if err != nil {
 			*errorPtr = C.CString(err.Error())
