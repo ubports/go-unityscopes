@@ -121,6 +121,13 @@ func finalizeActionMetadata(metadata *ActionMetadata) {
 	metadata.m = nil
 }
 
+// NewActionMetadata creates a new ActionMetadata with the given locale and
+// form_factor
+func NewActionMetadata(locale, form_factor string) *ActionMetadata {
+	return makeActionMetadata(C.new_action_metadata(unsafe.Pointer(&locale),
+		unsafe.Pointer(&form_factor)))
+}
+
 func makeActionMetadata(m *C._ActionMetadata) *ActionMetadata {
 	metadata := new(ActionMetadata)
 	runtime.SetFinalizer(metadata, finalizeActionMetadata)
@@ -151,6 +158,53 @@ func (metadata *ActionMetadata) ScopeData(v interface{}) error {
 	scopeData := C.action_metadata_get_scope_data(metadata.m, &dataLength)
 	defer C.free(scopeData)
 	return json.Unmarshal(C.GoBytes(scopeData, dataLength), v)
+}
+
+// SetScopeData attaches arbitrary data to this ActionMetadata.
+func (metadata *ActionMetadata) SetScopeData(v interface{}) error {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	var errorString *C.char
+	C.action_metadata_set_scope_data(metadata.m, (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
+	return checkError(errorString)
+}
+
+// SetHint sets a hint.
+func (metadata *ActionMetadata) SetHint(key string, value interface{}) error {
+	data, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+	var errorString *C.char
+	C.action_metadata_set_hint(metadata.m, unsafe.Pointer(&key), (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
+	return checkError(errorString)
+}
+
+// Hint returns a hint.
+// Returns error if the hint does not exist or if we got an error unmarshaling
+func (metadata *ActionMetadata) Hint(key string, value interface{}) error {
+	var dataLength C.int
+	var errorString *C.char
+	scopeData := C.action_metadata_get_hint(metadata.m, unsafe.Pointer(&key), &dataLength, &errorString)
+	if dataLength > 0 && errorString == nil {
+		defer C.free(scopeData)
+		return json.Unmarshal(C.GoBytes(scopeData, dataLength), value)
+	} else {
+		return checkError(errorString)
+	}
+}
+
+// Hints gets all hints.
+func (metadata *ActionMetadata) Hints(value interface{}) error {
+	var length C.int
+	data := C.action_metadata_get_hints(metadata.m, &length)
+	if data == nil {
+		return nil
+	}
+	defer C.free(data)
+	return json.Unmarshal(C.GoBytes(data, length), value)
 }
 
 // we use this type to reimplement the marshaller interface in order to make values
