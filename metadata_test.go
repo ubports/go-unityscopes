@@ -13,6 +13,11 @@ func (s *S) TestMetadataBasic(c *C) {
 	c.Check(metadata.FormFactor(), Equals, "phone")
 	c.Check(metadata.Cardinality(), Equals, 2)
 	c.Check(metadata.Location(), IsNil)
+	c.Check(metadata.InternetConnectivity(), Equals, scopes.ConnectivityStatusUnknown)
+	metadata.SetInternetConnectivity(scopes.ConnectivityStatusConnected)
+	c.Check(metadata.InternetConnectivity(), Equals, scopes.ConnectivityStatusConnected)
+	metadata.SetInternetConnectivity(scopes.ConnectivityStatusDisconnected)
+	c.Check(metadata.InternetConnectivity(), Equals, scopes.ConnectivityStatusDisconnected)
 }
 
 func (s *S) TestSetLocation(c *C) {
@@ -38,6 +43,12 @@ func (s *S) TestActionMetadata(c *C) {
 	// basic check
 	c.Check(metadata.Locale(), Equals, "us")
 	c.Check(metadata.FormFactor(), Equals, "phone")
+
+	c.Check(metadata.InternetConnectivity(), Equals, scopes.ConnectivityStatusUnknown)
+	metadata.SetInternetConnectivity(scopes.ConnectivityStatusConnected)
+	c.Check(metadata.InternetConnectivity(), Equals, scopes.ConnectivityStatusConnected)
+	metadata.SetInternetConnectivity(scopes.ConnectivityStatusDisconnected)
+	c.Check(metadata.InternetConnectivity(), Equals, scopes.ConnectivityStatusDisconnected)
 
 	var scope_data interface{}
 	metadata.ScopeData(&scope_data)

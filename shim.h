@@ -16,6 +16,7 @@ typedef struct _Result _Result;
 typedef struct _Result _CategorisedResult;
 typedef struct _SearchMetadata _SearchMetadata;
 typedef struct _ActionMetadata _ActionMetadata;
+typedef struct _QueryMetadata _QueryMetadata;
 typedef struct _ColumnLayout _ColumnLayout;
 typedef void _ScopeBase;
 typedef struct _GoString _GoString;
@@ -92,11 +93,15 @@ SharedPtrData * department_get_subdepartments(SharedPtrData dept, int *n_subdept
 void department_set_subdepartments(SharedPtrData dept, SharedPtrData **subdepartments, int nb_subdepartments);
 _CannedQuery * department_get_query(SharedPtrData dept);
 
+/* QueryMetadata objects */
+char *query_metadata_get_locale(_QueryMetadata *metadata);
+char *query_metadata_get_form_factor(_QueryMetadata *metadata);
+void query_metadata_set_internet_connectivity(_QueryMetadata *metadata, int status);
+int query_metadata_get_internet_connectivity(_QueryMetadata *metadata);
+
 /* SearchMetadata objects */
 _SearchMetadata *new_search_metadata(int cardinality, void *locale, void *form_factor);
 void destroy_search_metadata(_SearchMetadata *metadata);
-char *search_metadata_get_locale(_SearchMetadata *metadata);
-char *search_metadata_get_form_factor(_SearchMetadata *metadata);
 int search_metadata_get_cardinality(_SearchMetadata *metadata);
 void *search_metadata_get_location(_SearchMetadata *metadata, int *length);
 void search_metadata_set_location(_SearchMetadata *metadata, char *json_data, int json_data_length, char **error);
@@ -104,8 +109,6 @@ void search_metadata_set_location(_SearchMetadata *metadata, char *json_data, in
 /* ActionMetadata objects */
 _ActionMetadata *new_action_metadata(void *locale, void *form_factor);
 void destroy_action_metadata(_ActionMetadata *metadata);
-char *action_metadata_get_locale(_ActionMetadata *metadata);
-char *action_metadata_get_form_factor(_ActionMetadata *metadata);
 void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length);
 void action_metadata_set_scope_data(_ActionMetadata *metadata, char *json_data, int json_data_length, char **error);
 void action_metadata_set_hint(_ActionMetadata *metadata, void *key, char *json_data, int json_data_length, char **error);

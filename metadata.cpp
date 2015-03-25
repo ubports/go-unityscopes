@@ -25,8 +25,8 @@ void destroy_search_metadata(_SearchMetadata *metadata) {
     delete reinterpret_cast<SearchMetadata*>(metadata);
 }
 
-char *search_metadata_get_locale(_SearchMetadata *metadata) {
-    auto m = reinterpret_cast<SearchMetadata*>(metadata);
+char *query_metadata_get_locale(_QueryMetadata *metadata) {
+    auto m = reinterpret_cast<QueryMetadata*>(metadata);
     try {
         return strdup(m->locale().c_str());
     } catch (const NotFoundException &) {
@@ -34,13 +34,21 @@ char *search_metadata_get_locale(_SearchMetadata *metadata) {
     }
 }
 
-char *search_metadata_get_form_factor(_SearchMetadata *metadata) {
-    auto m = reinterpret_cast<SearchMetadata*>(metadata);
+char *query_metadata_get_form_factor(_QueryMetadata *metadata) {
+    auto m = reinterpret_cast<QueryMetadata*>(metadata);
     try {
         return strdup(m->form_factor().c_str());
     } catch (const NotFoundException &) {
         return nullptr;
     }
+}
+
+void query_metadata_set_internet_connectivity(_QueryMetadata *metadata, int status) {
+    reinterpret_cast<QueryMetadata*>(metadata)->set_internet_connectivity(static_cast<QueryMetadata::ConnectivityStatus>(status));
+}
+
+int query_metadata_get_internet_connectivity(_QueryMetadata *metadata) {
+    return static_cast<int>(reinterpret_cast<QueryMetadata*>(metadata)->internet_connectivity());
 }
 
 int search_metadata_get_cardinality(_SearchMetadata *metadata) {
@@ -87,14 +95,6 @@ _ActionMetadata *new_action_metadata(void *locale, void *form_factor) {
 
 void destroy_action_metadata(_ActionMetadata *metadata) {
     delete reinterpret_cast<ActionMetadata*>(metadata);
-}
-
-char *action_metadata_get_locale(_ActionMetadata *metadata) {
-    return strdup(reinterpret_cast<ActionMetadata*>(metadata)->locale().c_str());
-}
-
-char *action_metadata_get_form_factor(_ActionMetadata *metadata) {
-    return strdup(reinterpret_cast<ActionMetadata*>(metadata)->form_factor().c_str());
 }
 
 void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length) {
