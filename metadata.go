@@ -192,11 +192,11 @@ func (metadata *ActionMetadata) SetHint(key string, value interface{}) error {
 	return checkError(errorString)
 }
 
-// GetHint returns a hint.
+// Hint returns a hint.
 
 // If the hint does not exist it returns false, otherwise returns true and the
 // passed paramter value is filled.
-func (metadata *ActionMetadata) GetHint(key string, value interface{}) error {
+func (metadata *ActionMetadata) Hint(key string, value interface{}) error {
 	var dataLength C.int
 	var errorString *C.char
 	scopeData := C.action_metadata_get_hint((*C._ActionMetadata)(metadata.m), unsafe.Pointer(&key), &dataLength, &errorString)
