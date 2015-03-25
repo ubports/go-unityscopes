@@ -1,8 +1,10 @@
 #include <stdexcept>
 #include <cstring>
+#include <iostream>
 
 #include <unity/scopes/PreviewReply.h>
 #include <unity/scopes/SearchReply.h>
+#include <unity/scopes/Version.h>
 
 extern "C" {
 #include "_cgo_export.h"
@@ -54,6 +56,11 @@ void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **e
 }
 
 void search_reply_push_filters(SharedPtrData reply, void *filters_json, void *filter_state_json, char **error) {
+#if UNITY_SCOPES_VERSION_MAJOR == 0 && (UNITY_SCOPES_VERSION_MINOR < 6 || (UNITY_SCOPES_VERSION_MINOR == 6 && UNITY_SCOPES_VERSION_MICRO < 10))
+    std::string errorMessage = "SearchReply.PushFilters() is only available when compiled against libunity-scopes >= 0.6.10";
+    *error = strdup(errorMessage.c_str());
+    std::cerr << errorMessage << std::endl;
+#else
     try {
         Variant filters_var = Variant::deserialize_json(from_gostring(filters_json));
         Variant filter_state_var = Variant::deserialize_json(from_gostring(filter_state_json));
@@ -66,6 +73,7 @@ void search_reply_push_filters(SharedPtrData reply, void *filters_json, void *fi
     } catch (const std::exception &e) {
         *error = strdup(e.what());
     }
+#endif
 }
 
 void init_preview_reply_ptr(SharedPtrData dest, SharedPtrData src) {

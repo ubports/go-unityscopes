@@ -96,6 +96,12 @@ func (s *MyScope) Search(query *scopes.CannedQuery, metadata *scopes.SearchMetad
 	root_department := s.CreateDepartments(query, metadata, reply)
 	reply.RegisterDepartments(root_department)
 
+	// test incompatible features in RTM version of libunity-scopes
+	filter1 := scopes.NewOptionSelectorFilter("f1", "Options", false)
+	var filterState scopes.FilterState
+	// for RTM version of libunity-scopes we should see a log message
+	reply.PushFilters([]scopes.Filter{filter1}, filterState)
+	
 	return s.AddQueryResults(reply, query.QueryString())
 }
 
