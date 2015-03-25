@@ -76,11 +76,11 @@ func (s *S) TestActionMetadataHints(c *C) {
 	err = metadata.SetHint("test_1", "value_1")
 	c.Check(err, IsNil)
 
-	err = metadata.GetHint("test_1", &value)
+	err = metadata.Hint("test_1", &value)
 	c.Check(err, IsNil)
 	c.Check(value, Equals, "value_1")
 
-	err = metadata.GetHint("test_1_not_exists", &value)
+	err = metadata.Hint("test_1_not_exists", &value)
 	c.Assert(err, Not(Equals), nil)
 	c.Check(err.Error(), Equals, "unity::LogicException: QueryMetadataImpl::hint(): requested key test_1_not_exists doesn't exist")
 
