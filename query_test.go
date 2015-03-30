@@ -2,7 +2,7 @@ package scopes_test
 
 import (
 	. "gopkg.in/check.v1"
-	"launchpad.net/go-unityscopes/v1"
+	"launchpad.net/go-unityscopes/v2"
 )
 
 func (s *S) TestQuery(c *C) {

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"launchpad.net/go-unityscopes/v1"
+	"launchpad.net/go-unityscopes/v2"
 	"log"
 )
 
