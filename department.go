@@ -115,7 +115,7 @@ func (dept *Department) Subdepartments() []*Department {
 	defer C.free(unsafe.Pointer(theCArray))
 	length := int(nb_subdepartments)
 	// create a very big slice and then slice it to the number of subdepartments
-	slice := (*[1 << 30]C.SharedPtrData)(unsafe.Pointer(theCArray))[:length:length]
+	slice := (*[1 << 27]C.SharedPtrData)(unsafe.Pointer(theCArray))[:length:length]
 	ptr_depts := make([]*Department, length)
 	for i := 0; i < length; i++ {
 		ptr_depts[i] = makeDepartment()
