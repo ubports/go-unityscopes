@@ -48,13 +48,13 @@ func (s *S) TestRadioButtonsFilterSingleSelection(c *C) {
 
 	active := filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 1)
-	c.Check(active, DeepEquals, []interface{}{"1"})
+	c.Check(active, DeepEquals, []string{"1"})
 
 	// enable option2, option1 get disabled
 	filter1.UpdateState(fstate, "2", true)
 	active = filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 1)
-	c.Check(active, DeepEquals, []interface{}{"2"})
+	c.Check(active, DeepEquals, []string{"2"})
 
 	// disable option1; filter state remains in the FilterState, just no options are selected
 	filter1.UpdateState(fstate, "2", false)

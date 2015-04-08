@@ -1,7 +1,7 @@
 package scopes
 
 import (
-	"sort"
+//	"sort"
 )
 
 // RatingFilter is a filter that allows for rating-based selection
@@ -27,14 +27,10 @@ func NewRatingFilter(id, label string) *RatingFilter {
 	}
 }
 
-// HasActiveRating checks if a rating option is active.
-func (f *RatingFilter) HasActiveRating(state FilterState) bool {
-	return f.HasActiveOption(state)
-}
-
-// HasActiveRating checks if a rating option is active.
-func (f *RatingFilter) ActiveRating(state FilterState) []interface{} {
-	return f.ActiveOptions(state)
+// ActiveRating gets active option from an instance of FilterState for this filter.
+func (f *RatingFilter) ActiveRating(state FilterState) (string, bool) {
+	rating, ok := state[f.Id].(string)
+	return rating, ok
 }
 
 // UpdateState updates the value of a particular option in the filter state.
@@ -43,21 +39,14 @@ func (f *RatingFilter) UpdateState(state FilterState, optionId string, active bo
 		panic("invalid option ID")
 	}
 	// If the state isn't in a form we expect, treat it as empty
-	selected, _ := state[f.Id].([]string)
-	sort.Strings(selected)
-	pos := sort.SearchStrings(selected, optionId)
-	if active {
-		if pos == len(selected) {
-			selected = append(selected, optionId)
-		} else if pos < len(selected) && selected[pos] != optionId {
-			selected = append(selected[:pos], append([]string{optionId}, selected[pos:]...)...)
-		}
+	selected, ok := state[f.Id].(string)
+	if ok && selected == optionId && active == false {
+		delete(state, f.Id)
 	} else {
-		if pos < len(selected) {
-			selected = append(selected[:pos], selected[pos+1:]...)
+		if active {
+			state[f.Id] = optionId
 		}
 	}
-	state[f.Id] = selected
 }
 
 func (f *RatingFilter) serializeFilter() interface{} {

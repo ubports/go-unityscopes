@@ -46,13 +46,13 @@ func (s *S) TestOptionSelectorFilterSingleSelection(c *C) {
 
 	active := filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 1)
-	c.Check(active, DeepEquals, []interface{}{"1"})
+	c.Check(active, DeepEquals, []string{"1"})
 
 	// enable option2, option1 get disabled
 	filter1.UpdateState(fstate, "2", true)
 	active = filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 1)
-	c.Check(active, DeepEquals, []interface{}{"2"})
+	c.Check(active, DeepEquals, []string{"2"})
 
 	// disable option1; filter state remains in the FilterState, just no options are selected
 	filter1.UpdateState(fstate, "2", false)
@@ -79,7 +79,7 @@ func (s *S) TestOptionSelectorFilterMultiSelection(c *C) {
 	c.Check(filter1.HasActiveOption(fstate), Equals, true)
 	active := filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"1", "2"})
+	c.Check(active, DeepEquals, []string{"1", "2"})
 
 	// disable option1
 	filter1.UpdateState(fstate, "1", false)
@@ -96,25 +96,25 @@ func (s *S) TestOptionSelectorFilterMultiSelection(c *C) {
 
 	active = filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"1", "3"})
+	c.Check(active, DeepEquals, []string{"1", "3"})
 
 	// add existing item
 	filter1.UpdateState(fstate, "1", true)
 	active = filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"1", "3"})
+	c.Check(active, DeepEquals, []string{"1", "3"})
 
 	// add in the middle
 	filter1.UpdateState(fstate, "2", true)
 	active = filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 3)
-	c.Check(active, DeepEquals, []interface{}{"1", "2", "3"})
+	c.Check(active, DeepEquals, []string{"1", "2", "3"})
 
 	// erase in the middle
 	filter1.UpdateState(fstate, "2", false)
 	active = filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"1", "3"})
+	c.Check(active, DeepEquals, []string{"1", "3"})
 
 	filter1.UpdateState(fstate, "2", true)
 
@@ -122,7 +122,7 @@ func (s *S) TestOptionSelectorFilterMultiSelection(c *C) {
 	filter1.UpdateState(fstate, "1", false)
 	active = filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"2", "3"})
+	c.Check(active, DeepEquals, []string{"2", "3"})
 
 	filter1.UpdateState(fstate, "1", true)
 
@@ -130,12 +130,12 @@ func (s *S) TestOptionSelectorFilterMultiSelection(c *C) {
 	filter1.UpdateState(fstate, "3", false)
 	active = filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"1", "2"})
+	c.Check(active, DeepEquals, []string{"1", "2"})
 
 	filter1.UpdateState(fstate, "1", false)
 	active = filter1.ActiveOptions(fstate)
 	c.Check(len(active), Equals, 1)
-	c.Check(active, DeepEquals, []interface{}{"2"})
+	c.Check(active, DeepEquals, []string{"2"})
 
 	filter1.UpdateState(fstate, "2", false)
 	active = filter1.ActiveOptions(fstate)

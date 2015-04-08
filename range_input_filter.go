@@ -67,7 +67,7 @@ func (f *RangeInputFilter) checkValidType(value interface{}) bool {
 	return true
 }
 
-func (f *RangeInputFilter) convertToFloat(value interface{}) float64 {
+func convertToFloat(value interface{}) float64 {
 	if value != nil {
 		fVal, ok := value.(float64)
 		if !ok {
@@ -98,8 +98,8 @@ func (f *RangeInputFilter) UpdateState(state FilterState, start, end interface{}
 		return nil
 	}
 	if start != nil && end != nil {
-		fStart := f.convertToFloat(start)
-		fEnd := f.convertToFloat(end)
+		fStart := convertToFloat(start)
+		fEnd := convertToFloat(end)
 		if fStart >= fEnd {
 			return errors.New(fmt.Sprintf("RangeInputFilter::UpdateState(): start_value %v is greater or equal to end_value %v for filter %s", start, end, f.Id))
 		}

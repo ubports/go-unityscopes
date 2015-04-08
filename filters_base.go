@@ -1,9 +1,5 @@
 package scopes
 
-import (
-	"reflect"
-)
-
 // Filter is implemented by all scope filter types.
 type Filter interface {
 	serializeFilter() interface{}
@@ -63,15 +59,10 @@ func (f *filterWithOptions) HasActiveOption(state FilterState) bool {
 }
 
 // ActiveOptions returns the filter's active options from the filter state.
-func (f *filterWithOptions) ActiveOptions(state FilterState) []interface{} {
-	var ret []interface{}
+func (f *filterWithOptions) ActiveOptions(state FilterState) []string {
+	var ret []string
 	if state[f.Id] != nil {
-		if reflect.TypeOf(state[f.Id]).Kind() == reflect.Slice {
-			s := reflect.ValueOf(state[f.Id])
-			for i := 0; i < s.Len(); i++ {
-				ret = append(ret, s.Index(i).Interface())
-			}
-		}
+		ret = state[f.Id].([]string)
 	}
 	return ret
 }

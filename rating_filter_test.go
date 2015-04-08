@@ -37,74 +37,45 @@ func (s *S) TestRatingFilterMultiSelection(c *C) {
 
 	// enable option1 & option2
 	filter1.UpdateState(fstate, "1", true)
-	filter1.UpdateState(fstate, "2", true)
 	_, ok := fstate["f1"]
 	c.Check(ok, Equals, true)
 
-	c.Check(filter1.HasActiveRating(fstate), Equals, true)
-	active := filter1.ActiveRating(fstate)
-	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"1", "2"})
+	active, ok := filter1.ActiveRating(fstate)
+	c.Check(active, Equals, "1")
+	c.Check(ok, Equals, true)
 
 	// disable option1
 	filter1.UpdateState(fstate, "1", false)
-	active = filter1.ActiveRating(fstate)
-	c.Check(len(active), Equals, 1)
-	c.Check(active[0], Equals, "2")
-
-	// disable option2
-	filter1.UpdateState(fstate, "2", false)
-	c.Check(0, Equals, len(filter1.ActiveOptions(fstate)))
+	active, ok = filter1.ActiveRating(fstate)
+	c.Check(active, Equals, "")
+	c.Check(ok, Equals, false)
 
 	filter1.UpdateState(fstate, "3", true)
+
+	active, ok = filter1.ActiveRating(fstate)
+	c.Check(active, Equals, "3")
+	c.Check(ok, Equals, true)
+
+	// select another one
 	filter1.UpdateState(fstate, "1", true)
+	active, ok = filter1.ActiveRating(fstate)
+	c.Check(active, Equals, "1")
+	c.Check(ok, Equals, true)
 
-	active = filter1.ActiveRating(fstate)
-	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"1", "3"})
-
-	// add existing item
-	filter1.UpdateState(fstate, "1", true)
-	active = filter1.ActiveRating(fstate)
-	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"1", "3"})
-
-	// add in the middle
-	filter1.UpdateState(fstate, "2", true)
-	active = filter1.ActiveRating(fstate)
-	c.Check(len(active), Equals, 3)
-	c.Check(active, DeepEquals, []interface{}{"1", "2", "3"})
-
-	// erase in the middle
-	filter1.UpdateState(fstate, "2", false)
-	active = filter1.ActiveRating(fstate)
-	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"1", "3"})
-
+	// select another one
 	filter1.UpdateState(fstate, "2", true)
 
-	// erase at the beginning
+	// erase not selected
 	filter1.UpdateState(fstate, "1", false)
-	active = filter1.ActiveRating(fstate)
-	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"2", "3"})
+	active, ok = filter1.ActiveRating(fstate)
+	c.Check(active, Equals, "2")
+	c.Check(ok, Equals, true)
 
-	filter1.UpdateState(fstate, "1", true)
-
-	// erase at the end
-	filter1.UpdateState(fstate, "3", false)
-	active = filter1.ActiveRating(fstate)
-	c.Check(len(active), Equals, 2)
-	c.Check(active, DeepEquals, []interface{}{"1", "2"})
-
-	filter1.UpdateState(fstate, "1", false)
-	active = filter1.ActiveRating(fstate)
-	c.Check(len(active), Equals, 1)
-	c.Check(active, DeepEquals, []interface{}{"2"})
-
+	// erase the active one
 	filter1.UpdateState(fstate, "2", false)
-	active = filter1.ActiveRating(fstate)
-	c.Check(len(active), Equals, 0)
+	active, ok = filter1.ActiveRating(fstate)
+	c.Check(ok, Equals, false)
+	c.Check(active, Equals, "")
 }
 
 func (s *S) TestRatingFilterBadOption(c *C) {
@@ -117,4 +88,5 @@ func (s *S) TestRatingFilterBadOption(c *C) {
 
 	c.Assert(func() { filter1.UpdateState(fstate, "5", true) }, PanicMatches, "invalid option ID")
 	c.Assert(func() { filter1.UpdateState(fstate, "5", false) }, PanicMatches, "invalid option ID")
+	c.Assert(func() { filter1.UpdateState(fstate, "", false) }, PanicMatches, "invalid option ID")
 }
