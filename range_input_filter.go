@@ -31,12 +31,13 @@ func NewRangeInputFilter(id, label, start_label, end_label, unit_label string) *
 	}
 }
 
-// Value gets value of this filter from filter state object.
-// If the value is not set for the filter it returns false as the third return statement,
+// StartValue gets the start value of this filter from filter state object.
+// If the value is not set for the filter it returns false as the second return statement,
 // it returns true otherwise
-// The first returned value is the start value, the second is the end value.
-func (f *RangeInputFilter) Values(state FilterState) (interface{}, interface{}, bool) {
-	_, ok := state[f.Id]
+func (f *RangeInputFilter) StartValue(state FilterState) (float64, bool) {
+	var start float64
+	var ok bool
+	_, ok = state[f.Id]
 	if ok {
 		if reflect.TypeOf(state[f.Id]).Kind() == reflect.Slice {
 			s := reflect.ValueOf(state[f.Id])
@@ -45,12 +46,59 @@ func (f *RangeInputFilter) Values(state FilterState) (interface{}, interface{}, 
 				// we should have just 2 values
 				panic("RangeInputFilter:Values unexpected number of values found.")
 			}
-			start := s.Index(0).Interface()
-			end := s.Index(1).Interface()
-			return start, end, true
+			start_interface := s.Index(0).Interface()
+			// try to convert to float64 if it's a float64 or an integer
+			if start_interface != nil {
+				start, ok = start_interface.(float64)
+				if !ok {
+					var start_int int
+					start_int, ok = start_interface.(int)
+					if ok {
+						start = float64(start_int)
+					}
+				}
+			} else {
+				// the value is undefined (nil)
+				ok = false
+			}
 		}
 	}
-	return nil, nil, false
+	return start, ok
+}
+
+// EndValue gets the end value of this filter from filter state object.
+// If the value is not set for the filter it returns false as the second return statement,
+// it returns true otherwise
+func (f *RangeInputFilter) EndValue(state FilterState) (float64, bool) {
+	var end float64
+	var ok bool
+	_, ok = state[f.Id]
+	if ok {
+		if reflect.TypeOf(state[f.Id]).Kind() == reflect.Slice {
+			s := reflect.ValueOf(state[f.Id])
+			if s.Len() != 2 {
+				// something went really bad.
+				// we should have just 2 values
+				panic("RangeInputFilter:Values unexpected number of values found.")
+			}
+			end_interface := s.Index(1).Interface()
+			// try to convert to float64 if it's a float64 or an integer
+			if end_interface != nil {
+				end, ok = end_interface.(float64)
+				if !ok {
+					var end_int int
+					end_int, ok = end_interface.(int)
+					if ok {
+						end = float64(end_int)
+					}
+				}
+			} else {
+				// the value is undefined (nil)
+				ok = false
+			}
+		}
+	}
+	return end, ok
 }
 
 func (f *RangeInputFilter) checkValidType(value interface{}) bool {
