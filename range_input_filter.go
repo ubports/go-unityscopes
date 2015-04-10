@@ -3,7 +3,6 @@ package scopes
 import (
 	"errors"
 	"fmt"
-	"reflect"
 )
 
 // RangeInputFilter is a range filter which allows a start and end value to be entered by user, and any of them is optional.
@@ -37,30 +36,23 @@ func NewRangeInputFilter(id, label, start_label, end_label, unit_label string) *
 func (f *RangeInputFilter) StartValue(state FilterState) (float64, bool) {
 	var start float64
 	var ok bool
-	_, ok = state[f.Id]
+	slice_interface, ok := state[f.Id].([]interface{})
 	if ok {
-		if reflect.TypeOf(state[f.Id]).Kind() == reflect.Slice {
-			s := reflect.ValueOf(state[f.Id])
-			if s.Len() != 2 {
-				// something went really bad.
-				// we should have just 2 values
-				panic("RangeInputFilter:Values unexpected number of values found.")
-			}
-			start_interface := s.Index(0).Interface()
-			// try to convert to float64 if it's a float64 or an integer
-			if start_interface != nil {
-				start, ok = start_interface.(float64)
-				if !ok {
-					var start_int int
-					start_int, ok = start_interface.(int)
-					if ok {
-						start = float64(start_int)
-					}
-				}
-			} else {
-				// the value is undefined (nil)
-				ok = false
-			}
+		if len(slice_interface) != 2 {
+			// something went really bad.
+			// we should have just 2 values
+			panic("RangeInputFilter:StartValue unexpected number of values found.")
+		}
+
+		switch v := slice_interface[0].(type) {
+		case float64:
+			return v, true
+		case int:
+			return float64(v), true
+		case nil:
+			return 0, false
+		default:
+			panic("RangeInputFilter:StartValue Unknown value type")
 		}
 	}
 	return start, ok
@@ -72,47 +64,35 @@ func (f *RangeInputFilter) StartValue(state FilterState) (float64, bool) {
 func (f *RangeInputFilter) EndValue(state FilterState) (float64, bool) {
 	var end float64
 	var ok bool
-	_, ok = state[f.Id]
+	slice_interface, ok := state[f.Id].([]interface{})
 	if ok {
-		if reflect.TypeOf(state[f.Id]).Kind() == reflect.Slice {
-			s := reflect.ValueOf(state[f.Id])
-			if s.Len() != 2 {
-				// something went really bad.
-				// we should have just 2 values
-				panic("RangeInputFilter:Values unexpected number of values found.")
-			}
-			end_interface := s.Index(1).Interface()
-			// try to convert to float64 if it's a float64 or an integer
-			if end_interface != nil {
-				end, ok = end_interface.(float64)
-				if !ok {
-					var end_int int
-					end_int, ok = end_interface.(int)
-					if ok {
-						end = float64(end_int)
-					}
-				}
-			} else {
-				// the value is undefined (nil)
-				ok = false
-			}
+		if len(slice_interface) != 2 {
+			// something went really bad.
+			// we should have just 2 values
+			panic("RangeInputFilter:EndValue unexpected number of values found.")
+		}
+
+		switch v := slice_interface[1].(type) {
+		case float64:
+			return v, true
+		case int:
+			return float64(v), true
+		case nil:
+			return 0, false
+		default:
+			panic("RangeInputFilter:EndValue Unknown value type")
 		}
 	}
 	return end, ok
 }
 
 func (f *RangeInputFilter) checkValidType(value interface{}) bool {
-	if value != nil {
-		switch value.(type) {
-		case int:
-		case float64:
-			return true
-		default:
-			return false
-		}
+	switch value.(type) {
+	case int, float64, nil:
+		return true
+	default:
+		return false
 	}
-	// we accept the nil value
-	return true
 }
 
 func convertToFloat(value interface{}) float64 {
