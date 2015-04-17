@@ -100,8 +100,12 @@ void search_metadata_set_aggregated_keywords(_SearchMetadata *metadata, void *go
     }
 }
 
-void search_metadata_get_aggregated_keywords(_SearchMetadata *metadata) {
+void *search_metadata_get_aggregated_keywords(_SearchMetadata *metadata, int *length) {
     std::set<std::string> keywords = reinterpret_cast<SearchMetadata*>(metadata)->aggregated_keywords();
+    // Marshal via JSON for now.  This is probably faster than calling
+    // C.free() on each of a list of strings.
+    VariantArray array(keywords.begin(), keywords.end());
+    return as_bytes(Variant(array).serialize_json(), length);
 }
 
 int search_metadata_is_aggregated(_SearchMetadata *metadata) {

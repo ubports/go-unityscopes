@@ -139,7 +139,13 @@ func (metadata *SearchMetadata) SetAggregatedKeywords(keywords []string) error {
 }
 
 func (metadata *SearchMetadata) AggregatedKeywords() []string {
-	return nil
+	var length C.int
+	keywordData := C.search_metadata_get_aggregated_keywords((*C._SearchMetadata)(metadata.m), &length)
+	var keywords []string
+	if err := json.Unmarshal(C.GoBytes(keywordData, length), &keywords); err != nil {
+		panic(err)
+	}
+	return keywords
 }
 
 func (metadata *SearchMetadata) IsAggregated() bool {

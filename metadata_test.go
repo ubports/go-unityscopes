@@ -1,6 +1,8 @@
 package scopes_test
 
 import (
+	"sort"
+
 	. "gopkg.in/check.v1"
 	"launchpad.net/go-unityscopes/v2"
 )
@@ -40,8 +42,13 @@ func (s *S) TestSetLocation(c *C) {
 func (s *S) TestSearchMetadataAgregatorKeywords(c *C) {
 	metadata := scopes.NewSearchMetadata(2, "us", "phone")
 
+	c.Check(metadata.AggregatedKeywords(), DeepEquals, []string{})
 	c.Check(metadata.IsAggregated(), Equals, false)
+
 	c.Check(metadata.SetAggregatedKeywords([]string{"one", "two"}), IsNil)
+	keywords := metadata.AggregatedKeywords()
+	sort.Strings(keywords)
+	c.Check(keywords, DeepEquals, []string{"one", "two"})
 	c.Check(metadata.IsAggregated(), Equals, true)
 }
 
