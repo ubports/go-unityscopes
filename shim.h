@@ -105,6 +105,9 @@ void destroy_search_metadata(_SearchMetadata *metadata);
 int search_metadata_get_cardinality(_SearchMetadata *metadata);
 void *search_metadata_get_location(_SearchMetadata *metadata, int *length);
 void search_metadata_set_location(_SearchMetadata *metadata, char *json_data, int json_data_length, char **error);
+void search_metadata_set_aggregated_keywords(_SearchMetadata *metadata, void *gostring_array, int count, char **error);
+void search_metadata_get_aggregated_keywords(_SearchMetadata *metadata);
+int search_metadata_is_aggregated(_SearchMetadata *metadata);
 
 /* ActionMetadata objects */
 _ActionMetadata *new_action_metadata(void *locale, void *form_factor);

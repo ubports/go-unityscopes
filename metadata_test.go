@@ -37,6 +37,14 @@ func (s *S) TestSetLocation(c *C) {
 	//c.Check(stored_location, DeepEquals, &location)
 }
 
+func (s *S) TestSearchMetadataAgregatorKeywords(c *C) {
+	metadata := scopes.NewSearchMetadata(2, "us", "phone")
+
+	c.Check(metadata.IsAggregated(), Equals, false)
+	c.Check(metadata.SetAggregatedKeywords([]string{"one", "two"}), IsNil)
+	c.Check(metadata.IsAggregated(), Equals, true)
+}
+
 func (s *S) TestActionMetadata(c *C) {
 	metadata := scopes.NewActionMetadata("us", "phone")
 

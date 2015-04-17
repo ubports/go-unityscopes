@@ -87,6 +87,28 @@ void search_metadata_set_location(_SearchMetadata *metadata, char *json_data, in
     }
 }
 
+void search_metadata_set_aggregated_keywords(_SearchMetadata *metadata, void *gostring_array, int count, char **error) {
+    try {
+        GoString *keyword_data = static_cast<GoString*>(gostring_array);
+        std::set<std::string> keywords;
+        for (int i = 0; i < count; i++) {
+            keywords.emplace(std::string(keyword_data[i].p, keyword_data[i].n));
+        }
+        reinterpret_cast<SearchMetadata*>(metadata)->set_aggregated_keywords(keywords);
+    } catch (const std::exception & e) {
+        *error = strdup(e.what());
+    }
+}
+
+void search_metadata_get_aggregated_keywords(_SearchMetadata *metadata) {
+    std::set<std::string> keywords = reinterpret_cast<SearchMetadata*>(metadata)->aggregated_keywords();
+}
+
+int search_metadata_is_aggregated(_SearchMetadata *metadata) {
+    return reinterpret_cast<SearchMetadata*>(metadata)->is_aggregated();
+}
+
+
 /* ActionMetadata objects */
 _ActionMetadata *new_action_metadata(void *locale, void *form_factor) {
     return reinterpret_cast<_ActionMetadata*>(new ActionMetadata(from_gostring(locale),

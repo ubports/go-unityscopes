@@ -132,6 +132,23 @@ func (metadata *SearchMetadata) SetLocation(l *Location) error {
 	return checkError(errorString)
 }
 
+func (metadata *SearchMetadata) SetAggregatedKeywords(keywords []string) error {
+	var errorString *C.char
+	C.search_metadata_set_aggregated_keywords((*C._SearchMetadata)(metadata.m), unsafe.Pointer(&keywords[0]), C.int(len(keywords)), &errorString)
+	return checkError(errorString)
+}
+
+func (metadata *SearchMetadata) AggregatedKeywords() []string {
+	return nil
+}
+
+func (metadata *SearchMetadata) IsAggregated() bool {
+	if C.search_metadata_is_aggregated((*C._SearchMetadata)(metadata.m)) == 0 {
+		return false
+	}
+	return true
+}
+
 // ActionMetadata holds additional metadata about the preview request
 // or result activation.
 type ActionMetadata struct {
