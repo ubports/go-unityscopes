@@ -8,7 +8,7 @@ Scopes are implemented through types that conform to the Scope interface.
 The scope has access to a ScopeBase instance, which can be used to access
 various pieces of information about the scope, such as its settings:
 
-    func (s *MyScope) SetScopeBase(base *ScopeBase) {
+    func (s *MyScope) SetScopeBase(base *scopes.ScopeBase) {
     }
 
 If the scope needs access to this information, it should save the
@@ -18,9 +18,9 @@ left blank.
 The shell may ask the scope for search results, which will cause the
 Search method to be invoked:
 
-    func (s *MyScope) Search(query *CannedQuery, metadata *SearchMetadata, reply  *SearchReply cancelled <-chan bool) error {
+    func (s *MyScope) Search(query *scopes.CannedQuery, metadata *scopes.SearchMetadata, reply *scopes.SearchReply, cancelled <-chan bool) error {
         category := reply.RegisterCategory("cat_id", "category", "", "")
-        result := NewCategorisedResult(category)
+        result := scopes.NewCategorisedResult(category)
         result.SetTitle("Result for " + query.QueryString())
         reply.Push(result)
         return nil
@@ -39,8 +39,8 @@ results are wanted.
 
 The shell may ask the scope to provide a preview of a result, which causes the Preview method to be invoked:
 
-    func (s *MyScope) Preview(result *Result, metadata *ActionMetadata, reply *PreviewReply, cancelled <-chan bool) error {
-        widget := NewPreviewWidget("foo", "text")
+    func (s *MyScope) Preview(result *scopes.Result, metadata *scopes.ActionMetadata, reply *scopes.PreviewReply, cancelled <-chan bool) error {
+        widget := scopes.NewPreviewWidget("foo", "text")
         widget.AddAttributeValue("text", "Hello")
         reply.PushWidgets(widget)
         return nil
