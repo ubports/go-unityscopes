@@ -164,6 +164,29 @@ func (b *ScopeBase) TmpDirectory() string {
 	return C.GoString(dir)
 }
 
+// ListRegistryScopes lists all the scopes existing in the registry
+func (b *ScopeBase) ListRegistryScopes() map[string]*ScopeMetadata {
+	var nb_scopes C.int
+	var c_array *C.SharedPtrData = C.list_registry_scopes_metadata(b.b, &nb_scopes)
+	defer C.free(unsafe.Pointer(c_array))
+
+	length := int(nb_scopes)
+	// create a very big slice and then slice it to the number of scopes metadata
+	slice := (*[1 << 27]C.SharedPtrData)(unsafe.Pointer(c_array))[:length:length]
+	var scopesList = make(map[string]*ScopeMetadata)
+
+	for i := 0; i < length; i++ {
+		json_data := C.get_scope_metadata_serialized(&(slice[i][0]))
+		defer C.free(unsafe.Pointer(json_data))
+
+		scope_id := C.get_scope_metadata_id(&(slice[i][0]))
+		defer C.free(unsafe.Pointer(scope_id))
+		scopesList[C.GoString(scope_id)] = makeScopeMetadata(slice[i], C.GoString(json_data))
+	}
+
+	return scopesList
+}
+
 // Settings returns the scope's settings.  The settings will be
 // decoded into the given value according to the same rules used by
 // json.Unmarshal().

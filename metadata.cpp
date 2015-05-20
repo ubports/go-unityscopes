@@ -4,12 +4,14 @@
 
 #include <unity/scopes/ActionMetadata.h>
 #include <unity/scopes/SearchMetadata.h>
+#include <unity/scopes/ScopeMetadata.h>
 #include <unity/scopes/ScopeExceptions.h>
 
 extern "C" {
 #include "_cgo_export.h"
 }
 #include "helpers.h"
+#include "smartptr_helper.h"
 
 using namespace unity::scopes;
 using namespace gounityscopes::internal;
@@ -172,4 +174,16 @@ void *action_metadata_get_hints(_ActionMetadata *metadata, int *length) {
         }
     }
     return as_bytes(Variant(hints).serialize_json(), length);
+}
+
+char *get_scope_metadata_serialized(SharedPtrData metadata) {
+    return strdup(Variant(get_ptr<ScopeMetadata>(metadata)->serialize()).serialize_json().c_str());
+}
+
+char *get_scope_metadata_id(SharedPtrData metadata) {
+    return strdup(get_ptr<ScopeMetadata>(metadata)->scope_id().c_str());
+}
+
+void destroy_scope_metadata_ptr(SharedPtrData metadata) {
+    destroy_ptr<ScopeMetadata>(metadata);
 }
