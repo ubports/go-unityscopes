@@ -1,5 +1,9 @@
 package scopes
 
+import (
+	"encoding/json"
+)
+
 // This file exports certain private functions for use by tests.
 
 func NewTestingResult() *Result {
@@ -7,5 +11,10 @@ func NewTestingResult() *Result {
 }
 
 func NewTestingScopeMetadata(json_data string) ScopeMetadata {
-	return newScopeMetadata(json_data)
+	var scopeMetadata ScopeMetadata
+	if err := json.Unmarshal([]byte(json_data), &scopeMetadata); err != nil {
+		panic(err)
+	}
+
+	return scopeMetadata
 }

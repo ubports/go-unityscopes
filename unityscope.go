@@ -179,9 +179,8 @@ func (b *ScopeBase) ListRegistryScopes() map[string]*ScopeMetadata {
 		json_data := C.get_scope_metadata_serialized(slice[i])
 		defer C.free(unsafe.Pointer(json_data))
 
-		scope_id := C.get_scope_metadata_id(slice[i])
-		defer C.free(unsafe.Pointer(scope_id))
-		scopesList[C.GoString(scope_id)] = makeScopeMetadata(slice[i], C.GoString(json_data))
+		metadata := makeScopeMetadata(slice[i], C.GoString(json_data))
+		scopesList[metadata.ScopeId] = metadata
 	}
 
 	return scopesList

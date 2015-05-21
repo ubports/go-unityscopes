@@ -123,7 +123,6 @@ void *action_metadata_get_hints(_ActionMetadata *metadata, int *length);
 /* ScopeMetadata objects */
 void destroy_scope_metadata_ptr(_ScopeMetadata *metadata);
 char *get_scope_metadata_serialized(_ScopeMetadata *metadata);
-char *get_scope_metadata_id(_ScopeMetadata *metadata);
 
 /* ActivationResponse objects */
 void activation_response_init_status(_ActivationResponse *response, int status);

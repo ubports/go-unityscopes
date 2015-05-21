@@ -294,7 +294,7 @@ type ScopeMetadata struct {
 }
 
 func finalizeScopeMetadata(metadata *ScopeMetadata) {
-	C.destroy_scope_metadata_ptr((*C._ScopeMetadata)(metadata.m))
+	C.destroy_scope_metadata_ptr(metadata.m)
 }
 
 func makeScopeMetadata(m *C._ScopeMetadata, json_data string) *ScopeMetadata {

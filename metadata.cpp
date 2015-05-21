@@ -11,7 +11,6 @@ extern "C" {
 #include "_cgo_export.h"
 }
 #include "helpers.h"
-#include "smartptr_helper.h"
 
 using namespace unity::scopes;
 using namespace gounityscopes::internal;
@@ -179,11 +178,6 @@ void *action_metadata_get_hints(_ActionMetadata *metadata, int *length) {
 char *get_scope_metadata_serialized(_ScopeMetadata *metadata) {
     ScopeMetadata const*api_metadata = reinterpret_cast<ScopeMetadata const*>(metadata);
     return strdup(Variant(api_metadata->serialize()).serialize_json().c_str());
-}
-
-char *get_scope_metadata_id(_ScopeMetadata *metadata) {
-    ScopeMetadata const*api_metadata = reinterpret_cast<ScopeMetadata const*>(metadata);
-    return strdup(api_metadata->scope_id().c_str());
 }
 
 void destroy_scope_metadata_ptr(_ScopeMetadata *metadata) {
