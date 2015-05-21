@@ -148,7 +148,7 @@ func (s *S) TestActionMetadataHints(c *C) {
 }
 
 func (s *S) TestScopeMetadataCreation(c *C) {
-	json_data := "{\"appearance_attributes\":{\"page-header\":{\"background\":\"color:///#ffffff\",\"divider-color\":\"#b31217\",\"logo\":\"unity-scope-youtube/build/src/logo.png\"}},\"art\":\"unity-scope-youtube/build/src/screenshot.jpg\",\"author\":\"Canonical Ltd.\",\"description\":\"Search YouTube for videos and browse channels\",\"display_name\":\"YouTube\",\"icon\":\"unity-scope-youtube/build/src/icon.png\",\"invisible\":false,\"is_aggregator\":false,\"location_data_needed\":true,\"proxy\":{\"endpoint\":\"ipc:///tmp/scope-dev-endpoints.V4gbrE/priv/com.ubuntu.scopes.youtube_youtube\",\"identity\":\"com.ubuntu.scopes.youtube_youtube\"},\"scope_dir\":\"unity-scope-youtube/build/src\",\"scope_id\":\"com.ubuntu.scopes.youtube_youtube\",\"settings_definitions\":[{\"defaultValue\":true,\"displayName\":\"Enable location data\",\"id\":\"internal.location\",\"type\":\"boolean\"}],\"version\":0}"
+	json_data := "{\"appearance_attributes\":{\"page-header\":{\"background\":\"color:///#ffffff\",\"divider-color\":\"#b31217\",\"logo\":\"unity-scope-youtube/build/src/logo.png\"}},\"art\":\"unity-scope-youtube/build/src/screenshot.jpg\",\"author\":\"Canonical Ltd.\",\"description\":\"Search YouTube for videos and browse channels\",\"display_name\":\"YouTube\",\"icon\":\"unity-scope-youtube/build/src/icon.png\",\"invisible\":false,\"is_aggregator\":false,\"location_data_needed\":true,\"proxy\":{\"endpoint\":\"ipc:///tmp/scope-dev-endpoints.V4gbrE/priv/com.ubuntu.scopes.youtube_youtube\",\"identity\":\"com.ubuntu.scopes.youtube_youtube\"},\"scope_dir\":\"unity-scope-youtube/build/src\",\"scope_id\":\"com.ubuntu.scopes.youtube_youtube\",\"settings_definitions\":[{\"defaultValue\":true,\"displayName\":\"Enable location data\",\"id\":\"internal.location\",\"type\":\"boolean\"}],\"version\":0,\"keywords\":[\"music\",\"video\"]}"
 
 	scopeMetadata := scopes.NewTestingScopeMetadata(json_data)
 	c.Assert(scopeMetadata, Not(Equals), nil)
@@ -170,4 +170,6 @@ func (s *S) TestScopeMetadataCreation(c *C) {
 	c.Check(pageHeader["background"], Equals, "color:///#ffffff")
 	c.Check(pageHeader["divider-color"], Equals, "#b31217")
 	c.Check(pageHeader["logo"], Equals, "unity-scope-youtube/build/src/logo.png")
+	
+	c.Check(scopeMetadata.Keywords, DeepEquals, []string{"music","video"})
 }

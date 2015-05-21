@@ -291,6 +291,7 @@ type ScopeMetadata struct {
 	Proxy                ProxyScopeMetadata     `json:"proxy"`
 	AppearanceAttributes map[string]interface{} `json:"appearance_attributes"`
 	SettingsDefinitions  []interface{}          `json:"settings_definitions"`
+	Keywords             []string               `json:"keywords"`
 }
 
 func finalizeScopeMetadata(metadata *ScopeMetadata) {
