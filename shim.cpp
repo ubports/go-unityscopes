@@ -66,3 +66,17 @@ _ScopeMetadata** list_registry_scopes_metadata(_ScopeBase *scope, int *n_scopes)
 
     return ret_data;
 }
+
+_ChildScope **list_child_scopes(_ScopeBase *scope, int *n_scopes) {
+    ScopeBase *s = reinterpret_cast<ScopeBase*>(scope);
+    auto child_scopes = s->child_scopes();
+
+    *n_scopes = child_scopes.size();
+    _ChildScope** ret_data = reinterpret_cast<_ChildScope**>(calloc(*n_scopes, sizeof(_ChildScope*)));
+    int i = 0;
+    for (auto item: child_scopes) {
+        ret_data[i++] = reinterpret_cast<_ChildScope*>(new ChildScope(item.id, item.metadata, item.enabled, item.keywords));
+    }
+
+    return ret_data;
+}
