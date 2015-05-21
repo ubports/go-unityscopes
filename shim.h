@@ -33,7 +33,7 @@ char *scope_base_scope_directory(_ScopeBase *scope);
 char *scope_base_cache_directory(_ScopeBase *scope);
 char *scope_base_tmp_directory(_ScopeBase *scope);
 void *scope_base_settings(_ScopeBase *scope, int *length);
-SharedPtrData * list_registry_scopes_metadata(_ScopeBase *scope, int *n_scopes);
+_ScopeMetadata **list_registry_scopes_metadata(_ScopeBase *scope, int *n_scopes);
 
 /* SearchReply objects */
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src);
@@ -121,9 +121,9 @@ void *action_metadata_get_hint(_ActionMetadata *metadata, void *key, int *data_l
 void *action_metadata_get_hints(_ActionMetadata *metadata, int *length);
 
 /* ScopeMetadata objects */
-void destroy_scope_metadata_ptr(SharedPtrData metadata);
-char *get_scope_metadata_serialized(SharedPtrData metadata);
-char *get_scope_metadata_id(SharedPtrData metadata);
+void destroy_scope_metadata_ptr(_ScopeMetadata *metadata);
+char *get_scope_metadata_serialized(_ScopeMetadata *metadata);
+char *get_scope_metadata_id(_ScopeMetadata *metadata);
 
 /* ActivationResponse objects */
 void activation_response_init_status(_ActivationResponse *response, int status);

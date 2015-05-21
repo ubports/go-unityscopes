@@ -276,7 +276,7 @@ type ProxyScopeMetadata struct {
 // or is fetched from the remote server (for scopes running on Smart Scopes Server).
 // Use ListRegistryScopes from ScopeBase to get the metadata for all scopes.
 type ScopeMetadata struct {
-	m                    C.SharedPtrData
+	m                    *C._ScopeMetadata
 	Art                  string                 `json:"art"`
 	Author               string                 `json:"author"`
 	Description          string                 `json:"description"`
@@ -294,10 +294,10 @@ type ScopeMetadata struct {
 }
 
 func finalizeScopeMetadata(metadata *ScopeMetadata) {
-	C.destroy_scope_metadata_ptr(&metadata.m[0])
+	C.destroy_scope_metadata_ptr((*C._ScopeMetadata)(metadata.m))
 }
 
-func makeScopeMetadata(m C.SharedPtrData, json_data string) *ScopeMetadata {
+func makeScopeMetadata(m *C._ScopeMetadata, json_data string) *ScopeMetadata {
 	metadata := new(ScopeMetadata)
 	if err := json.Unmarshal([]byte(json_data), &metadata); err != nil {
 		panic(err)

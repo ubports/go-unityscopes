@@ -167,19 +167,19 @@ func (b *ScopeBase) TmpDirectory() string {
 // ListRegistryScopes lists all the scopes existing in the registry
 func (b *ScopeBase) ListRegistryScopes() map[string]*ScopeMetadata {
 	var nb_scopes C.int
-	var c_array *C.SharedPtrData = C.list_registry_scopes_metadata(b.b, &nb_scopes)
+	var c_array **C._ScopeMetadata = C.list_registry_scopes_metadata(b.b, &nb_scopes)
 	defer C.free(unsafe.Pointer(c_array))
 
 	length := int(nb_scopes)
 	// create a very big slice and then slice it to the number of scopes metadata
-	slice := (*[1 << 27]C.SharedPtrData)(unsafe.Pointer(c_array))[:length:length]
+	slice := (*[1 << 27]*C._ScopeMetadata)(unsafe.Pointer(c_array))[:length:length]
 	var scopesList = make(map[string]*ScopeMetadata)
 
 	for i := 0; i < length; i++ {
-		json_data := C.get_scope_metadata_serialized(&(slice[i][0]))
+		json_data := C.get_scope_metadata_serialized(slice[i])
 		defer C.free(unsafe.Pointer(json_data))
 
-		scope_id := C.get_scope_metadata_id(&(slice[i][0]))
+		scope_id := C.get_scope_metadata_id(slice[i])
 		defer C.free(unsafe.Pointer(scope_id))
 		scopesList[C.GoString(scope_id)] = makeScopeMetadata(slice[i], C.GoString(json_data))
 	}
