@@ -3,6 +3,7 @@ package main
 import (
 	"launchpad.net/go-unityscopes/v2"
 	"log"
+	"fmt"
 )
 
 const searchCategoryTemplate = `{
@@ -107,6 +108,17 @@ func (s *MyScope) Search(query *scopes.CannedQuery, metadata *scopes.SearchMetad
 
 func (s *MyScope) SetScopeBase(base *scopes.ScopeBase) {
 	s.base = base
+	
+	// THIS IS JUST A TEST ON THE STDOUT
+	listScopes := s.base.ListRegistryScopes()
+	fmt.Print("LIST SCOPES ****************************************************************\n")
+	for k := range listScopes {
+		fmt.Print(k)
+		fmt.Print("\n")
+		fmt.Print(*listScopes[k])
+		fmt.Print("\n")
+	}
+	fmt.Print("LIST SCOPES ****************************************************************\n")
 }
 
 // RESULTS *********************************************************************
