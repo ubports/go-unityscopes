@@ -41,13 +41,7 @@ ActivationQueryBase::UPtr ScopeAdapter::perform_action(Result const& result, Act
 
 ChildScopeList ScopeAdapter::find_child_scopes() const {
     ChildScopeList child_scopes;
-    GoSlice go_slice = callFindChildScopes(goscope);
-    ChildScope **data = reinterpret_cast<ChildScope **>(go_slice.data);
-    for(uint i = 0;i < go_slice.len; ++i)
-    {
-        ChildScope child_scope(data[i]->id, data[i]->metadata, data[i]->enabled, data[i]->keywords);
-        child_scopes.push_back(child_scope);
-    }
+    callFindChildScopes(goscope, &child_scopes);
     return child_scopes;
 }
 

@@ -41,6 +41,7 @@ _ChildScope **list_child_scopes(_ScopeBase *scope, int *n_scopes);
 _ChildScope *new_child_scope(void *id, _ScopeMetadata *metadata, int enabled, void *gostring_array, int count);
 void destroy_child_scope(_ChildScope *childscope);
 char *child_scope_get_id(_ChildScope *childscope);
+void set_child_scopes_list(void *child_scopes_list, void *source_child_scopes, int length);
 
 /* SearchReply objects */
 void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src);

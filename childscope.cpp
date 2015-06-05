@@ -30,3 +30,13 @@ void destroy_child_scope(_ChildScope *childscope) {
 char *child_scope_get_id(_ChildScope *childscope) {
     return strdup(reinterpret_cast<ChildScope*>(childscope)->id.c_str());
 }
+
+void set_child_scopes_list(void *child_scopes_list, void *source_child_scopes, int length) {
+    ChildScopeList *c_child_scopes_list = reinterpret_cast<ChildScopeList*>(child_scopes_list);
+    ChildScope **c_source_child_scopes = reinterpret_cast<ChildScope **>(source_child_scopes);
+    for (int i=0; i < length; ++i) {
+        ChildScope *pItem = c_source_child_scopes[i];
+        ChildScope item(pItem->id, pItem->metadata, pItem->enabled, pItem->keywords);
+        c_child_scopes_list->push_back(item);
+    }
+}

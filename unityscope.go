@@ -111,19 +111,18 @@ func callScopeActivate(scope Scope, resultPtr, metadataPtr, responsePtr unsafe.P
 }
 
 //export callFindChildScopes
-func callFindChildScopes(scope Scope) []*C._ChildScope {
-	var child_scopes []*C._ChildScope
+func callFindChildScopes(scope Scope, childScopeList unsafe.Pointer) {
 	switch s := scope.(type) {
 	case AggregatedScope:
 		go_child_scopes := s.FindChildScopes()
-		child_scopes = make([]*C._ChildScope, len(go_child_scopes))
+		child_scopes := make([]*C._ChildScope, len(go_child_scopes))
 		for index, child_scope := range go_child_scopes {
 			child_scopes[index] = child_scope.c
 		}
+		C.set_child_scopes_list(childScopeList, (unsafe.Pointer)(&child_scopes[0]), (C.int)(len(go_child_scopes)))
 	default:
 		// nothing
 	}
-	return child_scopes
 }
 
 //export callScopePerformAction
@@ -212,7 +211,7 @@ func (b *ScopeBase) ChildScopes() []*ChildScope {
 	var nb_scopes C.int
 	var c_array **C._ChildScope = C.list_child_scopes(b.b, &nb_scopes)
 	defer C.free(unsafe.Pointer(c_array))
-	
+
 	length := int(nb_scopes)
 	// create a very big slice and then slice it to the number of scopes metadata
 	slice := (*[1 << 27]*C._ChildScope)(unsafe.Pointer(c_array))[:length:length]
