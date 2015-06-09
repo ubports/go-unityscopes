@@ -119,7 +119,7 @@ func callFindChildScopes(scope Scope, childScopeList unsafe.Pointer) {
 		for index, child_scope := range go_child_scopes {
 			child_scopes[index] = child_scope.c
 		}
-		C.set_child_scopes_list(childScopeList, (unsafe.Pointer)(&child_scopes[0]), (C.int)(len(go_child_scopes)))
+		C.set_child_scopes_list(childScopeList, &child_scopes[0], (C.int)(len(go_child_scopes)))
 	default:
 		// nothing
 	}
