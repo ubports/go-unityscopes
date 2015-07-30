@@ -41,6 +41,11 @@ type Scope interface {
 	Preview(result *Result, metadata *ActionMetadata, reply *PreviewReply, cancelled <-chan bool) error
 }
 
+type AggregatedScope interface {
+	Scope
+	FindChildScopes() []*ChildScope
+}
+
 // Activator is an interface that should be implemented by scopes that
 // need to handle result activation directly.
 type Activator interface {
@@ -100,6 +105,21 @@ func callScopeActivate(scope Scope, resultPtr, metadataPtr, responsePtr unsafe.P
 		if err != nil {
 			*errorPtr = C.CString(err.Error())
 		}
+	default:
+		// nothing
+	}
+}
+
+//export callFindChildScopes
+func callFindChildScopes(scope Scope, childScopeList unsafe.Pointer) {
+	switch s := scope.(type) {
+	case AggregatedScope:
+		go_child_scopes := s.FindChildScopes()
+		child_scopes := make([]*C._ChildScope, len(go_child_scopes))
+		for index, child_scope := range go_child_scopes {
+			child_scopes[index] = child_scope.c
+		}
+		C.set_child_scopes_list(childScopeList, &child_scopes[0], (C.int)(len(go_child_scopes)))
 	default:
 		// nothing
 	}
@@ -184,6 +204,25 @@ func (b *ScopeBase) ListRegistryScopes() map[string]*ScopeMetadata {
 	}
 
 	return scopesList
+}
+
+// ChildScopes list all the child scopes
+func (b *ScopeBase) ChildScopes() []*ChildScope {
+	var nb_scopes C.int
+	var c_array **C._ChildScope = C.list_child_scopes(b.b, &nb_scopes)
+	defer C.free(unsafe.Pointer(c_array))
+
+	length := int(nb_scopes)
+	// create a very big slice and then slice it to the number of scopes metadata
+	slice := (*[1 << 27]*C._ChildScope)(unsafe.Pointer(c_array))[:length:length]
+	child_scopes := make([]*ChildScope, length)
+
+	for i := 0; i < length; i++ {
+		child_scope := makeChildScope(slice[i])
+		child_scopes[i] = child_scope
+	}
+
+	return child_scopes
 }
 
 // Settings returns the scope's settings.  The settings will be

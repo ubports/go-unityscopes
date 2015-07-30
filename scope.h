@@ -21,6 +21,8 @@ public:
     virtual unity::scopes::ActivationQueryBase::UPtr activate(unity::scopes::Result const& result, unity::scopes::ActionMetadata const &metadata) override;
     virtual unity::scopes::ActivationQueryBase::UPtr perform_action(unity::scopes::Result const& result, unity::scopes::ActionMetadata const &metadata, std::string const &widget_id, std::string const &action_id) override;
 
+    virtual unity::scopes::ChildScopeList find_child_scopes() const override;
+
 private:
     GoInterface goscope;
 };

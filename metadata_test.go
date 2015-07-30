@@ -170,6 +170,6 @@ func (s *S) TestScopeMetadataCreation(c *C) {
 	c.Check(pageHeader["background"], Equals, "color:///#ffffff")
 	c.Check(pageHeader["divider-color"], Equals, "#b31217")
 	c.Check(pageHeader["logo"], Equals, "unity-scope-youtube/build/src/logo.png")
-	
-	c.Check(scopeMetadata.Keywords, DeepEquals, []string{"music","video"})
+
+	c.Check(scopeMetadata.Keywords, DeepEquals, []string{"music", "video"})
 }

@@ -21,7 +21,7 @@ const searchCategoryTemplate = `{
 
 // SCOPE ***********************************************************************
 
-var scope_interface scopes.Scope
+var scope_interface scopes.AggregatedScope
 
 type MyScope struct {
 	base *scopes.ScopeBase
@@ -103,7 +103,26 @@ func (s *MyScope) Search(query *scopes.CannedQuery, metadata *scopes.SearchMetad
 	// for RTM version of libunity-scopes we should see a log message
 	reply.PushFilters([]scopes.Filter{filter1}, filterState)
 	
+	// THIS IS JUST A TEST ON THE STDOUT
+	childScopes := s.base.ChildScopes()
+	fmt.Print("CHILD SCOPES ****************************************************************\n")
+	for k := range childScopes {
+		fmt.Print(childScopes[k].Id())
+		fmt.Print("\n")
+	}
+	fmt.Print("CHILD SCOPES ****************************************************************\n")
 	return s.AddQueryResults(reply, query.QueryString())
+}
+
+func (s *MyScope) FindChildScopes() []*scopes.ChildScope {
+	child_scopes := make([]*scopes.ChildScope, 0)
+
+	listScopes := s.base.ListRegistryScopes()
+	for _, item := range listScopes {
+		child_scope := scopes.NewChildScope(item.ScopeId, item, true, []string{"test_aggregator", "music"})
+		child_scopes = append(child_scopes, child_scope)
+	}
+	return child_scopes
 }
 
 func (s *MyScope) SetScopeBase(base *scopes.ScopeBase) {

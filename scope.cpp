@@ -39,6 +39,12 @@ ActivationQueryBase::UPtr ScopeAdapter::perform_action(Result const& result, Act
     return activation;
 }
 
+ChildScopeList ScopeAdapter::find_child_scopes() const {
+    ChildScopeList child_scopes;
+    callFindChildScopes(goscope, &child_scopes);
+    return child_scopes;
+}
+
 QueryAdapter::QueryAdapter(CannedQuery const &query,
                            SearchMetadata const &metadata,
                            ScopeAdapter &scope)
