@@ -135,6 +135,8 @@ char *get_scope_metadata_serialized(_ScopeMetadata *metadata);
 /* ActivationResponse objects */
 void activation_response_init_status(_ActivationResponse *response, int status);
 void activation_response_init_query(_ActivationResponse *response, _CannedQuery *query);
+void activation_response_init_update_result(_ActivationResponse *response, _Result *result);
+void activation_response_init_update_preview(_ActivationResponse *response, void *gostring_array, int count, char **error);
 void activation_response_set_scope_data(_ActivationResponse *response, char *json_data, int json_data_length, char **error);
 
 /* ColumnLayout objects */
