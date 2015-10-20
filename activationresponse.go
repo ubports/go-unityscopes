@@ -69,7 +69,7 @@ func NewActivationResponseUpdateResult(result *Result) *ActivationResponse {
 
 func NewActivationResponseUpdatePreview(widgets ...PreviewWidget) *ActivationResponse {
 	return &ActivationResponse{
-		Status: ActivationUpdateResult,
+		Status: ActivationUpdatePreview,
 		Widgets: widgets,
 	}
 }
