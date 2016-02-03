@@ -3,6 +3,8 @@
 
 #include <unity/scopes/ActivationResponse.h>
 #include <unity/scopes/CannedQuery.h>
+#include <unity/scopes/PreviewWidget.h>
+#include <unity/scopes/Result.h>
 
 extern "C" {
 #include "_cgo_export.h"
