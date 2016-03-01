@@ -34,7 +34,7 @@ In general, scopes will:
 
 * Check for cancellation requests via the provided channel.
 
-The Search method will be invoked with an empty query when sufacing
+The Search method will be invoked with an empty query when surfacing
 results are wanted.
 
 The shell may ask the scope to provide a preview of a result, which causes the Preview method to be invoked:
