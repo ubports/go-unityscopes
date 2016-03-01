@@ -45,4 +45,17 @@ func (s *S) TestActivationResponse(c *C) {
 	c.Check(response_query.Status, Equals, scopes.ActivationPerformQuery)
 	c.Check(response_query.Query, Equals, query)
 	c.Check(response_query.ScopeData, IsNil)
+
+	// test activation response for reply
+	result := scopes.NewTestingResult()
+	response = scopes.NewActivationResponseUpdateResult(result)
+	c.Check(response.Status, Equals, scopes.ActivationUpdateResult)
+	c.Check(response.Result, Equals, result)
+
+	// test activation response for a preview update
+	widget1 := scopes.NewPreviewWidget("id1", "text")
+	widget2 := scopes.NewPreviewWidget("id2", "image")
+	response = scopes.NewActivationResponseUpdatePreview(widget1, widget2)
+	c.Check(response.Status, Equals, scopes.ActivationUpdatePreview)
+	c.Check(response.Widgets, DeepEquals, []scopes.PreviewWidget{widget1, widget2})
 }

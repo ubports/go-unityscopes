@@ -16,6 +16,8 @@ const (
 	ActivationHideDash
 	ActivationShowPreview
 	ActivationPerformQuery
+	ActivationUpdateResult
+	ActivationUpdatePreview
 )
 
 // ActivationResponse is used as the result of a Activate() or
@@ -24,6 +26,8 @@ const (
 type ActivationResponse struct {
 	Status    ActivationStatus
 	Query     *CannedQuery
+	Result    *Result
+	Widgets   []PreviewWidget
 	ScopeData interface{}
 }
 
@@ -33,8 +37,13 @@ type ActivationResponse struct {
 // ActivationPerformQuery response: use NewActivationResponseForQuery
 // instead.
 func NewActivationResponse(status ActivationStatus) *ActivationResponse {
-	if status == ActivationPerformQuery {
+	switch status {
+	case ActivationPerformQuery:
 		panic("Use NewActivationResponseFromQuery for PerformQuery responses")
+	case ActivationUpdateResult:
+		panic("Use NewActivationResponseUpdateResult for UpdateResult responses")
+	case ActivationUpdatePreview:
+		panic("Use NewActivationResponseUpdatePreview for UpdatePreview responses")
 	}
 	return &ActivationResponse{
 		Status: status,
@@ -51,10 +60,41 @@ func NewActivationResponseForQuery(query *CannedQuery) *ActivationResponse {
 	}
 }
 
+func NewActivationResponseUpdateResult(result *Result) *ActivationResponse {
+	return &ActivationResponse{
+		Status: ActivationUpdateResult,
+		Result: result,
+	}
+}
+
+func NewActivationResponseUpdatePreview(widgets ...PreviewWidget) *ActivationResponse {
+	return &ActivationResponse{
+		Status: ActivationUpdatePreview,
+		Widgets: widgets,
+	}
+}
+
 func (r *ActivationResponse) update(responsePtr *C._ActivationResponse) error {
-	if r.Status == ActivationPerformQuery {
+	switch r.Status {
+	case ActivationPerformQuery:
 		C.activation_response_init_query(responsePtr, r.Query.q)
-	} else {
+	case ActivationUpdateResult:
+		C.activation_response_init_update_result(responsePtr, r.Result.result)
+	case ActivationUpdatePreview:
+		widgetData := make([]string, len(r.Widgets))
+		for i, w := range r.Widgets {
+			data, err := w.data()
+			if err != nil {
+				return err
+			}
+			widgetData[i] = string(data)
+		}
+		var errorString *C.char
+		C.activation_response_init_update_preview(responsePtr, unsafe.Pointer(&widgetData[0]), C.int(len(widgetData)), &errorString)
+		if err := checkError(errorString); err != nil {
+			return err
+		}
+	default:
 		C.activation_response_init_status(responsePtr, C.int(r.Status))
 	}
 	if r.ScopeData != nil {
