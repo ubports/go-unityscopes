@@ -14,14 +14,12 @@ type OptionSelectorFilter struct {
 func NewOptionSelectorFilter(id, label string, multiSelect bool) *OptionSelectorFilter {
 	return &OptionSelectorFilter{
 		filterWithOptions: filterWithOptions{
-			filterWithLabel: filterWithLabel{
-				filterBase: filterBase{
-					Id:           id,
-					DisplayHints: FilterDisplayDefault,
-					FilterType:   "option_selector",
-				},
-				Label: label,
+			filterBase: filterBase{
+				Id:           id,
+				DisplayHints: FilterDisplayDefault,
+				FilterType:   "option_selector",
 			},
+			Label: label,
 		},
 		MultiSelect: multiSelect,
 	}

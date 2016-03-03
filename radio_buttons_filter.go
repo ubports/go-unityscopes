@@ -9,14 +9,12 @@ type RadioButtonsFilter struct {
 func NewRadioButtonsFilter(id, label string) *RadioButtonsFilter {
 	return &RadioButtonsFilter{
 		filterWithOptions: filterWithOptions{
-			filterWithLabel: filterWithLabel{
-				filterBase: filterBase{
-					Id:           id,
-					DisplayHints: FilterDisplayDefault,
-					FilterType:   "radio_buttons",
-				},
-				Label: label,
+			filterBase: filterBase{
+				Id:           id,
+				DisplayHints: FilterDisplayDefault,
+				FilterType:   "radio_buttons",
 			},
+			Label: label,
 		},
 	}
 }

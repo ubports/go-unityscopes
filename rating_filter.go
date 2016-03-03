@@ -15,14 +15,12 @@ type RatingFilter struct {
 func NewRatingFilter(id, label string) *RatingFilter {
 	return &RatingFilter{
 		filterWithOptions: filterWithOptions{
-			filterWithLabel: filterWithLabel{
-				filterBase: filterBase{
-					Id:           id,
-					DisplayHints: FilterDisplayDefault,
-					FilterType:   "rating",
-				},
-				Label: label,
+			filterBase: filterBase{
+				Id:           id,
+				DisplayHints: FilterDisplayDefault,
+				FilterType:   "rating",
 			},
+			Label: label,
 		},
 	}
 }

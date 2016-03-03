@@ -14,7 +14,8 @@ const (
 
 // ValueSliderFilter is a value slider filter that allows for selecting a value within a given range.
 type ValueSliderFilter struct {
-	filterWithLabel
+	filterBase
+	Label              string
 	Type               SliderType
 	DefaultValue       float64
 	Min                float64
@@ -25,14 +26,12 @@ type ValueSliderFilter struct {
 // NewValueSliderFilter creates a new value slider filter.
 func NewValueSliderFilter(id, label, label_template string, min, max float64) *ValueSliderFilter {
 	return &ValueSliderFilter{
-		filterWithLabel: filterWithLabel{
-			filterBase: filterBase{
-				Id:           id,
-				DisplayHints: FilterDisplayDefault,
-				FilterType:   "value_slider",
-			},
-			Label: label,
+		filterBase: filterBase{
+			Id:           id,
+			DisplayHints: FilterDisplayDefault,
+			FilterType:   "value_slider",
 		},
+		Label:              label,
 		ValueLabelTemplate: label_template,
 		Min:                min,
 		Max:                max,

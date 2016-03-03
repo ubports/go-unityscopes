@@ -34,13 +34,9 @@ func (f *filterBase) serializeFilter() map[string]interface{} {
 	return v
 }
 
-type filterWithLabel struct {
-	filterBase
-	Label string
-}
-
 type filterWithOptions struct {
-	filterWithLabel
+	filterBase
+	Label   string
 	Options []FilterOption
 }
 

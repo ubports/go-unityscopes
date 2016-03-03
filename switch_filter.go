@@ -2,20 +2,19 @@ package scopes
 
 // SwitchFilter is a simple on/off switch filter.
 type SwitchFilter struct {
-	filterWithLabel
+	filterBase
+	Label string
 }
 
 // NewSwitchFilter creates a new switch filter.
 func NewSwitchFilter(id, label string) *SwitchFilter {
 	return &SwitchFilter{
-		filterWithLabel: filterWithLabel{
-			filterBase: filterBase{
-				Id:           id,
-				DisplayHints: FilterDisplayDefault,
-				FilterType:   "switch",
-			},
-			Label: label,
+		filterBase: filterBase{
+			Id:           id,
+			DisplayHints: FilterDisplayDefault,
+			FilterType:   "switch",
 		},
+		Label: label,
 	}
 }
 
