@@ -6,13 +6,15 @@ import (
 )
 
 func (s *S) TestRangeInputFilter(c *C) {
-	filter1 := scopes.NewRangeInputFilter("f1", "Options", "start_label", "end_label", "unit_label")
+	filter1 := scopes.NewRangeInputFilter("f1", 0, 10, "start_prefix", "start_postfix", "end_prefix", "end_postfix", "central")
 	c.Check("f1", Equals, filter1.Id)
-	c.Check("Options", Equals, filter1.Label)
-	c.Check(filter1.DisplayHints, Equals, scopes.FilterDisplayDefault)
-	c.Check("start_label", Equals, filter1.StartLabel)
-	c.Check("end_label", Equals, filter1.EndLabel)
-	c.Check("unit_label", Equals, filter1.UnitLabel)
+	c.Check(0, Equals, filter1.DefaultStartValue)
+	c.Check(10, Equals, filter1.DefaultEndValue)
+	c.Check("start_prefix", Equals, filter1.StartPrefixLabel)
+	c.Check("start_postfix", Equals, filter1.StartPostfixLabel)
+	c.Check("end_prefix", Equals, filter1.EndPrefixLabel)
+	c.Check("end_postfix", Equals, filter1.EndPostfixLabel)
+	c.Check("central", Equals, filter1.CentralLabel)
 
 	// check the selection
 	fstate := make(scopes.FilterState)
