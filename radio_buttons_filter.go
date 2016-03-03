@@ -47,12 +47,9 @@ func (f *RadioButtonsFilter) UpdateState(state FilterState, optionId string, act
 	state[f.Id] = selected
 }
 
-func (f *RadioButtonsFilter) serializeFilter() interface{} {
-	return map[string]interface{}{
-		"filter_type":   f.FilterType,
-		"id":            f.Id,
-		"display_hints": f.DisplayHints,
-		"label":         f.Label,
-		"options":       f.Options,
-	}
+func (f *RadioButtonsFilter) serializeFilter() map[string]interface{} {
+	v := f.filterBase.serializeFilter()
+	v["label"] = f.Label
+	v["options"] = f.Options
+	return v
 }

@@ -34,11 +34,8 @@ func (f *SwitchFilter) UpdateState(state FilterState, value bool) {
 	state[f.Id] = value
 }
 
-func (f *SwitchFilter) serializeFilter() interface{} {
-	return map[string]interface{}{
-		"filter_type":   f.FilterType,
-		"id":            f.Id,
-		"display_hints": f.DisplayHints,
-		"label":         f.Label,
-	}
+func (f *SwitchFilter) serializeFilter() map[string]interface{} {
+	v := f.filterBase.serializeFilter()
+	v["label"] = f.Label
+	return v
 }

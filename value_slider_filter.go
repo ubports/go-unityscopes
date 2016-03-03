@@ -57,16 +57,13 @@ func (f *ValueSliderFilter) UpdateState(state FilterState, value float64) error 
 	return nil
 }
 
-func (f *ValueSliderFilter) serializeFilter() interface{} {
-	return map[string]interface{}{
-		"filter_type":    f.FilterType,
-		"id":             f.Id,
-		"display_hints":  f.DisplayHints,
-		"label":          f.Label,
-		"label_template": f.ValueLabelTemplate,
-		"min":            f.Min,
-		"max":            f.Max,
-		"default":        f.DefaultValue,
-		"slider_type":    f.Type,
-	}
+func (f *ValueSliderFilter) serializeFilter() map[string]interface{} {
+	v := f.filterBase.serializeFilter()
+	v["label"] = f.Label
+	v["label_template"] = f.ValueLabelTemplate
+	v["min"] = f.Min
+	v["max"] = f.Max
+	v["default"] = f.DefaultValue
+	v["slider_type"] = f.Type
+	return v
 }

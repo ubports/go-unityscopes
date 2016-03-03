@@ -55,13 +55,10 @@ func (f *OptionSelectorFilter) UpdateState(state FilterState, optionId string, a
 	state[f.Id] = selected
 }
 
-func (f *OptionSelectorFilter) serializeFilter() interface{} {
-	return map[string]interface{}{
-		"filter_type":   f.FilterType,
-		"id":            f.Id,
-		"display_hints": f.DisplayHints,
-		"label":         f.Label,
-		"multi_select":  f.MultiSelect,
-		"options":       f.Options,
-	}
+func (f *OptionSelectorFilter) serializeFilter() map[string]interface{} {
+	v := f.filterBase.serializeFilter()
+	v["label"] = f.Label
+	v["multi_select"] = f.MultiSelect
+	v["options"] = f.Options
+	return v
 }

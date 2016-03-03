@@ -147,14 +147,14 @@ func (f *RangeInputFilter) UpdateState(state FilterState, start, end interface{}
 	return nil
 }
 
-func (f *RangeInputFilter) serializeFilter() interface{} {
-	return map[string]interface{}{
-		"default_start_value": f.DefaultStartValue,
-		"default_end_value":   f.DefaultEndValue,
-		"start_prefix_label":  f.StartPrefixLabel,
-		"start_postfix_label": f.StartPostfixLabel,
-		"end_prefix_label":    f.EndPrefixLabel,
-		"end_postfix_label":   f.EndPostfixLabel,
-		"central_label":       f.CentralLabel,
-	}
+func (f *RangeInputFilter) serializeFilter() map[string]interface{} {
+	v := f.filterBase.serializeFilter()
+	v["default_start_value"] = f.DefaultStartValue
+	v["default_end_value"] = f.DefaultEndValue
+	v["start_prefix_label"] = f.StartPrefixLabel
+	v["start_postfix_label"] = f.StartPostfixLabel
+	v["end_prefix_label"] = f.EndPrefixLabel
+	v["end_postfix_label"] = f.EndPostfixLabel
+	v["central_label"] = f.CentralLabel
+	return v
 }

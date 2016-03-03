@@ -2,7 +2,7 @@ package scopes
 
 // Filter is implemented by all scope filter types.
 type Filter interface {
-	serializeFilter() interface{}
+	serializeFilter() map[string]interface{}
 }
 
 type FilterDisplayHints int
@@ -19,6 +19,19 @@ type filterBase struct {
 	Id           string
 	DisplayHints FilterDisplayHints
 	FilterType   string
+	Title        string
+}
+
+func (f *filterBase) serializeFilter() map[string]interface{} {
+	v := map[string]interface{}{
+		"filter_type":   f.FilterType,
+		"id":            f.Id,
+		"display_hints": f.DisplayHints,
+	}
+	if f.Title != "" {
+		v["title"] = f.Title
+	}
+	return v
 }
 
 type filterWithLabel struct {
