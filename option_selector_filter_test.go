@@ -13,8 +13,8 @@ func (s *S) TestOptionSelectorFilter(c *C) {
 	c.Check(filter1.DisplayHints, Equals, scopes.FilterDisplayDefault)
 
 	filter1.DisplayHints = scopes.FilterDisplayPrimary
-	filter1.AddOption("1", "Option 1")
-	filter1.AddOption("2", "Option 2")
+	filter1.AddOption("1", "Option 1", false)
+	filter1.AddOption("2", "Option 2", false)
 
 	c.Check(filter1.DisplayHints, Equals, scopes.FilterDisplayPrimary)
 	c.Check(2, Equals, len(filter1.Options))
@@ -25,13 +25,13 @@ func (s *S) TestOptionSelectorFilter(c *C) {
 
 	// verify the list of options
 	c.Check(len(filter1.Options), Equals, 2)
-	c.Check(filter1.Options, DeepEquals, []scopes.FilterOption{scopes.FilterOption{"1", "Option 1"}, scopes.FilterOption{"2", "Option 2"}})
+	c.Check(filter1.Options, DeepEquals, []scopes.FilterOption{scopes.FilterOption{"1", "Option 1", false}, scopes.FilterOption{"2", "Option 2", false}})
 }
 
 func (s *S) TestOptionSelectorFilterSingleSelection(c *C) {
 	filter1 := scopes.NewOptionSelectorFilter("f1", "Options", false)
-	filter1.AddOption("1", "Option 1")
-	filter1.AddOption("2", "Option 2")
+	filter1.AddOption("1", "Option 1", false)
+	filter1.AddOption("2", "Option 2", false)
 
 	fstate := make(scopes.FilterState)
 	_, ok := fstate["route"]
@@ -64,9 +64,9 @@ func (s *S) TestOptionSelectorFilterSingleSelection(c *C) {
 
 func (s *S) TestOptionSelectorFilterMultiSelection(c *C) {
 	filter1 := scopes.NewOptionSelectorFilter("f1", "Options", true)
-	filter1.AddOption("1", "Option 1")
-	filter1.AddOption("2", "Option 2")
-	filter1.AddOption("3", "Option 3")
+	filter1.AddOption("1", "Option 1", false)
+	filter1.AddOption("2", "Option 2", false)
+	filter1.AddOption("3", "Option 3", false)
 
 	fstate := make(scopes.FilterState)
 
@@ -144,9 +144,9 @@ func (s *S) TestOptionSelectorFilterMultiSelection(c *C) {
 
 func (s *S) TestOptionSelectorFilterBadOption(c *C) {
 	filter1 := scopes.NewOptionSelectorFilter("f1", "Options", true)
-	filter1.AddOption("1", "Option 1")
-	filter1.AddOption("2", "Option 2")
-	filter1.AddOption("3", "Option 3")
+	filter1.AddOption("1", "Option 1", false)
+	filter1.AddOption("2", "Option 2", false)
+	filter1.AddOption("3", "Option 3", false)
 
 	fstate := make(scopes.FilterState)
 

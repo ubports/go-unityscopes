@@ -12,17 +12,17 @@ func (s *S) TestRadioButtonsFilter(c *C) {
 	c.Check(filter1.DisplayHints, Equals, scopes.FilterDisplayDefault)
 
 	filter1.DisplayHints = scopes.FilterDisplayPrimary
-	filter1.AddOption("1", "Option 1")
-	filter1.AddOption("2", "Option 2")
-	filter1.AddOption("3", "Option 3")
+	filter1.AddOption("1", "Option 1", false)
+	filter1.AddOption("2", "Option 2", false)
+	filter1.AddOption("3", "Option 3", false)
 
 	c.Check(filter1.DisplayHints, Equals, scopes.FilterDisplayPrimary)
 
 	// verify the list of options
 	c.Check(len(filter1.Options), Equals, 3)
-	c.Check(filter1.Options, DeepEquals, []scopes.FilterOption{scopes.FilterOption{"1", "Option 1"},
-		scopes.FilterOption{"2", "Option 2"},
-		scopes.FilterOption{"3", "Option 3"}})
+	c.Check(filter1.Options, DeepEquals, []scopes.FilterOption{scopes.FilterOption{"1", "Option 1", false},
+		scopes.FilterOption{"2", "Option 2", false},
+		scopes.FilterOption{"3", "Option 3", false}})
 
 	// check the selection
 	fstate := make(scopes.FilterState)
@@ -31,9 +31,9 @@ func (s *S) TestRadioButtonsFilter(c *C) {
 
 func (s *S) TestRadioButtonsFilterSingleSelection(c *C) {
 	filter1 := scopes.NewRadioButtonsFilter("f1", "Options")
-	filter1.AddOption("1", "Option 1")
-	filter1.AddOption("2", "Option 2")
-	filter1.AddOption("3", "Option 2")
+	filter1.AddOption("1", "Option 1", false)
+	filter1.AddOption("2", "Option 2", false)
+	filter1.AddOption("3", "Option 2", false)
 
 	fstate := make(scopes.FilterState)
 	_, ok := fstate["route"]
@@ -66,9 +66,9 @@ func (s *S) TestRadioButtonsFilterSingleSelection(c *C) {
 
 func (s *S) TestRadioButtonsFilterBadOption(c *C) {
 	filter1 := scopes.NewRadioButtonsFilter("f1", "Options")
-	filter1.AddOption("1", "Option 1")
-	filter1.AddOption("2", "Option 2")
-	filter1.AddOption("3", "Option 3")
+	filter1.AddOption("1", "Option 1", false)
+	filter1.AddOption("2", "Option 2", false)
+	filter1.AddOption("3", "Option 3", false)
 
 	fstate := make(scopes.FilterState)
 

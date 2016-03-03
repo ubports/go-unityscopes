@@ -41,10 +41,11 @@ type filterWithOptions struct {
 }
 
 // AddOption adds a new option to the filter.
-func (f *filterWithOptions) AddOption(id, label string) {
+func (f *filterWithOptions) AddOption(id, label string, defaultValue bool) {
 	f.Options = append(f.Options, FilterOption{
-		Id:    id,
-		Label: label,
+		Id:      id,
+		Label:   label,
+		Default: defaultValue,
 	})
 }
 
@@ -77,6 +78,7 @@ func (f *filterWithOptions) ActiveOptions(state FilterState) []string {
 }
 
 type FilterOption struct {
-	Id    string `json:"id"`
-	Label string `json:"label"`
+	Id      string `json:"id"`
+	Label   string `json:"label"`
+	Default bool   `json:"default"`
 }
