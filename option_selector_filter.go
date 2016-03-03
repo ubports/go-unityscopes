@@ -7,6 +7,7 @@ import (
 // OptionSelectorFilter is used to implement single-select or multi-select filters.
 type OptionSelectorFilter struct {
 	filterWithOptions
+	Label       string
 	MultiSelect bool
 }
 
@@ -19,8 +20,8 @@ func NewOptionSelectorFilter(id, label string, multiSelect bool) *OptionSelector
 				DisplayHints: FilterDisplayDefault,
 				FilterType:   "option_selector",
 			},
-			Label: label,
 		},
+		Label:       label,
 		MultiSelect: multiSelect,
 	}
 }

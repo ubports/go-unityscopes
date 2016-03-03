@@ -7,6 +7,7 @@ import (
 // RatingFilter is a filter that allows for rating-based selection
 type RatingFilter struct {
 	filterWithOptions
+	Label   string
 	OnIcon  string
 	OffIcon string
 }
@@ -20,8 +21,8 @@ func NewRatingFilter(id, label string) *RatingFilter {
 				DisplayHints: FilterDisplayDefault,
 				FilterType:   "rating",
 			},
-			Label: label,
 		},
+		Label: label,
 	}
 }
 

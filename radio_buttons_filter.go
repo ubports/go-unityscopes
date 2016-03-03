@@ -3,6 +3,7 @@ package scopes
 // RadioButtonsFilter is a filter that displays mutually exclusive list of options
 type RadioButtonsFilter struct {
 	filterWithOptions
+	Label string
 }
 
 // NewRadioButtonsFilter creates a new radio button filter.
@@ -14,8 +15,8 @@ func NewRadioButtonsFilter(id, label string) *RadioButtonsFilter {
 				DisplayHints: FilterDisplayDefault,
 				FilterType:   "radio_buttons",
 			},
-			Label: label,
 		},
+		Label: label,
 	}
 }
 
