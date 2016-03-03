@@ -5,37 +5,38 @@ import (
 	"fmt"
 )
 
-type SliderType int
-
-const (
-	LessThan SliderType = 0
-	MoreThan SliderType = 1 << iota
-)
-
 // ValueSliderFilter is a value slider filter that allows for selecting a value within a given range.
 type ValueSliderFilter struct {
 	filterBase
-	Label              string
-	Type               SliderType
-	DefaultValue       float64
-	Min                float64
-	Max                float64
-	ValueLabelTemplate string
+	DefaultValue float64
+	Min          float64
+	Max          float64
+	Labels       ValueSliderLabels
+}
+
+type ValueSliderLabels struct {
+	MinLabel    string
+	MaxLabel    string
+	ExtraLabels []ValueSliderExtraLabel
+}
+
+type ValueSliderExtraLabel struct {
+	Value float64
+	Label string
 }
 
 // NewValueSliderFilter creates a new value slider filter.
-func NewValueSliderFilter(id, label, label_template string, min, max float64) *ValueSliderFilter {
+func NewValueSliderFilter(id string, min, max, defaultValue float64, labels ValueSliderLabels) *ValueSliderFilter {
 	return &ValueSliderFilter{
 		filterBase: filterBase{
 			Id:           id,
 			DisplayHints: FilterDisplayDefault,
 			FilterType:   "value_slider",
 		},
-		Label:              label,
-		ValueLabelTemplate: label_template,
-		Min:                min,
-		Max:                max,
-		DefaultValue:       max,
+		Min:          min,
+		Max:          max,
+		DefaultValue: defaultValue,
+		Labels:       labels,
 	}
 }
 
@@ -58,11 +59,17 @@ func (f *ValueSliderFilter) UpdateState(state FilterState, value float64) error 
 
 func (f *ValueSliderFilter) serializeFilter() map[string]interface{} {
 	v := f.filterBase.serializeFilter()
-	v["label"] = f.Label
-	v["label_template"] = f.ValueLabelTemplate
 	v["min"] = f.Min
 	v["max"] = f.Max
 	v["default"] = f.DefaultValue
-	v["slider_type"] = f.Type
+	extra := make([]interface{}, 0, 2*len(f.Labels.ExtraLabels))
+	for _, l := range f.Labels.ExtraLabels {
+		extra = append(extra, l.Value, l.Label)
+	}
+	v["labels"] = map[string]interface{}{
+		"min_label":    f.Labels.MinLabel,
+		"max_label":    f.Labels.MaxLabel,
+		"extra_labels": extra,
+	}
 	return v
 }

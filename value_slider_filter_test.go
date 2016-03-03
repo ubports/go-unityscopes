@@ -6,14 +6,17 @@ import (
 )
 
 func (s *S) TestValueSliderFilter(c *C) {
-	filter1 := scopes.NewValueSliderFilter("f1", "Options", "label", 10.0, 100.0)
+	labels := scopes.ValueSliderLabels{
+		MinLabel: "min",
+		MaxLabel: "max",
+	}
+	filter1 := scopes.NewValueSliderFilter("f1", 10.0, 100.0, 50, labels)
 	c.Check("f1", Equals, filter1.Id)
-	c.Check("Options", Equals, filter1.Label)
 	c.Check(filter1.DisplayHints, Equals, scopes.FilterDisplayDefault)
-	c.Check(filter1.DefaultValue, Equals, 100.0)
+	c.Check(filter1.DefaultValue, Equals, 50.0)
 	c.Check(filter1.Min, Equals, 10.0)
 	c.Check(filter1.Max, Equals, 100.0)
-	c.Check(filter1.ValueLabelTemplate, Equals, "label")
+	c.Check(filter1.Labels, DeepEquals, labels)
 
 	fstate := make(scopes.FilterState)
 	value, ok := filter1.Value(fstate)
