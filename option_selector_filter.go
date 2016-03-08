@@ -26,6 +26,22 @@ func NewOptionSelectorFilter(id, label string, multiSelect bool) *OptionSelector
 	}
 }
 
+type optionSort struct {
+	Options []interface{}
+}
+
+func (s optionSort) Len() int {
+	return len(s.Options)
+}
+
+func (s optionSort) Less(i, j int) bool {
+	return s.Options[i].(string) < s.Options[j].(string)
+}
+
+func (s optionSort) Swap(i, j int) {
+	s.Options[i], s.Options[j] = s.Options[j], s.Options[i]
+}
+
 // UpdateState updates the value of a particular option in the filter state.
 func (f *OptionSelectorFilter) UpdateState(state FilterState, optionId string, active bool) {
 	if !f.isValidOption(optionId) {
@@ -37,14 +53,14 @@ func (f *OptionSelectorFilter) UpdateState(state FilterState, optionId string, a
 		delete(state, f.Id)
 	}
 	// If the state isn't in a form we expect, treat it as empty
-	selected, _ := state[f.Id].([]string)
-	sort.Strings(selected)
-	pos := sort.SearchStrings(selected, optionId)
+	selected, _ := state[f.Id].([]interface{})
+	sort.Sort(optionSort{selected})
+	pos := sort.Search(len(selected), func(i int) bool { return selected[i].(string) >= optionId })
 	if active {
 		if pos == len(selected) {
 			selected = append(selected, optionId)
 		} else if pos < len(selected) && selected[pos] != optionId {
-			selected = append(selected[:pos], append([]string{optionId}, selected[pos:]...)...)
+			selected = append(selected[:pos], append([]interface{}{optionId}, selected[pos:]...)...)
 		}
 	} else {
 		if pos < len(selected) {

@@ -26,7 +26,7 @@ func (f *RadioButtonsFilter) UpdateState(state FilterState, optionId string, act
 		panic("invalid option ID")
 	}
 	// If the state isn't in a form we expect, treat it as empty
-	selected, _ := state[f.Id].([]string)
+	selected, _ := state[f.Id].([]interface{})
 
 	if active {
 		if len(selected) == 0 {
@@ -40,7 +40,7 @@ func (f *RadioButtonsFilter) UpdateState(state FilterState, optionId string, act
 		if len(selected) > 0 && selected[0] == optionId {
 			// we have 1 option selected and it's the current one.
 			// clear the state
-			selected = make([]string, 0)
+			selected = make([]interface{}, 0)
 		}
 	}
 	state[f.Id] = selected

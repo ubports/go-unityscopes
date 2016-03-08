@@ -71,7 +71,11 @@ func (f *filterWithOptions) HasActiveOption(state FilterState) bool {
 func (f *filterWithOptions) ActiveOptions(state FilterState) []string {
 	var ret []string
 	if state[f.Id] != nil {
-		ret = state[f.Id].([]string)
+		options := state[f.Id].([]interface{})
+		ret = make([]string, len(options))
+		for i, opt := range options {
+			ret[i] = opt.(string)
+		}
 	}
 	return ret
 }
