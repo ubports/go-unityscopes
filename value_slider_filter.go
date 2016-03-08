@@ -27,7 +27,7 @@ type ValueSliderExtraLabel struct {
 
 // NewValueSliderFilter creates a new value slider filter.
 func NewValueSliderFilter(id string, min, max, defaultValue float64, labels ValueSliderLabels) *ValueSliderFilter {
-	return &ValueSliderFilter{
+	filter := &ValueSliderFilter{
 		filterBase: filterBase{
 			Id:           id,
 			DisplayHints: FilterDisplayDefault,
@@ -37,6 +37,37 @@ func NewValueSliderFilter(id string, min, max, defaultValue float64, labels Valu
 		Max:          max,
 		DefaultValue: defaultValue,
 		Labels:       labels,
+	}
+	filter.validate()
+	return filter
+}
+
+func (f *ValueSliderFilter) validate() {
+	if f.Min >= f.Max {
+		panic("Invalid range for value slider filter");
+	}
+	last := f.Min
+	labels := map[string]bool{
+		f.Labels.MinLabel: true,
+		f.Labels.MaxLabel: true,
+	}
+	// check that values of extra labels grow, i.e. v1 < v2 < v3 ...
+	// and labels are unique and not empty
+	for _, l := range f.Labels.ExtraLabels {
+		if l.Value <= last {
+			panic("Extra label for value slider filter out of sequence")
+		}
+		last = l.Value
+		if l.Label == "" {
+			panic("Extra labels cannot be empty")
+		}
+		if labels[l.Label] {
+			panic("Multiple definitions for extra label")
+		}
+		labels[l.Label] = true
+	}
+	if f.Max <= last {
+		panic("Last extra label value greater than maximum value")
 	}
 }
 
