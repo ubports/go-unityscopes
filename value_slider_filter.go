@@ -90,12 +90,12 @@ func (f *ValueSliderFilter) UpdateState(state FilterState, value float64) error 
 
 func (f *ValueSliderFilter) serializeFilter() map[string]interface{} {
 	v := f.filterBase.serializeFilter()
-	v["min"] = f.Min
-	v["max"] = f.Max
-	v["default"] = f.DefaultValue
+	v["min"] = marshalFloat(f.Min)
+	v["max"] = marshalFloat(f.Max)
+	v["default"] = marshalFloat(f.DefaultValue)
 	extra := make([]interface{}, 0, 2*len(f.Labels.ExtraLabels))
 	for _, l := range f.Labels.ExtraLabels {
-		extra = append(extra, l.Value, l.Label)
+		extra = append(extra, marshalFloat(l.Value), l.Label)
 	}
 	v["labels"] = map[string]interface{}{
 		"min_label":    f.Labels.MinLabel,
