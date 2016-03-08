@@ -7,8 +7,8 @@ import (
 
 func (s *S) TestValueSliderFilter(c *C) {
 	labels := scopes.ValueSliderLabels{
-		MinLabel:    "min",
-		MaxLabel:    "max",
+		MinLabel: "min",
+		MaxLabel: "max",
 		ExtraLabels: []scopes.ValueSliderExtraLabel{
 			{50, "middle"},
 		},

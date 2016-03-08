@@ -44,7 +44,7 @@ func NewValueSliderFilter(id string, min, max, defaultValue float64, labels Valu
 
 func (f *ValueSliderFilter) validate() {
 	if f.Min >= f.Max {
-		panic("Invalid range for value slider filter");
+		panic("Invalid range for value slider filter")
 	}
 	last := f.Min
 	labels := map[string]bool{
