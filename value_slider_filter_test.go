@@ -22,25 +22,21 @@ func (s *S) TestValueSliderFilter(c *C) {
 	c.Check(filter1.Labels, DeepEquals, labels)
 
 	fstate := make(scopes.FilterState)
-	value, ok := filter1.Value(fstate)
-	c.Check(value, Equals, 0.0)
-	c.Check(ok, Equals, false)
+	value := filter1.Value(fstate)
+	c.Check(value, Equals, 50.0)
 
 	err := filter1.UpdateState(fstate, 30.5)
 	c.Check(err, IsNil)
-	value, ok = filter1.Value(fstate)
+	value = filter1.Value(fstate)
 	c.Check(value, Equals, 30.5)
-	c.Check(ok, Equals, true)
 
 	err = filter1.UpdateState(fstate, 44.5)
 	c.Check(err, IsNil)
-	value, ok = filter1.Value(fstate)
+	value = filter1.Value(fstate)
 	c.Check(value, Equals, 44.5)
-	c.Check(ok, Equals, true)
 
 	err = filter1.UpdateState(fstate, 3545.33)
 	c.Check(err, Not(Equals), nil)
-	value, ok = filter1.Value(fstate)
+	value = filter1.Value(fstate)
 	c.Check(value, Equals, 44.5)
-	c.Check(ok, Equals, true)
 }

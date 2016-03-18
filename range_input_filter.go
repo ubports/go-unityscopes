@@ -74,6 +74,15 @@ func (f *RangeInputFilter) StartValue(state FilterState) (float64, bool) {
 		default:
 			panic("RangeInputFilter:StartValue Unknown value type")
 		}
+	} else {
+		switch v := f.DefaultStartValue.(type) {
+		case float64:
+			return v, true
+		case int:
+			return float64(v), true
+		case nil:
+			return 0, false
+		}
 	}
 	return start, ok
 }
@@ -101,6 +110,15 @@ func (f *RangeInputFilter) EndValue(state FilterState) (float64, bool) {
 			return 0, false
 		default:
 			panic("RangeInputFilter:EndValue Unknown value type")
+		}
+	} else {
+		switch v := f.DefaultEndValue.(type) {
+		case float64:
+			return v, true
+		case int:
+			return float64(v), true
+		case nil:
+			return 0, false
 		}
 	}
 	return end, ok

@@ -76,6 +76,14 @@ func (f *filterWithOptions) ActiveOptions(state FilterState) []string {
 		for i, opt := range options {
 			ret[i] = opt.(string)
 		}
+	} else {
+		// We don't have this filter in the state object, so
+		// give defaults back.
+		for _, o := range f.Options {
+			if o.Default {
+				ret = append(ret, o.Id)
+			}
+		}
 	}
 	return ret
 }

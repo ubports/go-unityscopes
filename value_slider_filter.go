@@ -74,9 +74,11 @@ func (f *ValueSliderFilter) validate() {
 // Value gets value of this filter from filter state object.
 // If the value is not set for the filter it returns false as the second return statement,
 // it returns true otherwise
-func (f *ValueSliderFilter) Value(state FilterState) (float64, bool) {
-	value, ok := state[f.Id].(float64)
-	return value, ok
+func (f *ValueSliderFilter) Value(state FilterState) float64 {
+	if value, ok := state[f.Id].(float64); ok {
+		return value
+	}
+	return f.DefaultValue
 }
 
 // UpdateState updates the value of the filter to the given value

@@ -34,7 +34,7 @@ func (s *S) TestOptionSelectorFilterSingleSelection(c *C) {
 	filter1.AddOption("2", "Option 2", false)
 
 	fstate := make(scopes.FilterState)
-	_, ok := fstate["route"]
+	_, ok := fstate["f1"]
 	c.Check(ok, Equals, false)
 	c.Check(filter1.HasActiveOption(fstate), Equals, false)
 
@@ -152,4 +152,15 @@ func (s *S) TestOptionSelectorFilterBadOption(c *C) {
 
 	c.Assert(func() { filter1.UpdateState(fstate, "5", true) }, PanicMatches, "invalid option ID")
 	c.Assert(func() { filter1.UpdateState(fstate, "5", false) }, PanicMatches, "invalid option ID")
+}
+
+func (s *S) TestOptionSelectorFilterDefaultValue(c *C) {
+	filter := scopes.NewOptionSelectorFilter("f1", "Options", true)
+	filter.AddOption("1", "Option 1", false)
+	filter.AddOption("2", "Option 2", true)
+	filter.AddOption("3", "Option 3", false)
+
+	fstate := make(scopes.FilterState)
+	c.Check(filter.HasActiveOption(fstate), Equals, true)
+	c.Check(filter.ActiveOptions(fstate), DeepEquals, []string{"2"})
 }

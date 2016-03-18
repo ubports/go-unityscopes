@@ -6,10 +6,10 @@ import (
 )
 
 func (s *S) TestRangeInputFilter(c *C) {
-	filter1 := scopes.NewRangeInputFilter("f1", 0, 10, "start_prefix", "start_postfix", "end_prefix", "end_postfix", "central")
+	filter1 := scopes.NewRangeInputFilter("f1", nil, nil, "start_prefix", "start_postfix", "end_prefix", "end_postfix", "central")
 	c.Check("f1", Equals, filter1.Id)
-	c.Check(0, Equals, filter1.DefaultStartValue)
-	c.Check(10, Equals, filter1.DefaultEndValue)
+	c.Check(nil, Equals, filter1.DefaultStartValue)
+	c.Check(nil, Equals, filter1.DefaultEndValue)
 	c.Check("start_prefix", Equals, filter1.StartPrefixLabel)
 	c.Check("start_postfix", Equals, filter1.StartPostfixLabel)
 	c.Check("end_prefix", Equals, filter1.EndPrefixLabel)
@@ -156,4 +156,17 @@ func (s *S) TestRangeInputFilter(c *C) {
 	end, found = filter1.EndValue(fstate)
 	c.Check(end, Equals, float64(100))
 	c.Check(found, Equals, true)
+}
+
+func (s *S) TestRangeInputFilterDefaults(c *C) {
+	filter := scopes.NewRangeInputFilter("f1", 0, 100, "start_prefix", "start_postfix", "end_prefix", "end_postfix", "central")
+
+	fstate := make(scopes.FilterState)
+	start, ok := filter.StartValue(fstate)
+	c.Check(ok, Equals, true)
+	c.Check(start, Equals, 0.0)
+
+	end, ok := filter.EndValue(fstate)
+	c.Check(ok, Equals, true)
+	c.Check(end, Equals, 100.0)
 }
