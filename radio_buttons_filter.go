@@ -3,21 +3,20 @@ package scopes
 // RadioButtonsFilter is a filter that displays mutually exclusive list of options
 type RadioButtonsFilter struct {
 	filterWithOptions
+	Label string
 }
 
 // NewRadioButtonsFilter creates a new radio button filter.
 func NewRadioButtonsFilter(id, label string) *RadioButtonsFilter {
 	return &RadioButtonsFilter{
 		filterWithOptions: filterWithOptions{
-			filterWithLabel: filterWithLabel{
-				filterBase: filterBase{
-					Id:           id,
-					DisplayHints: FilterDisplayDefault,
-					FilterType:   "radio_buttons",
-				},
-				Label: label,
+			filterBase: filterBase{
+				Id:           id,
+				DisplayHints: FilterDisplayDefault,
+				FilterType:   "radio_buttons",
 			},
 		},
+		Label: label,
 	}
 }
 
@@ -27,7 +26,7 @@ func (f *RadioButtonsFilter) UpdateState(state FilterState, optionId string, act
 		panic("invalid option ID")
 	}
 	// If the state isn't in a form we expect, treat it as empty
-	selected, _ := state[f.Id].([]string)
+	selected, _ := state[f.Id].([]interface{})
 
 	if active {
 		if len(selected) == 0 {
@@ -41,18 +40,15 @@ func (f *RadioButtonsFilter) UpdateState(state FilterState, optionId string, act
 		if len(selected) > 0 && selected[0] == optionId {
 			// we have 1 option selected and it's the current one.
 			// clear the state
-			selected = make([]string, 0)
+			selected = make([]interface{}, 0)
 		}
 	}
 	state[f.Id] = selected
 }
 
-func (f *RadioButtonsFilter) serializeFilter() interface{} {
-	return map[string]interface{}{
-		"filter_type":   f.FilterType,
-		"id":            f.Id,
-		"display_hints": f.DisplayHints,
-		"label":         f.Label,
-		"options":       f.Options,
-	}
+func (f *RadioButtonsFilter) serializeFilter() map[string]interface{} {
+	v := f.filterBase.serializeFilter()
+	v["label"] = f.Label
+	v["options"] = f.Options
+	return v
 }

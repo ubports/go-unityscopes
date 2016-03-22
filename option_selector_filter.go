@@ -7,6 +7,7 @@ import (
 // OptionSelectorFilter is used to implement single-select or multi-select filters.
 type OptionSelectorFilter struct {
 	filterWithOptions
+	Label       string
 	MultiSelect bool
 }
 
@@ -14,17 +15,31 @@ type OptionSelectorFilter struct {
 func NewOptionSelectorFilter(id, label string, multiSelect bool) *OptionSelectorFilter {
 	return &OptionSelectorFilter{
 		filterWithOptions: filterWithOptions{
-			filterWithLabel: filterWithLabel{
-				filterBase: filterBase{
-					Id:           id,
-					DisplayHints: FilterDisplayDefault,
-					FilterType:   "option_selector",
-				},
-				Label: label,
+			filterBase: filterBase{
+				Id:           id,
+				DisplayHints: FilterDisplayDefault,
+				FilterType:   "option_selector",
 			},
 		},
+		Label:       label,
 		MultiSelect: multiSelect,
 	}
+}
+
+type optionSort struct {
+	Options []interface{}
+}
+
+func (s optionSort) Len() int {
+	return len(s.Options)
+}
+
+func (s optionSort) Less(i, j int) bool {
+	return s.Options[i].(string) < s.Options[j].(string)
+}
+
+func (s optionSort) Swap(i, j int) {
+	s.Options[i], s.Options[j] = s.Options[j], s.Options[i]
 }
 
 // UpdateState updates the value of a particular option in the filter state.
@@ -38,14 +53,14 @@ func (f *OptionSelectorFilter) UpdateState(state FilterState, optionId string, a
 		delete(state, f.Id)
 	}
 	// If the state isn't in a form we expect, treat it as empty
-	selected, _ := state[f.Id].([]string)
-	sort.Strings(selected)
-	pos := sort.SearchStrings(selected, optionId)
+	selected, _ := state[f.Id].([]interface{})
+	sort.Sort(optionSort{selected})
+	pos := sort.Search(len(selected), func(i int) bool { return selected[i].(string) >= optionId })
 	if active {
 		if pos == len(selected) {
 			selected = append(selected, optionId)
 		} else if pos < len(selected) && selected[pos] != optionId {
-			selected = append(selected[:pos], append([]string{optionId}, selected[pos:]...)...)
+			selected = append(selected[:pos], append([]interface{}{optionId}, selected[pos:]...)...)
 		}
 	} else {
 		if pos < len(selected) {
@@ -55,13 +70,10 @@ func (f *OptionSelectorFilter) UpdateState(state FilterState, optionId string, a
 	state[f.Id] = selected
 }
 
-func (f *OptionSelectorFilter) serializeFilter() interface{} {
-	return map[string]interface{}{
-		"filter_type":   f.FilterType,
-		"id":            f.Id,
-		"display_hints": f.DisplayHints,
-		"label":         f.Label,
-		"multi_select":  f.MultiSelect,
-		"options":       f.Options,
-	}
+func (f *OptionSelectorFilter) serializeFilter() map[string]interface{} {
+	v := f.filterBase.serializeFilter()
+	v["label"] = f.Label
+	v["multi_select"] = f.MultiSelect
+	v["options"] = f.Options
+	return v
 }

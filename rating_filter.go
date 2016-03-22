@@ -7,6 +7,7 @@ import (
 // RatingFilter is a filter that allows for rating-based selection
 type RatingFilter struct {
 	filterWithOptions
+	Label   string
 	OnIcon  string
 	OffIcon string
 }
@@ -15,15 +16,13 @@ type RatingFilter struct {
 func NewRatingFilter(id, label string) *RatingFilter {
 	return &RatingFilter{
 		filterWithOptions: filterWithOptions{
-			filterWithLabel: filterWithLabel{
-				filterBase: filterBase{
-					Id:           id,
-					DisplayHints: FilterDisplayDefault,
-					FilterType:   "rating",
-				},
-				Label: label,
+			filterBase: filterBase{
+				Id:           id,
+				DisplayHints: FilterDisplayDefault,
+				FilterType:   "rating",
 			},
 		},
+		Label: label,
 	}
 }
 
@@ -49,12 +48,9 @@ func (f *RatingFilter) UpdateState(state FilterState, optionId string, active bo
 	}
 }
 
-func (f *RatingFilter) serializeFilter() interface{} {
-	return map[string]interface{}{
-		"filter_type":   f.FilterType,
-		"id":            f.Id,
-		"display_hints": f.DisplayHints,
-		"label":         f.Label,
-		"options":       f.Options,
-	}
+func (f *RatingFilter) serializeFilter() map[string]interface{} {
+	v := f.filterBase.serializeFilter()
+	v["label"] = f.Label
+	v["options"] = f.Options
+	return v
 }

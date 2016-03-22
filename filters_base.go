@@ -2,7 +2,7 @@ package scopes
 
 // Filter is implemented by all scope filter types.
 type Filter interface {
-	serializeFilter() interface{}
+	serializeFilter() map[string]interface{}
 }
 
 type FilterDisplayHints int
@@ -19,23 +19,32 @@ type filterBase struct {
 	Id           string
 	DisplayHints FilterDisplayHints
 	FilterType   string
+	Title        string
 }
 
-type filterWithLabel struct {
-	filterBase
-	Label string
+func (f *filterBase) serializeFilter() map[string]interface{} {
+	v := map[string]interface{}{
+		"filter_type":   f.FilterType,
+		"id":            f.Id,
+		"display_hints": f.DisplayHints,
+	}
+	if f.Title != "" {
+		v["title"] = f.Title
+	}
+	return v
 }
 
 type filterWithOptions struct {
-	filterWithLabel
+	filterBase
 	Options []FilterOption
 }
 
 // AddOption adds a new option to the filter.
-func (f *filterWithOptions) AddOption(id, label string) {
+func (f *filterWithOptions) AddOption(id, label string, defaultValue bool) {
 	f.Options = append(f.Options, FilterOption{
-		Id:    id,
-		Label: label,
+		Id:      id,
+		Label:   label,
+		Default: defaultValue,
 	})
 }
 
@@ -62,12 +71,25 @@ func (f *filterWithOptions) HasActiveOption(state FilterState) bool {
 func (f *filterWithOptions) ActiveOptions(state FilterState) []string {
 	var ret []string
 	if state[f.Id] != nil {
-		ret = state[f.Id].([]string)
+		options := state[f.Id].([]interface{})
+		ret = make([]string, len(options))
+		for i, opt := range options {
+			ret[i] = opt.(string)
+		}
+	} else {
+		// We don't have this filter in the state object, so
+		// give defaults back.
+		for _, o := range f.Options {
+			if o.Default {
+				ret = append(ret, o.Id)
+			}
+		}
 	}
 	return ret
 }
 
 type FilterOption struct {
-	Id    string `json:"id"`
-	Label string `json:"label"`
+	Id      string `json:"id"`
+	Label   string `json:"label"`
+	Default bool   `json:"default"`
 }

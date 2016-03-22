@@ -7,26 +7,46 @@ import (
 
 // RangeInputFilter is a range filter which allows a start and end value to be entered by user, and any of them is optional.
 type RangeInputFilter struct {
-	filterWithLabel
-	StartLabel string
-	EndLabel   string
-	UnitLabel  string
+	filterBase
+	DefaultStartValue interface{}
+	DefaultEndValue   interface{}
+	StartPrefixLabel  string
+	StartPostfixLabel string
+	EndPrefixLabel    string
+	EndPostfixLabel   string
+	CentralLabel      string
+}
+
+func checkRangeValidType(value interface{}) bool {
+	switch value.(type) {
+	case int, float64, nil:
+		return true
+	default:
+		return false
+	}
 }
 
 // NewRangeInputFilter creates a new range input filter.
-func NewRangeInputFilter(id, label, start_label, end_label, unit_label string) *RangeInputFilter {
+func NewRangeInputFilter(id string, defaultStartValue, defaultEndValue interface{}, startPrefixLabel, startPostfixLabel, endPrefixLabel, endPostfixLabel, centralLabel string) *RangeInputFilter {
+	if !checkRangeValidType(defaultStartValue) {
+		panic("bad type for defaultStartValue")
+	}
+	if !checkRangeValidType(defaultEndValue) {
+		panic("bad type for defaultEndValue")
+	}
 	return &RangeInputFilter{
-		filterWithLabel: filterWithLabel{
-			filterBase: filterBase{
-				Id:           id,
-				DisplayHints: FilterDisplayDefault,
-				FilterType:   "range_input",
-			},
-			Label: label,
+		filterBase: filterBase{
+			Id:           id,
+			DisplayHints: FilterDisplayDefault,
+			FilterType:   "range_input",
 		},
-		StartLabel: start_label,
-		EndLabel:   end_label,
-		UnitLabel:  unit_label,
+		DefaultStartValue: defaultStartValue,
+		DefaultEndValue:   defaultEndValue,
+		StartPrefixLabel:  startPrefixLabel,
+		StartPostfixLabel: startPostfixLabel,
+		EndPrefixLabel:    endPrefixLabel,
+		EndPostfixLabel:   endPostfixLabel,
+		CentralLabel:      centralLabel,
 	}
 }
 
@@ -53,6 +73,15 @@ func (f *RangeInputFilter) StartValue(state FilterState) (float64, bool) {
 			return 0, false
 		default:
 			panic("RangeInputFilter:StartValue Unknown value type")
+		}
+	} else {
+		switch v := f.DefaultStartValue.(type) {
+		case float64:
+			return v, true
+		case int:
+			return float64(v), true
+		case nil:
+			return 0, false
 		}
 	}
 	return start, ok
@@ -82,17 +111,17 @@ func (f *RangeInputFilter) EndValue(state FilterState) (float64, bool) {
 		default:
 			panic("RangeInputFilter:EndValue Unknown value type")
 		}
+	} else {
+		switch v := f.DefaultEndValue.(type) {
+		case float64:
+			return v, true
+		case int:
+			return float64(v), true
+		case nil:
+			return 0, false
+		}
 	}
 	return end, ok
-}
-
-func (f *RangeInputFilter) checkValidType(value interface{}) bool {
-	switch value.(type) {
-	case int, float64, nil:
-		return true
-	default:
-		return false
-	}
 }
 
 func convertToFloat(value interface{}) float64 {
@@ -113,10 +142,10 @@ func convertToFloat(value interface{}) float64 {
 
 // UpdateState updates the value of the filter
 func (f *RangeInputFilter) UpdateState(state FilterState, start, end interface{}) error {
-	if !f.checkValidType(start) {
+	if !checkRangeValidType(start) {
 		return errors.New("RangeInputFilter:UpdateState: Bad type for start value. Valid types are int float64 and nil")
 	}
-	if !f.checkValidType(end) {
+	if !checkRangeValidType(end) {
 		return errors.New("RangeInputFilter:UpdateState: Bad type for end value. Valid types are int float64 and nil")
 	}
 
@@ -136,10 +165,14 @@ func (f *RangeInputFilter) UpdateState(state FilterState, start, end interface{}
 	return nil
 }
 
-func (f *RangeInputFilter) serializeFilter() interface{} {
-	return map[string]interface{}{
-		"start_label": f.StartLabel,
-		"end_label":   f.EndLabel,
-		"unit_label":  f.UnitLabel,
-	}
+func (f *RangeInputFilter) serializeFilter() map[string]interface{} {
+	v := f.filterBase.serializeFilter()
+	v["default_start_value"] = f.DefaultStartValue
+	v["default_end_value"] = f.DefaultEndValue
+	v["start_prefix_label"] = f.StartPrefixLabel
+	v["start_postfix_label"] = f.StartPostfixLabel
+	v["end_prefix_label"] = f.EndPrefixLabel
+	v["end_postfix_label"] = f.EndPostfixLabel
+	v["central_label"] = f.CentralLabel
+	return v
 }
