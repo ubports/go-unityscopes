@@ -23,7 +23,7 @@ void destroy_result(_Result *res) {
     delete reinterpret_cast<Result*>(res);
 }
 
-void *result_get_attr(_Result *res, void *attr, int *length, char **error) {
+void *result_get_attr(_Result *res, StrData attr, int *length, char **error) {
     std::string json_data;
     try {
         Variant v = reinterpret_cast<Result*>(res)->value(from_gostring(attr));
@@ -35,7 +35,7 @@ void *result_get_attr(_Result *res, void *attr, int *length, char **error) {
     return as_bytes(json_data, length);
 }
 
-void result_set_attr(_Result *res, void *attr, void *json_value, char **error) {
+void result_set_attr(_Result *res, StrData attr, StrData json_value, char **error) {
     try {
         Variant v = Variant::deserialize_json(from_gostring(json_value));
         (*reinterpret_cast<Result*>(res))[from_gostring(attr)] = v;

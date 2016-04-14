@@ -88,8 +88,8 @@ _Result *new_categorised_result(SharedPtrData category);
 void destroy_result(_Result *res);
 
 /* Result objects */
-void *result_get_attr(_Result *res, void *attr, int *length, char **error);
-void result_set_attr(_Result *res, void *attr, void *json_value, char **error);
+void *result_get_attr(_Result *res, StrData attr, int *length, char **error);
+void result_set_attr(_Result *res, StrData attr, StrData json_value, char **error);
 void result_set_intercept_activation(_Result *res);
 
 /* Department objects */
