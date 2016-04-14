@@ -10,6 +10,10 @@ extern "C" {
 namespace gounityscopes {
 namespace internal {
 
+std::string from_gostring(StrData str) {
+    return std::string(str.data, str.length);
+}
+
 std::string from_gostring(void *str) {
     GoString *s = static_cast<GoString*>(str);
     return std::string(s->p, s->n);

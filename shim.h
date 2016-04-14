@@ -11,6 +11,11 @@ extern "C" {
 
 typedef uintptr_t SharedPtrData[2];
 
+typedef struct StrData {
+    char *data;
+    long length;
+} StrData;
+
 typedef struct _CannedQuery _CannedQuery;
 typedef struct _Result _Result;
 typedef struct _Result _CategorisedResult;
@@ -25,8 +30,8 @@ typedef struct _GoString _GoString;
 
 typedef struct _ActivationResponse _ActivationResponse;
 
-void run_scope(void *scope_name, void *runtime_config,
-               void *scope_config, void *pointer_to_iface,
+void run_scope(StrData scope_name, StrData runtime_config,
+               StrData scope_config, void *pointer_to_iface,
                char **error);
 
 /* ScopeBase objects */
