@@ -24,7 +24,7 @@ func makeDepartment() *Department {
 func NewDepartment(departmentID string, query *CannedQuery, label string) (*Department, error) {
 	dept := makeDepartment()
 	var errorString *C.char
-	C.new_department(unsafe.Pointer(&departmentID), query.q, unsafe.Pointer(&label), &dept.d[0], &errorString)
+	C.new_department(strData(departmentID), query.q, strData(label), &dept.d[0], &errorString)
 
 	if err := checkError(errorString); err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (dept *Department) Query() *CannedQuery {
 // The alternate label only needs to be provided for the current
 // department.
 func (dept *Department) SetAlternateLabel(label string) {
-	C.department_set_alternate_label(&dept.d[0], unsafe.Pointer(&label))
+	C.department_set_alternate_label(&dept.d[0], strData(label))
 }
 
 // AlternateLabel gets the alternate label for this department.
