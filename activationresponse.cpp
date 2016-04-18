@@ -29,7 +29,7 @@ void activation_response_init_update_result(_ActivationResponse *response, _Resu
         ActivationResponse(*reinterpret_cast<Result*>(result));
 }
 
-void activation_response_init_update_preview(_ActivationResponse *response, StrData widget_list, char **error) {
+void activation_response_init_update_preview(_ActivationResponse *response, const StrData widget_list, char **error) {
     try {
         PreviewWidgetList widgets;
         for (const auto &data : split_strings(widget_list)) {

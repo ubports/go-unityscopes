@@ -19,7 +19,7 @@ void init_department_ptr(SharedPtrData dest, SharedPtrData src) {
     init_ptr<Department>(dest, dept);
 }
 
-void new_department(StrData dept_id, _CannedQuery *query, StrData label, SharedPtrData dept, char **error) {
+void new_department(const StrData dept_id, _CannedQuery *query, const StrData label, SharedPtrData dept, char **error) {
     try {
         auto d = Department::create(from_gostring(dept_id),
                                *reinterpret_cast<CannedQuery*>(query),
@@ -38,7 +38,7 @@ void department_add_subdepartment(SharedPtrData dept, SharedPtrData child) {
     get_ptr<Department>(dept)->add_subdepartment(get_ptr<Department>(child));
 }
 
-void department_set_alternate_label(SharedPtrData dept, StrData label) {
+void department_set_alternate_label(SharedPtrData dept, const StrData label) {
     get_ptr<Department>(dept)->set_alternate_label(from_gostring(label));
 }
 

@@ -15,7 +15,7 @@ void destroy_canned_query(_CannedQuery *query) {
     delete reinterpret_cast<CannedQuery*>(query);
 }
 
-_CannedQuery *new_canned_query(StrData scope_id, StrData query_str, StrData department_id) {
+_CannedQuery *new_canned_query(const StrData scope_id, const StrData query_str, const StrData department_id) {
     return reinterpret_cast<_CannedQuery*>(
         new CannedQuery(from_gostring(scope_id),
                         from_gostring(query_str),
@@ -45,11 +45,11 @@ char *canned_query_get_query_string(_CannedQuery *query) {
     return strdup(reinterpret_cast<CannedQuery*>(query)->query_string().c_str());
 }
 
-void canned_query_set_department_id(_CannedQuery *query, StrData department_id) {
+void canned_query_set_department_id(_CannedQuery *query, const StrData department_id) {
     reinterpret_cast<CannedQuery*>(query)->set_department_id(from_gostring(department_id));
 }
 
-void canned_query_set_query_string(_CannedQuery *query, StrData query_str) {
+void canned_query_set_query_string(_CannedQuery *query, const StrData query_str) {
     reinterpret_cast<CannedQuery*>(query)->set_query_string(from_gostring(query_str));
 }
 

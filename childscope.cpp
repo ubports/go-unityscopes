@@ -11,7 +11,7 @@ extern "C" {
 using namespace unity::scopes;
 using namespace gounityscopes::internal;
 
-_ChildScope *new_child_scope(StrData id, _ScopeMetadata *metadata, int enabled, const StrData keyword_list) {
+_ChildScope *new_child_scope(const StrData id, _ScopeMetadata *metadata, int enabled, const StrData keyword_list) {
     ScopeMetadata *api_metadata = reinterpret_cast<ScopeMetadata *>(metadata);
 
     std::set<std::string> keywords;
