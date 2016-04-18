@@ -53,20 +53,20 @@ void init_search_reply_ptr(SharedPtrData dest, SharedPtrData src);
 void destroy_search_reply_ptr(SharedPtrData data);
 
 void search_reply_finished(SharedPtrData reply);
-void search_reply_error(SharedPtrData reply, void *err_string);
-void search_reply_register_category(SharedPtrData reply, void *id, void *title, void *icon, void *cat_template, SharedPtrData category);
+void search_reply_error(SharedPtrData reply, StrData err_string);
+void search_reply_register_category(SharedPtrData reply, StrData id, StrData title, StrData icon, StrData cat_template, SharedPtrData category);
 void search_reply_register_departments(SharedPtrData reply, SharedPtrData dept);
 void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **error);
-void search_reply_push_filters(SharedPtrData reply, void *filters_json, void *filter_state_json, char **error);
+void search_reply_push_filters(SharedPtrData reply, StrData filters_json, StrData filter_state_json, char **error);
 
 /* PreviewReply objects */
 void init_preview_reply_ptr(SharedPtrData dest, SharedPtrData src);
 void destroy_preview_reply_ptr(SharedPtrData data);
 
 void preview_reply_finished(SharedPtrData reply);
-void preview_reply_error(SharedPtrData reply, void *err_string);
+void preview_reply_error(SharedPtrData reply, StrData err_string);
 void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int count, char **error);
-void preview_reply_push_attr(SharedPtrData reply, void *key, void *json_value, char **error);
+void preview_reply_push_attr(SharedPtrData reply, StrData key, StrData json_value, char **error);
 void preview_reply_register_layout(SharedPtrData reply, _ColumnLayout **layout, int n_items, char **error);
 
 /* CannedQuery objects */

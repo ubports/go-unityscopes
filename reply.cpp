@@ -28,12 +28,12 @@ void search_reply_finished(SharedPtrData reply) {
     get_ptr<SearchReply>(reply)->finished();
 }
 
-void search_reply_error(SharedPtrData reply, void *err_string) {
+void search_reply_error(SharedPtrData reply, StrData err_string) {
     get_ptr<SearchReply>(reply)->error(std::make_exception_ptr(
         std::runtime_error(from_gostring(err_string))));
 }
 
-void search_reply_register_category(SharedPtrData reply, void *id, void *title, void *icon, void *cat_template, SharedPtrData category) {
+void search_reply_register_category(SharedPtrData reply, StrData id, StrData title, StrData icon, StrData cat_template, SharedPtrData category) {
     CategoryRenderer renderer;
     std::string renderer_template = from_gostring(cat_template);
     if (!renderer_template.empty()) {
@@ -55,7 +55,7 @@ void search_reply_push(SharedPtrData reply, _CategorisedResult *result, char **e
     }
 }
 
-void search_reply_push_filters(SharedPtrData reply, void *filters_json, void *filter_state_json, char **error) {
+void search_reply_push_filters(SharedPtrData reply, StrData filters_json, StrData filter_state_json, char **error) {
 #if UNITY_SCOPES_VERSION_MAJOR == 0 && (UNITY_SCOPES_VERSION_MINOR < 6 || (UNITY_SCOPES_VERSION_MINOR == 6 && UNITY_SCOPES_VERSION_MICRO < 10))
     std::string errorMessage = "SearchReply.PushFilters() is only available when compiled against libunity-scopes >= 0.6.10";
     *error = strdup(errorMessage.c_str());
@@ -89,7 +89,7 @@ void preview_reply_finished(SharedPtrData reply) {
     get_ptr<PreviewReply>(reply)->finished();
 }
 
-void preview_reply_error(SharedPtrData reply, void *err_string) {
+void preview_reply_error(SharedPtrData reply, StrData err_string) {
     get_ptr<PreviewReply>(reply)->error(std::make_exception_ptr(
         std::runtime_error(from_gostring(err_string))));
 }
@@ -108,7 +108,7 @@ void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int c
     }
 }
 
-void preview_reply_push_attr(SharedPtrData reply, void *key, void *json_value, char **error) {
+void preview_reply_push_attr(SharedPtrData reply, StrData key, StrData json_value, char **error) {
     try {
         Variant value = Variant::deserialize_json(from_gostring(json_value));
         get_ptr<PreviewReply>(reply)->push(from_gostring(key), value);
