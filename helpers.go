@@ -20,6 +20,12 @@ func strData(s string) C.StrData {
 
 // byteData transforms a byte array into the same format strData() produces.
 func byteData(b []byte) C.StrData {
+	if len(b) == 0 {
+		return C.StrData{
+			data: nil,
+			length: 0,
+		}
+	}
 	return C.StrData{
 		data: (*C.char)(unsafe.Pointer(&b[0])),
 		length: C.long(len(b)),

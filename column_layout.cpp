@@ -23,13 +23,12 @@ _ColumnLayout *new_column_layout(int num_columns) {
     return reinterpret_cast<_ColumnLayout*>(new ColumnLayout(num_columns));
 }
 
-void column_layout_add_column(_ColumnLayout *layout, void *gostring_array_widgets, int nb_widgets, char **error) {
-    GoString *widget_data = static_cast<GoString*>(gostring_array_widgets);
-
+void column_layout_add_column(_ColumnLayout *layout, const StrData widget_list, char **error) {
+    auto widgets = split_strings(widget_list);
     std::vector<std::string> api_widgets;
     // convert to std::string
-    for (auto i = 0; i < nb_widgets; ++i) {
-        api_widgets.push_back(std::string(widget_data[i].p, widget_data[i].n));
+    for (const char *w : widgets) {
+        api_widgets.push_back(w);
     }
     try {
         reinterpret_cast<ColumnLayout*>(layout)->add_column(api_widgets);

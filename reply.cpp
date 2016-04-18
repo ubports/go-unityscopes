@@ -94,13 +94,12 @@ void preview_reply_error(SharedPtrData reply, StrData err_string) {
         std::runtime_error(from_gostring(err_string))));
 }
 
-void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int count, char **error) {
+void preview_reply_push_widgets(SharedPtrData reply, const StrData widget_list, char **error) {
     try {
-        GoString *widget_data = static_cast<GoString*>(gostring_array);
+        std::vector<const char*> widget_data = split_strings(widget_list);
         PreviewWidgetList widgets;
-        for (int i = 0; i < count; i++) {
-            widgets.push_back(PreviewWidget(std::string(
-                widget_data[i].p, widget_data[i].n)));
+        for (const char *w : widget_data) {
+            widgets.push_back(PreviewWidget(w));
         }
         get_ptr<PreviewReply>(reply)->push(widgets);
     } catch (const std::exception &e) {

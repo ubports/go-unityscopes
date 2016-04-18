@@ -134,7 +134,7 @@ func (metadata *SearchMetadata) SetLocation(l *Location) error {
 
 func (metadata *SearchMetadata) SetAggregatedKeywords(keywords []string) error {
 	var errorString *C.char
-	C.search_metadata_set_aggregated_keywords((*C._SearchMetadata)(metadata.m), unsafe.Pointer(&keywords[0]), C.int(len(keywords)), &errorString)
+	C.search_metadata_set_aggregated_keywords((*C._SearchMetadata)(metadata.m), joinedStrData(keywords), &errorString)
 	return checkError(errorString)
 }
 

@@ -6,7 +6,6 @@ import "C"
 import (
 	"encoding/json"
 	"runtime"
-	"unsafe"
 )
 
 // SearchReply is used to send results of search queries to the client.
@@ -145,7 +144,7 @@ func (reply *PreviewReply) PushWidgets(widgets ...PreviewWidget) error {
 		widget_data[i] = string(data)
 	}
 	var errorString *C.char
-	C.preview_reply_push_widgets(&reply.r[0], unsafe.Pointer(&widget_data[0]), C.int(len(widget_data)), &errorString)
+	C.preview_reply_push_widgets(&reply.r[0], joinedStrData(widget_data), &errorString)
 	return checkError(errorString)
 }
 

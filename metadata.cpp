@@ -88,12 +88,12 @@ void search_metadata_set_location(_SearchMetadata *metadata, char *json_data, in
     }
 }
 
-void search_metadata_set_aggregated_keywords(_SearchMetadata *metadata, void *gostring_array, int count, char **error) {
+void search_metadata_set_aggregated_keywords(_SearchMetadata *metadata, const StrData keyword_list, char **error) {
     try {
-        GoString *keyword_data = static_cast<GoString*>(gostring_array);
+        std::vector<const char*> keyword_data = split_strings(keyword_list);
         std::set<std::string> keywords;
-        for (int i = 0; i < count; i++) {
-            keywords.emplace(std::string(keyword_data[i].p, keyword_data[i].n));
+        for (const char *k : keyword_data) {
+            keywords.emplace(k);
         }
         reinterpret_cast<SearchMetadata*>(metadata)->set_aggregated_keywords(keywords);
     } catch (const std::exception & e) {

@@ -43,7 +43,7 @@ _ScopeMetadata **list_registry_scopes_metadata(_ScopeBase *scope, int *n_scopes)
 _ChildScope **list_child_scopes(_ScopeBase *scope, int *n_scopes);
 
 /* ChildScope objects */
-_ChildScope *new_child_scope(StrData id, _ScopeMetadata *metadata, int enabled, void *gostring_array, int count);
+_ChildScope *new_child_scope(StrData id, _ScopeMetadata *metadata, int enabled, const StrData keyword_list);
 void destroy_child_scope(_ChildScope *childscope);
 char *child_scope_get_id(_ChildScope *childscope);
 void set_child_scopes_list(void *child_scopes_list, _ChildScope **source_child_scopes, int length);
@@ -65,7 +65,7 @@ void destroy_preview_reply_ptr(SharedPtrData data);
 
 void preview_reply_finished(SharedPtrData reply);
 void preview_reply_error(SharedPtrData reply, StrData err_string);
-void preview_reply_push_widgets(SharedPtrData reply, void *gostring_array, int count, char **error);
+void preview_reply_push_widgets(SharedPtrData reply, const StrData widget_list, char **error);
 void preview_reply_push_attr(SharedPtrData reply, StrData key, StrData json_value, char **error);
 void preview_reply_register_layout(SharedPtrData reply, _ColumnLayout **layout, int n_items, char **error);
 
@@ -120,7 +120,7 @@ void destroy_search_metadata(_SearchMetadata *metadata);
 int search_metadata_get_cardinality(_SearchMetadata *metadata);
 void *search_metadata_get_location(_SearchMetadata *metadata, int *length);
 void search_metadata_set_location(_SearchMetadata *metadata, char *json_data, int json_data_length, char **error);
-void search_metadata_set_aggregated_keywords(_SearchMetadata *metadata, void *gostring_array, int count, char **error);
+void search_metadata_set_aggregated_keywords(_SearchMetadata *metadata, const StrData keyword_list, char **error);
 void *search_metadata_get_aggregated_keywords(_SearchMetadata *metadata, int *length);
 int search_metadata_is_aggregated(_SearchMetadata *metadata);
 
@@ -141,13 +141,13 @@ char *get_scope_metadata_serialized(_ScopeMetadata *metadata);
 void activation_response_init_status(_ActivationResponse *response, int status);
 void activation_response_init_query(_ActivationResponse *response, _CannedQuery *query);
 void activation_response_init_update_result(_ActivationResponse *response, _Result *result);
-void activation_response_init_update_preview(_ActivationResponse *response, void *gostring_array, int count, char **error);
+void activation_response_init_update_preview(_ActivationResponse *response, StrData widget_list, char **error);
 void activation_response_set_scope_data(_ActivationResponse *response, char *json_data, int json_data_length, char **error);
 
 /* ColumnLayout objects */
 _ColumnLayout *new_column_layout(int num_columns);
 void destroy_column_layout(_ColumnLayout *layout);
-void column_layout_add_column(_ColumnLayout *layout, void *gostring_array_widgets, int nb_widgets, char **error);
+void column_layout_add_column(_ColumnLayout *layout, const StrData widget_list, char **error);
 int column_layout_number_of_columns(_ColumnLayout *layout);
 int column_layout_size(_ColumnLayout *layout);
 void *column_layout_column(_ColumnLayout *layout, int column, int *n_items, char **error);

@@ -9,8 +9,10 @@
 extern "C" {
 #include "_cgo_export.h"
 }
+#include "helpers.h"
 
 using namespace unity::scopes;
+using namespace gounityscopes::internal;
 
 void activation_response_init_status(_ActivationResponse *response, int status) {
     *reinterpret_cast<ActivationResponse*>(response) =
@@ -27,13 +29,12 @@ void activation_response_init_update_result(_ActivationResponse *response, _Resu
         ActivationResponse(*reinterpret_cast<Result*>(result));
 }
 
-void activation_response_init_update_preview(_ActivationResponse *response, void *gostring_array, int count, char **error) {
+void activation_response_init_update_preview(_ActivationResponse *response, StrData widget_list, char **error) {
     try {
-        GoString *widget_data = static_cast<GoString*>(gostring_array);
+        auto widget_data = split_strings(widget_list);
         PreviewWidgetList widgets;
-        for (int i = 0; i < count; i++) {
-            widgets.push_back(PreviewWidget(std::string(
-                widget_data[i].p, widget_data[i].n)));
+        for (const char *data : widget_data) {
+            widgets.push_back(PreviewWidget(data));
         }
         *reinterpret_cast<ActivationResponse*>(response) =
             ActivationResponse(widgets);
