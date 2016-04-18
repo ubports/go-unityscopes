@@ -11,7 +11,7 @@ extern "C" {
 using namespace unity::scopes;
 using namespace gounityscopes::internal;
 
-_ChildScope *new_child_scope(void *id, _ScopeMetadata *metadata, int enabled, void *gostring_array, int count) {
+_ChildScope *new_child_scope(StrData id, _ScopeMetadata *metadata, int enabled, void *gostring_array, int count) {
     ScopeMetadata *api_metadata = reinterpret_cast<ScopeMetadata *>(metadata);
 
     GoString *keyword_data = static_cast<GoString*>(gostring_array);

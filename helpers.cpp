@@ -10,13 +10,20 @@ extern "C" {
 namespace gounityscopes {
 namespace internal {
 
-std::string from_gostring(StrData str) {
+std::string from_gostring(const StrData str) {
     return std::string(str.data, str.length);
 }
 
-std::string from_gostring(void *str) {
-    GoString *s = static_cast<GoString*>(str);
-    return std::string(s->p, s->n);
+std::vector<const char*> split_strings(const StrData str) {
+    std::vector<const char*> list;
+    const char *s = str.data;
+    for (const char *p = str.data; p != str.data + str.length; ++p) {
+        if (*p == '\0') {
+            list.push_back(s);
+            s = p + 1;
+        }
+    }
+    return list;
 }
 
 void *as_bytes(const std::string &str, int *length) {

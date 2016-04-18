@@ -43,7 +43,7 @@ _ScopeMetadata **list_registry_scopes_metadata(_ScopeBase *scope, int *n_scopes)
 _ChildScope **list_child_scopes(_ScopeBase *scope, int *n_scopes);
 
 /* ChildScope objects */
-_ChildScope *new_child_scope(void *id, _ScopeMetadata *metadata, int enabled, void *gostring_array, int count);
+_ChildScope *new_child_scope(StrData id, _ScopeMetadata *metadata, int enabled, void *gostring_array, int count);
 void destroy_child_scope(_ChildScope *childscope);
 char *child_scope_get_id(_ChildScope *childscope);
 void set_child_scopes_list(void *child_scopes_list, _ChildScope **source_child_scopes, int length);

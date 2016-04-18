@@ -2,14 +2,15 @@
 #define UNITYSCOPE_HELPERS_H
 
 #include <string>
+#include <vector>
 
 typedef struct StrData StrData;
 
 namespace gounityscopes {
 namespace internal {
 
-std::string from_gostring(StrData str);
-std::string from_gostring(void *str);
+std::string from_gostring(const StrData str);
+std::vector<const char*> split_strings(const StrData str);
 void *as_bytes(const std::string &str, int *length);
 
 }

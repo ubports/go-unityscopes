@@ -34,7 +34,7 @@ func NewChildScope(id string, metadata *ScopeMetadata, enabled bool, keywords []
 	} else {
 		cEnabled = 0
 	}
-	return makeChildScope(C.new_child_scope(unsafe.Pointer(&id),
+	return makeChildScope(C.new_child_scope(strData(id),
 		(*C._ScopeMetadata)(metadata.m),
 		cEnabled,
 		unsafe.Pointer(&keywords[0]),
