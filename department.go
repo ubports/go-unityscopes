@@ -126,9 +126,17 @@ func (dept *Department) Subdepartments() []*Department {
 
 // SetSubdepartments sets sub-departments of this department.
 func (dept *Department) SetSubdepartments(subdepartments []*Department) {
-	api_depts := make([]*C.SharedPtrData, len(subdepartments))
+	// This technically breaks C++ shared_ptr rules because we are
+	// making a copy of the shared_ptr that doesn't own a
+	// reference.
+	//
+	// However, we know the copy won't be destroyed on the C++
+	// side, and we hold references to the underlying Deparment
+	// objects, preventing them from being cleaned up while the
+	// shared_ptr copies are in scope.
+	api_depts := make([]C.SharedPtrData, len(subdepartments))
 	for i := 0; i < len(subdepartments); i++ {
-		api_depts[i] = &subdepartments[i].d
+		api_depts[i] = subdepartments[i].d
 	}
 	if len(subdepartments) > 0 {
 		C.department_set_subdepartments(&dept.d[0], &api_depts[0], C.int(len(subdepartments)))

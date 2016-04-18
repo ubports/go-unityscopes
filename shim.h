@@ -105,7 +105,7 @@ void department_set_has_subdepartments(SharedPtrData dept, int subdepartments);
 int department_has_subdepartments(SharedPtrData dept);
 //void department_get_subdepartments(SharedPtrData dept, SharedPtrData **ret_data);
 SharedPtrData * department_get_subdepartments(SharedPtrData dept, int *n_subdepts);
-void department_set_subdepartments(SharedPtrData dept, SharedPtrData **subdepartments, int nb_subdepartments);
+void department_set_subdepartments(SharedPtrData dept, SharedPtrData *subdepartments, int nb_subdepartments);
 _CannedQuery * department_get_query(SharedPtrData dept);
 
 /* QueryMetadata objects */

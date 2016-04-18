@@ -74,10 +74,10 @@ SharedPtrData * department_get_subdepartments(SharedPtrData dept, int *n_subdept
     return ret_data;
 }
 
-void department_set_subdepartments(SharedPtrData dept, SharedPtrData **subdepartments, int nb_subdepartments) {
+void department_set_subdepartments(SharedPtrData dept, SharedPtrData *subdepartments, int nb_subdepartments) {
     DepartmentList api_depts;
     for(auto i = 0; i < nb_subdepartments; i++) {
-        api_depts.push_back(get_ptr<Department>(*subdepartments[i]));
+        api_depts.push_back(get_ptr<Department>(subdepartments[i]));
     }
     get_ptr<Department>(dept)->set_subdepartments(api_depts);
 }
