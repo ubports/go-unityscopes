@@ -71,13 +71,13 @@ void preview_reply_register_layout(SharedPtrData reply, _ColumnLayout **layout, 
 
 /* CannedQuery objects */
 void destroy_canned_query(_CannedQuery *query);
-_CannedQuery *new_canned_query(void *scope_id, void *query_str, void *department_id);
+_CannedQuery *new_canned_query(StrData scope_id, StrData query_str, StrData department_id);
 char *canned_query_get_scope_id(_CannedQuery *query);
 char *canned_query_get_department_id(_CannedQuery *query);
 char *canned_query_get_query_string(_CannedQuery *query);
 void *canned_query_get_filter_state(_CannedQuery *query, int *length);
-void canned_query_set_department_id(_CannedQuery *query, void *department_id);
-void canned_query_set_query_string(_CannedQuery *query, void *query_str);
+void canned_query_set_department_id(_CannedQuery *query, StrData department_id);
+void canned_query_set_query_string(_CannedQuery *query, StrData query_str);
 char *canned_query_to_uri(_CannedQuery *query);
 
 /* Category objects */
