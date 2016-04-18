@@ -115,7 +115,7 @@ void query_metadata_set_internet_connectivity(_QueryMetadata *metadata, int stat
 int query_metadata_get_internet_connectivity(_QueryMetadata *metadata);
 
 /* SearchMetadata objects */
-_SearchMetadata *new_search_metadata(int cardinality, void *locale, void *form_factor);
+_SearchMetadata *new_search_metadata(int cardinality, StrData locale, StrData form_factor);
 void destroy_search_metadata(_SearchMetadata *metadata);
 int search_metadata_get_cardinality(_SearchMetadata *metadata);
 void *search_metadata_get_location(_SearchMetadata *metadata, int *length);
@@ -125,12 +125,12 @@ void *search_metadata_get_aggregated_keywords(_SearchMetadata *metadata, int *le
 int search_metadata_is_aggregated(_SearchMetadata *metadata);
 
 /* ActionMetadata objects */
-_ActionMetadata *new_action_metadata(void *locale, void *form_factor);
+_ActionMetadata *new_action_metadata(StrData locale, StrData form_factor);
 void destroy_action_metadata(_ActionMetadata *metadata);
 void *action_metadata_get_scope_data(_ActionMetadata *metadata, int *data_length);
 void action_metadata_set_scope_data(_ActionMetadata *metadata, char *json_data, int json_data_length, char **error);
-void action_metadata_set_hint(_ActionMetadata *metadata, void *key, char *json_data, int json_data_length, char **error);
-void *action_metadata_get_hint(_ActionMetadata *metadata, void *key, int *data_length, char **error);
+void action_metadata_set_hint(_ActionMetadata *metadata, StrData key, char *json_data, int json_data_length, char **error);
+void *action_metadata_get_hint(_ActionMetadata *metadata, StrData key, int *data_length, char **error);
 void *action_metadata_get_hints(_ActionMetadata *metadata, int *length);
 
 /* ScopeMetadata objects */
