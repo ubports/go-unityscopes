@@ -24,14 +24,9 @@ _ColumnLayout *new_column_layout(int num_columns) {
 }
 
 void column_layout_add_column(_ColumnLayout *layout, const StrData widget_list, char **error) {
-    auto widgets = split_strings(widget_list);
-    std::vector<std::string> api_widgets;
-    // convert to std::string
-    for (const char *w : widgets) {
-        api_widgets.push_back(w);
-    }
+    std::vector<std::string> widgets = split_strings(widget_list);
     try {
-        reinterpret_cast<ColumnLayout*>(layout)->add_column(api_widgets);
+        reinterpret_cast<ColumnLayout*>(layout)->add_column(widgets);
     } catch(unity::LogicException & e) {
         *error = strdup(e.what());
     }

@@ -96,9 +96,8 @@ void preview_reply_error(SharedPtrData reply, StrData err_string) {
 
 void preview_reply_push_widgets(SharedPtrData reply, const StrData widget_list, char **error) {
     try {
-        std::vector<const char*> widget_data = split_strings(widget_list);
         PreviewWidgetList widgets;
-        for (const char *w : widget_data) {
+        for (const auto &w : split_strings(widget_list)) {
             widgets.push_back(PreviewWidget(w));
         }
         get_ptr<PreviewReply>(reply)->push(widgets);

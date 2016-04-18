@@ -14,9 +14,10 @@ std::string from_gostring(const StrData str) {
     return std::string(str.data, str.length);
 }
 
-std::vector<const char*> split_strings(const StrData str) {
-    std::vector<const char*> list;
+std::vector<std::string> split_strings(const StrData str) {
+    std::vector<std::string> list;
     const char *s = str.data;
+    // str contains a sequence of nul-terminated strings concatenated together.
     for (const char *p = str.data; p != str.data + str.length; ++p) {
         if (*p == '\0') {
             list.push_back(s);

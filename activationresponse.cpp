@@ -31,9 +31,8 @@ void activation_response_init_update_result(_ActivationResponse *response, _Resu
 
 void activation_response_init_update_preview(_ActivationResponse *response, StrData widget_list, char **error) {
     try {
-        auto widget_data = split_strings(widget_list);
         PreviewWidgetList widgets;
-        for (const char *data : widget_data) {
+        for (const auto &data : split_strings(widget_list)) {
             widgets.push_back(PreviewWidget(data));
         }
         *reinterpret_cast<ActivationResponse*>(response) =

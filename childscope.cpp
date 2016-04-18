@@ -14,10 +14,9 @@ using namespace gounityscopes::internal;
 _ChildScope *new_child_scope(StrData id, _ScopeMetadata *metadata, int enabled, const StrData keyword_list) {
     ScopeMetadata *api_metadata = reinterpret_cast<ScopeMetadata *>(metadata);
 
-    std::vector<const char*> keyword_data = split_strings(keyword_list);
     std::set<std::string> keywords;
-    for (const char *k : keyword_data) {
-        keywords.emplace(k);
+    for (auto &k : split_strings(keyword_list)) {
+        keywords.emplace(std::move(k));
     }
 
     return reinterpret_cast<_ChildScope *>(new ChildScope(from_gostring(id), *api_metadata, enabled, keywords));

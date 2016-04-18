@@ -10,7 +10,7 @@ namespace gounityscopes {
 namespace internal {
 
 std::string from_gostring(const StrData str);
-std::vector<const char*> split_strings(const StrData str);
+std::vector<std::string> split_strings(const StrData str);
 void *as_bytes(const std::string &str, int *length);
 
 }
