@@ -90,7 +90,7 @@ func (r *ActivationResponse) update(responsePtr *C._ActivationResponse) error {
 			widgetData[i] = string(data)
 		}
 		var errorString *C.char
-		C.activation_response_init_update_preview(responsePtr, unsafe.Pointer(&widgetData[0]), C.int(len(widgetData)), &errorString)
+		C.activation_response_init_update_preview(responsePtr, joinedStrData(widgetData), &errorString)
 		if err := checkError(errorString); err != nil {
 			return err
 		}

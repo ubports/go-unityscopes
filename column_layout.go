@@ -6,7 +6,6 @@ import "C"
 import (
 	"encoding/json"
 	"runtime"
-	"unsafe"
 )
 
 // ColumnLayout is used represent different representations of a widget.
@@ -41,11 +40,7 @@ func NewColumnLayout(num_columns int) *ColumnLayout {
 // AddColumn method.
 func (layout *ColumnLayout) AddColumn(widgetIds ...string) error {
 	var errorString *C.char
-	var ptr_columns unsafe.Pointer
-	if len(widgetIds) > 0 {
-		ptr_columns = unsafe.Pointer(&widgetIds[0])
-	}
-	C.column_layout_add_column(layout.c, ptr_columns, C.int(len(widgetIds)), &errorString)
+	C.column_layout_add_column(layout.c, joinedStrData(widgetIds), &errorString)
 
 	return checkError(errorString)
 }

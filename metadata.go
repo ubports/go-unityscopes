@@ -71,8 +71,8 @@ func makeSearchMetadata(m *C._SearchMetadata) *SearchMetadata {
 // form_factor
 func NewSearchMetadata(cardinality int, locale, form_factor string) *SearchMetadata {
 	return makeSearchMetadata(C.new_search_metadata(C.int(cardinality),
-		unsafe.Pointer(&locale),
-		unsafe.Pointer(&form_factor)))
+		strData(locale),
+		strData(form_factor)))
 }
 
 // Cardinality returns the desired number of results for the search request.
@@ -134,7 +134,7 @@ func (metadata *SearchMetadata) SetLocation(l *Location) error {
 
 func (metadata *SearchMetadata) SetAggregatedKeywords(keywords []string) error {
 	var errorString *C.char
-	C.search_metadata_set_aggregated_keywords((*C._SearchMetadata)(metadata.m), unsafe.Pointer(&keywords[0]), C.int(len(keywords)), &errorString)
+	C.search_metadata_set_aggregated_keywords((*C._SearchMetadata)(metadata.m), joinedStrData(keywords), &errorString)
 	return checkError(errorString)
 }
 
@@ -171,8 +171,8 @@ func finalizeActionMetadata(metadata *ActionMetadata) {
 // NewActionMetadata creates a new ActionMetadata with the given locale and
 // form_factor
 func NewActionMetadata(locale, form_factor string) *ActionMetadata {
-	return makeActionMetadata(C.new_action_metadata(unsafe.Pointer(&locale),
-		unsafe.Pointer(&form_factor)))
+	return makeActionMetadata(C.new_action_metadata(strData(locale),
+		strData(form_factor)))
 }
 
 func makeActionMetadata(m *C._ActionMetadata) *ActionMetadata {
@@ -211,7 +211,7 @@ func (metadata *ActionMetadata) SetHint(key string, value interface{}) error {
 		return err
 	}
 	var errorString *C.char
-	C.action_metadata_set_hint((*C._ActionMetadata)(metadata.m), unsafe.Pointer(&key), (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
+	C.action_metadata_set_hint((*C._ActionMetadata)(metadata.m), strData(key), (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data)), &errorString)
 	return checkError(errorString)
 }
 
@@ -220,7 +220,7 @@ func (metadata *ActionMetadata) SetHint(key string, value interface{}) error {
 func (metadata *ActionMetadata) Hint(key string, value interface{}) error {
 	var dataLength C.int
 	var errorString *C.char
-	scopeData := C.action_metadata_get_hint((*C._ActionMetadata)(metadata.m), unsafe.Pointer(&key), &dataLength, &errorString)
+	scopeData := C.action_metadata_get_hint((*C._ActionMetadata)(metadata.m), strData(key), &dataLength, &errorString)
 	if dataLength > 0 && errorString == nil {
 		defer C.free(scopeData)
 		return json.Unmarshal(C.GoBytes(scopeData, dataLength), value)

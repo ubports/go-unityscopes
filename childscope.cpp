@@ -11,13 +11,12 @@ extern "C" {
 using namespace unity::scopes;
 using namespace gounityscopes::internal;
 
-_ChildScope *new_child_scope(void *id, _ScopeMetadata *metadata, int enabled, void *gostring_array, int count) {
+_ChildScope *new_child_scope(const StrData id, _ScopeMetadata *metadata, int enabled, const StrData keyword_list) {
     ScopeMetadata *api_metadata = reinterpret_cast<ScopeMetadata *>(metadata);
 
-    GoString *keyword_data = static_cast<GoString*>(gostring_array);
     std::set<std::string> keywords;
-    for (int i = 0; i < count; i++) {
-        keywords.emplace(std::string(keyword_data[i].p, keyword_data[i].n));
+    for (auto &k : split_strings(keyword_list)) {
+        keywords.emplace(std::move(k));
     }
 
     return reinterpret_cast<_ChildScope *>(new ChildScope(from_gostring(id), *api_metadata, enabled, keywords));

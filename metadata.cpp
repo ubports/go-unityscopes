@@ -16,7 +16,7 @@ using namespace unity::scopes;
 using namespace gounityscopes::internal;
 
 /* SearchMetadata objects */
-_SearchMetadata *new_search_metadata(int cardinality, void *locale, void *form_factor) {
+_SearchMetadata *new_search_metadata(int cardinality, const StrData locale, const StrData form_factor) {
     return reinterpret_cast<_SearchMetadata*>(new SearchMetadata(cardinality,
                                                                 from_gostring(locale),
                                                                 from_gostring(form_factor)));
@@ -88,12 +88,11 @@ void search_metadata_set_location(_SearchMetadata *metadata, char *json_data, in
     }
 }
 
-void search_metadata_set_aggregated_keywords(_SearchMetadata *metadata, void *gostring_array, int count, char **error) {
+void search_metadata_set_aggregated_keywords(_SearchMetadata *metadata, const StrData keyword_list, char **error) {
     try {
-        GoString *keyword_data = static_cast<GoString*>(gostring_array);
         std::set<std::string> keywords;
-        for (int i = 0; i < count; i++) {
-            keywords.emplace(std::string(keyword_data[i].p, keyword_data[i].n));
+        for (auto &k : split_strings(keyword_list)) {
+            keywords.emplace(std::move(k));
         }
         reinterpret_cast<SearchMetadata*>(metadata)->set_aggregated_keywords(keywords);
     } catch (const std::exception & e) {
@@ -115,7 +114,7 @@ int search_metadata_is_aggregated(_SearchMetadata *metadata) {
 
 
 /* ActionMetadata objects */
-_ActionMetadata *new_action_metadata(void *locale, void *form_factor) {
+_ActionMetadata *new_action_metadata(const StrData locale, const StrData form_factor) {
     return reinterpret_cast<_ActionMetadata*>(new ActionMetadata(from_gostring(locale),
                                                                  from_gostring(form_factor)));
 }
@@ -138,7 +137,7 @@ void action_metadata_set_scope_data(_ActionMetadata *metadata, char *json_data, 
     }
 }
 
-void action_metadata_set_hint(_ActionMetadata *metadata, void *key, char *json_data, int json_data_length, char **error) {
+void action_metadata_set_hint(_ActionMetadata *metadata, const StrData key, char *json_data, int json_data_length, char **error) {
     try {
         Variant value = Variant::deserialize_json(std::string(json_data, json_data_length));
         reinterpret_cast<ActionMetadata*>(metadata)->set_hint(from_gostring(key), value);
@@ -147,7 +146,7 @@ void action_metadata_set_hint(_ActionMetadata *metadata, void *key, char *json_d
     }
 }
 
-void *action_metadata_get_hint(_ActionMetadata *metadata, void *key, int *data_length, char **error) {
+void *action_metadata_get_hint(_ActionMetadata *metadata, const StrData key, int *data_length, char **error) {
     try {
         ActionMetadata const*api_metadata = reinterpret_cast<ActionMetadata const*>(metadata);
         Variant value = (*api_metadata)[from_gostring(key)];

@@ -6,7 +6,6 @@ import "C"
 import (
 	"encoding/json"
 	"runtime"
-	"unsafe"
 )
 
 // SearchReply is used to send results of search queries to the client.
@@ -41,7 +40,7 @@ func (reply *SearchReply) Finished() {
 // with an error.
 func (reply *SearchReply) Error(err error) {
 	errString := err.Error()
-	C.search_reply_error(&reply.r[0], unsafe.Pointer(&errString))
+	C.search_reply_error(&reply.r[0], strData(errString))
 }
 
 // RegisterCategory registers a new results category with the client.
@@ -56,7 +55,7 @@ func (reply *SearchReply) Error(err error) {
 func (reply *SearchReply) RegisterCategory(id, title, icon, template string) *Category {
 	cat := new(Category)
 	runtime.SetFinalizer(cat, finalizeCategory)
-	C.search_reply_register_category(&reply.r[0], unsafe.Pointer(&id), unsafe.Pointer(&title), unsafe.Pointer(&icon), unsafe.Pointer(&template), &cat.c[0])
+	C.search_reply_register_category(&reply.r[0], strData(id), strData(title), strData(icon), strData(template), &cat.c[0])
 	return cat
 }
 
@@ -95,7 +94,7 @@ func (reply *SearchReply) PushFilters(filters []Filter, state FilterState) error
 		return err
 	}
 	var errorString *C.char
-	C.search_reply_push_filters(&reply.r[0], unsafe.Pointer(&filtersJson), unsafe.Pointer(&stateJson), &errorString)
+	C.search_reply_push_filters(&reply.r[0], strData(filtersJson), strData(stateJson), &errorString)
 	return checkError(errorString)
 }
 
@@ -131,7 +130,7 @@ func (reply *PreviewReply) Finished() {
 // with an error.
 func (reply *PreviewReply) Error(err error) {
 	errString := err.Error()
-	C.preview_reply_error(&reply.r[0], unsafe.Pointer(&errString))
+	C.preview_reply_error(&reply.r[0], strData(errString))
 }
 
 // PushWidgets sends one or more preview widgets to the client.
@@ -145,7 +144,7 @@ func (reply *PreviewReply) PushWidgets(widgets ...PreviewWidget) error {
 		widget_data[i] = string(data)
 	}
 	var errorString *C.char
-	C.preview_reply_push_widgets(&reply.r[0], unsafe.Pointer(&widget_data[0]), C.int(len(widget_data)), &errorString)
+	C.preview_reply_push_widgets(&reply.r[0], joinedStrData(widget_data), &errorString)
 	return checkError(errorString)
 }
 
@@ -162,7 +161,7 @@ func (reply *PreviewReply) PushAttr(attr string, value interface{}) error {
 	}
 	json_value := string(data)
 	var errorString *C.char
-	C.preview_reply_push_attr(&reply.r[0], unsafe.Pointer(&attr), unsafe.Pointer(&json_value), &errorString)
+	C.preview_reply_push_attr(&reply.r[0], strData(attr), strData(json_value), &errorString)
 	return checkError(errorString)
 }
 

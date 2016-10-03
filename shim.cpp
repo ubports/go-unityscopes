@@ -14,8 +14,9 @@ extern "C" {
 using namespace unity::scopes;
 using namespace gounityscopes::internal;
 
-void run_scope(void *scope_name, void *runtime_config, void *scope_config,
-               void *pointer_to_iface, char **error) {
+void run_scope(const StrData scope_name, const StrData runtime_config,
+               const StrData scope_config, void *pointer_to_iface,
+               char **error) {
     try {
         auto runtime = Runtime::create_scope_runtime(
             from_gostring(scope_name), from_gostring(runtime_config));

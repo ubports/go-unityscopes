@@ -6,7 +6,6 @@ import "C"
 import (
 	"encoding/json"
 	"runtime"
-	"unsafe"
 )
 
 // Result represents a result from the scope
@@ -39,7 +38,7 @@ func (res *Result) Get(attr string, value interface{}) error {
 		length      C.int
 		errorString *C.char
 	)
-	data := C.result_get_attr(res.result, unsafe.Pointer(&attr), &length, &errorString)
+	data := C.result_get_attr(res.result, strData(attr), &length, &errorString)
 	if err := checkError(errorString); err != nil {
 		return err
 	}
@@ -59,7 +58,7 @@ func (res *Result) Set(attr string, value interface{}) error {
 	stringValue := string(data)
 
 	var errorString *C.char
-	C.result_set_attr(res.result, unsafe.Pointer(&attr), unsafe.Pointer(&stringValue), &errorString)
+	C.result_set_attr(res.result, strData(attr), strData(stringValue), &errorString)
 	return checkError(errorString)
 }
 

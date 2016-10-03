@@ -32,9 +32,9 @@ func makeCannedQuery(q *C._CannedQuery) *CannedQuery {
 // query string and department ID.
 func NewCannedQuery(scopeID, queryString, departmentID string) *CannedQuery {
 	return makeCannedQuery(C.new_canned_query(
-		unsafe.Pointer(&scopeID),
-		unsafe.Pointer(&queryString),
-		unsafe.Pointer(&departmentID)))
+		strData(scopeID),
+		strData(queryString),
+		strData(departmentID)))
 }
 
 // ScopeID returns the scope ID for this canned query.
@@ -72,12 +72,12 @@ func (query *CannedQuery) FilterState() FilterState {
 
 // SetDepartmentID changes the department ID for this canned query.
 func (query *CannedQuery) SetDepartmentID(departmentID string) {
-	C.canned_query_set_department_id(query.q, unsafe.Pointer(&departmentID))
+	C.canned_query_set_department_id(query.q, strData(departmentID))
 }
 
 // SetQueryString changes the query string for this canned query.
 func (query *CannedQuery) SetQueryString(queryString string) {
-	C.canned_query_set_query_string(query.q, unsafe.Pointer(&queryString))
+	C.canned_query_set_query_string(query.q, strData(queryString))
 }
 
 // ToURI formats the canned query as a URI.

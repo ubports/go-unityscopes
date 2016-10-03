@@ -24,7 +24,7 @@ func makeDepartment() *Department {
 func NewDepartment(departmentID string, query *CannedQuery, label string) (*Department, error) {
 	dept := makeDepartment()
 	var errorString *C.char
-	C.new_department(unsafe.Pointer(&departmentID), query.q, unsafe.Pointer(&label), &dept.d[0], &errorString)
+	C.new_department(strData(departmentID), query.q, strData(label), &dept.d[0], &errorString)
 
 	if err := checkError(errorString); err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (dept *Department) Query() *CannedQuery {
 // The alternate label only needs to be provided for the current
 // department.
 func (dept *Department) SetAlternateLabel(label string) {
-	C.department_set_alternate_label(&dept.d[0], unsafe.Pointer(&label))
+	C.department_set_alternate_label(&dept.d[0], strData(label))
 }
 
 // AlternateLabel gets the alternate label for this department.
@@ -126,9 +126,17 @@ func (dept *Department) Subdepartments() []*Department {
 
 // SetSubdepartments sets sub-departments of this department.
 func (dept *Department) SetSubdepartments(subdepartments []*Department) {
-	api_depts := make([]*C.SharedPtrData, len(subdepartments))
+	// This technically breaks C++ shared_ptr rules because we are
+	// making a copy of the shared_ptr that doesn't own a
+	// reference.
+	//
+	// However, we know the copy won't be destroyed on the C++
+	// side, and we hold references to the underlying Deparment
+	// objects, preventing them from being cleaned up while the
+	// shared_ptr copies are in scope.
+	api_depts := make([]C.SharedPtrData, len(subdepartments))
 	for i := 0; i < len(subdepartments); i++ {
-		api_depts[i] = &subdepartments[i].d
+		api_depts[i] = subdepartments[i].d
 	}
 	if len(subdepartments) > 0 {
 		C.department_set_subdepartments(&dept.d[0], &api_depts[0], C.int(len(subdepartments)))

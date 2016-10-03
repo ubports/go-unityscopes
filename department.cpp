@@ -19,17 +19,11 @@ void init_department_ptr(SharedPtrData dest, SharedPtrData src) {
     init_ptr<Department>(dest, dept);
 }
 
-void new_department(void *dept_id, _CannedQuery *query, void *label, SharedPtrData dept, char **error) {
+void new_department(const StrData dept_id, _CannedQuery *query, const StrData label, SharedPtrData dept, char **error) {
     try {
-        Department::UPtr d;
-        if(dept_id) {
-            d = Department::create(from_gostring(dept_id),
-                                    *reinterpret_cast<CannedQuery*>(query),
-                                    from_gostring(label));
-        } else {
-            d = Department::create(*reinterpret_cast<CannedQuery*>(query),
-                                   from_gostring(label));
-        }
+        auto d = Department::create(from_gostring(dept_id),
+                               *reinterpret_cast<CannedQuery*>(query),
+                               from_gostring(label));
         init_ptr<Department>(dept, std::move(d));
     } catch (const std::exception &e) {
         *error = strdup(e.what());
@@ -44,7 +38,7 @@ void department_add_subdepartment(SharedPtrData dept, SharedPtrData child) {
     get_ptr<Department>(dept)->add_subdepartment(get_ptr<Department>(child));
 }
 
-void department_set_alternate_label(SharedPtrData dept, void *label) {
+void department_set_alternate_label(SharedPtrData dept, const StrData label) {
     get_ptr<Department>(dept)->set_alternate_label(from_gostring(label));
 }
 
@@ -80,10 +74,10 @@ SharedPtrData * department_get_subdepartments(SharedPtrData dept, int *n_subdept
     return ret_data;
 }
 
-void department_set_subdepartments(SharedPtrData dept, SharedPtrData **subdepartments, int nb_subdepartments) {
+void department_set_subdepartments(SharedPtrData dept, SharedPtrData *subdepartments, int nb_subdepartments) {
     DepartmentList api_depts;
     for(auto i = 0; i < nb_subdepartments; i++) {
-        api_depts.push_back(get_ptr<Department>(*subdepartments[i]));
+        api_depts.push_back(get_ptr<Department>(subdepartments[i]));
     }
     get_ptr<Department>(dept)->set_subdepartments(api_depts);
 }
