@@ -1,0 +1,20 @@
+Source: go-unityscopes
+Section: lib
+Priority: optional
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Build-Depends: debhelper (>= 9),
+               dh-golang,
+               golang-go (>= 1.6),
+               libunity-scopes-dev,
+               pkg-config,
+Standards-Version: 3.9.6
+Homepage: https://launchpad.net/go-unityscopes
+Vcs-Bzr: lp:go-unityscopes/v2
+
+Package: golang-launchpad-go-unityscopes-v2-dev
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Built-Using: ${misc:Built-Using}
+Description: Go bindings for Unity 8 scopes API.
+ This package contains the Go bindings for the scopes API for Unity 8.

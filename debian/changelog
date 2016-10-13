@@ -1,0 +1,5 @@
+go-unityscopes (1.0) UNRELEASED; urgency=medium
+
+  * Initial packaging of go-unityscopes.
+
+ -- Rodney Dawes <rodney.dawes@canonical.com>  Thu, 13 Oct 2016 16:16:54 -0400
