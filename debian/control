@@ -5,6 +5,7 @@ Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 Build-Depends: debhelper (>= 9),
                dh-golang,
                golang-go (>= 1.6),
+               golang-check.v1-dev,
                libunity-scopes-dev,
                pkg-config,
 Standards-Version: 3.9.6
@@ -12,7 +13,7 @@ Homepage: https://launchpad.net/go-unityscopes
 Vcs-Bzr: lp:go-unityscopes/v2
 
 Package: golang-launchpad-go-unityscopes-v2-dev
-Architecture: any
+Architecture: amd64 arm64 armhf i386
 Depends: ${misc:Depends},
          ${shlibs:Depends},
 Built-Using: ${misc:Built-Using}
