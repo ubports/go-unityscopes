@@ -1,5 +1,6 @@
-go-unityscopes (1.0) UNRELEASED; urgency=medium
+go-unityscopes (1.0+16.10.20161014-0ubuntu1) yakkety; urgency=medium
 
   * Initial packaging of go-unityscopes.
+  * Fix typo for debian section.
 
- -- Rodney Dawes <rodney.dawes@canonical.com>  Thu, 13 Oct 2016 16:16:54 -0400
+ -- Rodney Dawes <rodney.dawes@canonical.com>  Fri, 14 Oct 2016 20:06:45 +0000
