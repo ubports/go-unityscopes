@@ -1,5 +1,5 @@
 Source: go-unityscopes
-Section: lib
+Section: libs
 Priority: optional
 Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 Build-Depends: debhelper (>= 9),
