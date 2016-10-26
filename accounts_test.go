@@ -11,7 +11,7 @@ func (s *S) TestRegisterAccountLoginWidget(c *C) {
 		"id":    "install-snap",
 		"label": "Install",
 	})
-	scopes.RegisterAccountLoginWidget(widget,
+	scopes.RegisterAccountLoginWidget(&widget,
 		"ubuntuone", "ubuntuone", "ubuntuone",
 		scopes.PostLoginContinueActivation,
 		scopes.PostLoginDoNothing)
