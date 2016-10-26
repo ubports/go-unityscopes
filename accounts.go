@@ -46,8 +46,8 @@ func RegisterAccountLoginResult(result *CategorisedResult, query *CannedQuery, s
 //
 // On success, the dash will perform the action specified by
 // passedAction.  On failure, it will use failedAction.
-func RegisterAccountLoginItem(widget *PreviewWidget, serviceName, serviceType, providerName string, passedAction, failedAction PostLoginAction) error {
-	return widget.AddAttributeValue("online_account_details", accountDetails{
+func RegisterAccountLoginWidget(widget *PreviewWidget, serviceName, serviceType, providerName string, passedAction, failedAction PostLoginAction) {
+	widget.AddAttributeValue("online_account_details", accountDetails{
 		ScopeID:           "",
 		ServiceName:       serviceName,
 		ServiceType:       serviceType,
