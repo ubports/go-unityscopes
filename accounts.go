@@ -39,3 +39,20 @@ func RegisterAccountLoginResult(result *CategorisedResult, query *CannedQuery, s
 		LoginFailedAction: failedAction,
 	})
 }
+
+// RegisterAccountLoginWidget configures a widget such that the dash
+// will attempt to log in to the account identified by (serviceName,
+// serviceType, providerName).
+//
+// On success, the dash will perform the action specified by
+// passedAction.  On failure, it will use failedAction.
+func RegisterAccountLoginItem(widget *PreviewWidget, serviceName, serviceType, providerName string, passedAction, failedAction PostLoginAction) error {
+	return widget.AddAttributeValue("online_account_details", accountDetails{
+		ScopeID:           "",
+		ServiceName:       serviceName,
+		ServiceType:       serviceType,
+		ProviderName:      providerName,
+		LoginPassedAction: passedAction,
+		LoginFailedAction: failedAction,
+	})
+}
