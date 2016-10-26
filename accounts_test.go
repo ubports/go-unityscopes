@@ -18,7 +18,7 @@ func (s *S) TestRegisterAccountLoginWidget(c *C) {
 
 	result, ok := widget["online_account_details"]
 	c.Check(ok, Equals, true)
-	c.Check(result, Equals, map[string]interface{}{
+	c.Check(result, DeepEquals, map[string]interface{}{
 		"scope_id":            "",
 		"service_name":        "ubuntuone",
 		"service_type":        "ubuntuone",
