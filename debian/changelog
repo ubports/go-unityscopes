@@ -1,3 +1,9 @@
+go-unityscopes (1.0.2+ubports) xenial; urgency=medium
+
+  * Imported to UBports
+
+ -- UBports auto importer <infra@ubports.com>  Thu, 11 Jan 2018 10:07:15 +0000
+
 go-unityscopes (1.0.1+17.04.20161026-0ubuntu1) zesty; urgency=medium
 
   * Add API for registering widget as login item. (LP: #1636853)
